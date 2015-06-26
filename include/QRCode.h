@@ -10,7 +10,7 @@
 #ifndef INCLUDE_QRCODE_H_
 #define INCLUDE_QRCODE_H_
 
-enum Color {BLUE, GREEN, YELLOW, RED };
+
 
 /*
  * QR Code Class Header that defines the behavior for QR Codes

@@ -7,7 +7,9 @@
  *
  */
 #include <iostream>
-#include "../include/QRCode.h"
+
+#include "../include/qrcode.h"
+
 using namespace std;
 
 void QRCode :: getCode()
