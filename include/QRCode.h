@@ -20,7 +20,7 @@ enum Color {BLUE, GREEN, YELLOW, RED };
 class QRCode{
 public:
 
-	void getCode() const;
+	void getCode();
 
 
 private:

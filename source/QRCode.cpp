@@ -10,7 +10,7 @@
 #include "../include/QRCode.h"
 using namespace std;
 
-void QRCode :: getCode() const
+void QRCode :: getCode()
 {
 	cout << "get the QR code" << endl;
 
