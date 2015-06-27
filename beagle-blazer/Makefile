@@ -85,6 +85,7 @@
 # BUILD TARGETS
 #---------------------------------------------------------------------
 
+#all builds the 
 all: $(BUILD_DIR)/$(BIN) 
 
 # Actual target of the binary - depends on all .o files.
