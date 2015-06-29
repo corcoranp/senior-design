@@ -1,0 +1,245 @@
+#---------------------------------------------------------------------
+# MAKEFILE for UAB SeniorDesign Project
+# BY Peter Corcoran
+# File is used to build BeagleBone Black ANGSTROM binary via 
+# Cross-Compiling
+# 
+#---------------------------------------------------------------------
+# PROJECT SETTINGS
+#---------------------------------------------------------------------
+	PROJECT		=SeniorDesign
+
+	# TARGET is used to define what platform to build
+	TARGET		=RPI 
+	BIN			=blazebot
+
+
+#could just compile for everyone....
+	ifeq ($(TARGET),ANGSTROM)
+		# ANGSTROM: Used to indicate BeagleBone
+		BUILD_DIR	=../builds/angstrom
+		
+		#Compiler & Linker to use when building for BeagleBone 
+		# Added as environment variable
+		CC = $(CPP_BBB_COMPILER)
+		LD = $(CPP_BBB_LINKER)
+		
+	else ifeq ($(TARGET),RPI)
+		# RPI: 		Used to indicate Raspberry Pi
+		BUILD_DIR	=../builds/raspberry
+
+		#Compiler & Linker to use when building for Raspberry Pi
+		# Added as environment variable
+		CC = $(CPP_RPI_COMPILER)
+		LD = $(CPP_RPI_LINKER)
+		
+	else
+		# x86_64	Used to indicate Windows x86 or x64
+		BUILD_DIR	=../builds/x86_64
+		BIN			=blazebot.exe
+		
+		#Compiler & Linker to use when building for Windows...
+		CC = $(LINARO_CPP_COMPILER)
+		LD = $(LINARO_CPP_COMPILER)
+		
+		
+	endif
+	
+	
+
+
+#---------------------------------------------------------------------
+# SOURCE FILES & DIRECTORIES
+#---------------------------------------------------------------------
+#Binary Name & Location
+
+# Directory for C-Source
+*** No rule to make target `*.cpp', needed by
+
+# Directory for includes
+	CINCLUDE = $(CURDIR)/include  
+
+# Directory for object files
+	OBJDIR = $(CURDIR)/object
+ 
+# Other dependencies
+	DEPS = \
+ 		Makefile \
+ 		include/*.h 
+
+# Compiler object files 
+	COBJ = $(OBJDIR)/*.o 
+
+
+#---------------------------------------------------------------------
+# EXECUTABLES
+# Setup of variables that can be used in place of command
+#---------------------------------------------------------------------	
+	# rm is part of yagarto-tools
+	SHELL  = cmd
+	REMOVE = rm -f
+	
+#---------------------------------------------------------------------
+# ECHO STATEMENTS
+#---------------------------------------------------------------------	
+	# for a better output
+	MSG_EMPTYLINE 	= . 
+	MSG_COMPILING 	= ---COMPILE--- 
+	MSG_LINKING 	= ---LINK--- 
+	MSG_SUCCESS 	= ---SUCCESS--- 
+		
+	
+
+
+#---------------------------------------------------------------------
+# Options Controlling C Dialect
+#---------------------------------------------------------------------
+# https://gcc.gnu.org/onlinedocs/gcc/Option-Summary.html
+#
+# From: https://en.wikipedia.org/wiki/CFLAGS
+#	CFLAGS and CXXFLAGS are either the name of environment variables 
+#	or of Makefile variables that can be set to specify additional 
+#	switches to be passed to a compiler in the process of building 
+#	computer software.
+#
+# These variables are usually set inside a Makefile and are then 
+#	appended to the command line when the compiler is invoked. 
+#	If they are not specified in the Makefile, then they will be 
+#	read from the environment, if present. Tools like autoconf's 
+#	./configure script will usually pick them up from the environment 
+#	and write them into the generated Makefiles. Some package install 
+#	scripts, like SDL, allow CFLAGS settings to override their normal 
+#	settings (instead of append to them), so setting CFLAGS can cause 
+#	harm in this case.
+#
+# CFLAGS allows to add switches for the C compiler, while CXXFLAGS 
+#	is meant to be used when invoking a C++ compiler. Similarly, 
+#	a variable CPPFLAGS exists with switches to be passed to the 
+#	 C or C++ preprocessor.
+#---------------------------------------------------------------------
+	
+	#Select between generating code that executes in ARM and Thumb states.
+	CFLAGS = -marm
+
+	# Two additional CFLAGS must be used for Angstrom
+	# They must not be used for Debian or Ubuntu. I couldn't find out why. 
+	# The hint came from C:\gcc-linaro\share\doc\gcc-linaro-arm-linux-gnueabihf\README.txt 
+	ifeq ($(TARGET),ANGSTROM)
+		
+		# This specifies the name of the target ARM architecture. GCC uses this name to determine 
+		# 	what kind of instructions it can emit when generating assembly code. This option can 
+		# 	be used in conjunction with or instead of the -mcpu= option. 
+		# Permissible names are: 'armv2', 'armv2a', 'armv3', 'armv3m', 'armv4', 'armv4t', 
+		# 	'armv5', 'armv5t', 'armv5e', 'armv5te', 'armv6', 'armv6j', 'armv6t2', 'armv6z', 
+		# 	'armv6zk', 'armv6-m', 'armv7', 'armv7-a', 'armv7-r', 'armv7-m', 'armv7e-m', 
+		# 	'armv7ve', 'armv8-a', 'armv8-a+crc', 'iwmmxt', 'iwmmxt2', 'ep9312'.
+		
+		# -march=armv7ve is the armv7-a architecture with virtualization extensions.
+		# -march=armv8-a+crc enables code generation for the ARMv8-A architecture together with the optional CRC32 extensions.
+		# -march=native causes the compiler to auto-detect the architecture of the build computer. 
+		# 	At present, this feature is only supported on GNU/Linux, and not all architectures are recognized. 
+		# 	If the auto-detect is unsuccessful the option has no effect. 
+			
+		CFLAGS += -march=armv4t
+		
+		# Specifies which floating-point ABI to use. Permissible values are: ‘soft’, ‘softfp’ and ‘hard’.
+		# Specifying ‘soft’ causes GCC to generate output containing library calls for floating-point operations. 
+		#	‘softfp’ allows the generation of code using hardware floating-point instructions, but still uses the soft-float calling conventions. 
+		#	‘hard’ allows generation of floating-point instructions and uses FPU-specific calling conventions.
+		#
+		# The default depends on the specific target configuration. Note that the hard-float and soft-float ABIs are not link-compatible; 
+		#	you must compile your entire program with the same ABI, and link with a compatible set of libraries. 
+		
+		CFLAGS += -mfloat-abi=soft
+		
+		# -std=c++0x
+		# -std=c++11x  
+		
+		#	Determine the language standard. 		
+		# 	The 2011 ISO C++ standard plus amendments. The name 'c++0x' is deprecated. (should use c++11x then?)
+		CFLAGS += -std=c++0x
+	else ifeq ($(TARGET),RPI)
+		#Raspberry Pi options
+		
+		CFLAGS += -mcpu=cortex-a7
+		CFLAGS += -march=armv7-a
+		CFLAGS += -mfloat-abi=hard
+		CFLAGS += -mthumb
+		CFLAGS += -mfpu=neon-vfpv4
+		
+	else
+		CFLAGS += -std=c++11x			
+	endif
+
+	
+
+	# Optimization Options - https://gcc.gnu.org/onlinedocs/gcc/Optimize-Options.html#Optimize-Options
+	# -O  -O0  -O1  -O2  -O3  -Os -Ofast -Og
+	#
+	# -O0 = Reduce compilation time and make debugging produce the expected results. This is the default. 
+	CFLAGS += -O0 
+	
+	# Options for Debugging Your Program or GCC - https://gcc.gnu.org/onlinedocs/gcc/Debugging-Options.html#Debugging-Options
+	# -g  -glevel  -gtoggle  -gcoff  -gdwarf-version 
+	#
+	# -g = Produce debugging information in the operating system's native format (stabs, COFF, XCOFF, or DWARF 2). GDB can work with this debugging information.
+	CFLAGS += -g 
+	
+	CFLAGS += -I.
+	CFLAGS += -I$(CINCLUDE)
+	CFLAGS += $(CDEFINE)
+	
+	
+	
+	
+	
+	
+#---------------------------------------------------------------------
+# BUILD TARGETS
+#---------------------------------------------------------------------
+
+#all builds the 
+all: $(BUILD_DIR)/$(BIN) 
+
+# Actual target of the binary - depends on all .o files.
+$(BUILD_DIR)/$(BIN) : $(COBJ)
+	@echo $(MSG_EMPTYLINE)
+	@echo $(MSG_LINKING)
+	$(LD) -o $@ $^ $(CFLAGS)
+	@echo $(MSG_EMPTYLINE)
+	@echo $(MSG_SUCCESS) $(BIN)
+
+
+# Compiler call
+$(COBJ): $(OBJDIR)/%.o: %.cpp $(DEPS)
+	@echo $(MSG_EMPTYLINE)
+	@echo $(MSG_COMPILING) $<
+	$(CC) -c -o $@ $< $(CFLAGS)
+	@echo $(MSG_EMPTYLINE)
+	@echo $(MSG_SUCCESS) $(BIN)
+
+	
+bbb:
+	@echo $(MSG_EMPTYLINE)
+	@echo BeagleBone Black Build
+
+	@echo $(MSG_EMPTYLINE)
+	@echo $(MSG_SUCCESS) $(BIN)
+	
+	
+rpi:
+	@echo $(MSG_EMPTYLINE)
+	@echo RaspberryPi Build
+	
+	@echo $(MSG_EMPTYLINE)
+	@echo $(MSG_SUCCESS) $(BIN)
+	
+clean:
+	@echo Clean Builds
+	$(REMOVE) $(OBJDIR)/*.o
+	$(REMOVE) $(BIN)
+
+
+print_vars:
+
+	echo "teste"

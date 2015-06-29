@@ -1,0 +1,113 @@
+Cross-Compiling for BeagleBone Black (BBB) & Raspberry Pi (RPi) from Windows 
+============================================================================
+
+Contents
+--------
+1. Platform Information
+2. Development Platform
+3. Tools & Development IDE
+4. Extra Libraries
+
+
+
+Platform Information
+--------------------
+The following are the specific platforms being used or described in this tutorial
+
+*** BBB ***
+	- Using Angstrom Image on BeagleBone Black
+	- 
+
+*** RPi *** 
+	- Using Raspbian on RPi 2 
+
+*** Operating System *** 
+	- Windows 7  
+
+
+
+
+Development Platforms
+---------------------
+
+In order to cross-compile on BBB or RPi, the 
+The GCC compiler for C and C++ languages
+The GDB debugger
+Include files and libraries from the Raspberry PI image
+
+
+
+*** Cygwin ***
+	Cygwin is a large collection of GNU and Open Source tools which provide functionality similar to a Linux distribution on Windows.
+
+	Cygwin install files can be found: https://www.cygwin.com/
+	The most recent version of the Cygwin DLL, at the time of this writing is 2.0.4
+
+*** Linaro ***
+	Linaro is a not-for-profit engineering organization that works on free and open-source software such as the Linux kernel, the GNU Compiler Collection (GCC), power management, graphics and multimedia interfaces for the ARM family of instruction sets and implementations thereof as well as for the Heterogeneous System Architecture. 
+
+	BBB and the RPi 2 are both ARM based systems and Linaro is used to compile binary executables from a Windows (which have a Intel x86 instruction set) system that will run on BBB or RPi 
+
+	Install 4.8  Toolchain from:
+	Linaro - http://releases.linaro.org/13.09/components/toolchain/binaries
+	http://releases.linaro.org/13.09/components/toolchain/binaries/gcc-linaro-arm-linux-gnueabihf-4.8-2013.09-20130912_win32.exe
+
+	Add Raspberry Pi Toolchain
+	- http://www.a2p.it/wordpress/tech-stuff/development/remote-debugging-raspberrypi/
+	- Compiler
+	-- D:\Developer\raspberrypi-tools\arm-unknown-linux-gnueabi\bin\arm-unknown-linux-gnueabi-g++.exe
+	-- D:\Developer\raspberrypi-tools\arm-unknown-linux-gnueabi\bin\arm-unknown-linux-gnueabi-gcc.exe
+	- Debugger: 
+	-- D:\Developer\raspberrypi-tools\arm-unknown-linux-gnueabi\bin\arm-unknown-linux-gnueabi-gdb.exe 
+
+*** Python ***
+
+*** MINGW ***
+	http://www.mingw.org/wiki/Install_MinGW
+
+Tools & Development IDE 
+-----------------------
+*** Eclipse ***
+	http://jkuhlm.bplaced.net/hellobone/
+	http://tuanphong.net/cross-compile-and-remote-deploy-from-windows-for-beaglebone-using-eclipse-and-a-linaro-gcc-toolchain/
+	http://www.gurucoding.com/en/raspberry_pi_eclipse/installing_eclipse.php
+
+*** NETBEANS ***
+
+*** Putty ***
+	SSH Client used to connect to the BBB or RPi
+
+*** Sublime ***
+
+
+
+Extra Libraries
+---------------
+
+*** C++ BeagleBone Black Lib ***
+
+	Source: 
+	http://blacklib.yigityuce.com/v2_0/downloads.html
+	https://github.com/yigityuce/BlackLib
+
+*** OpenCV ***
+	OpenCV is a computer vision library...
+
+	Source:
+	http://opencv.org/downloads.html
+
+*** Boost ***
+	Boost is a ...
+
+	Source:
+	http://www.boost.org/
+
+
+
+
+Install 
+
+	Add Windows Environment Variable for Linaro compiler used for BBB 
+	Add Windows Environment Variable for Linaro compiler used for Raspberry Pi
+	Add Winodws Environment Variable for compiler on x86_64
+
