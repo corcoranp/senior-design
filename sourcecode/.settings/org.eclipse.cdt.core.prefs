@@ -1,7 +1,10 @@
 eclipse.preferences.version=1
 environment/project/cdt.managedbuild.config.gnu.cross.exe.debug.75134037.28775405/CYGWIN/delimiter=;
-environment/project/cdt.managedbuild.config.gnu.cross.exe.debug.75134037.28775405/CYGWIN/operation=append
-environment/project/cdt.managedbuild.config.gnu.cross.exe.debug.75134037.28775405/CYGWIN/value=nodosfilewarning
+environment/project/cdt.managedbuild.config.gnu.cross.exe.debug.75134037.28775405/CYGWIN/operation=replace
+environment/project/cdt.managedbuild.config.gnu.cross.exe.debug.75134037.28775405/CYGWIN/value=tty;nodosfilewarning
+environment/project/cdt.managedbuild.config.gnu.cross.exe.debug.75134037.28775405/PATH/delimiter=;
+environment/project/cdt.managedbuild.config.gnu.cross.exe.debug.75134037.28775405/PATH/operation=replace
+environment/project/cdt.managedbuild.config.gnu.cross.exe.debug.75134037.28775405/PATH/value=${CYGWIN_HOME}\\opt\\cross\\x-tools\\arm-unknown-linux-gnueabi\\bin;${CYGWIN_HOME}\\bin;C\:\\Windows\\system32;C\:\\Windows;C\:\\Windows\\System32\\Wbem;C\:\\Windows\\System32\\WindowsPowerShell\\v1.0\\;D\:\\Developer\\yagarto-tools\\bin;C\:\\Program Files\\Java\\jdk1.7.0_75\\bin;D\:\\Program Files\\eclipse;D\:\\Developer\\cygwin\\bin;C\:\\Ruby200-x64\\bin;C\:\\Ruby200\\bin;c\:\\ffmpeg\\bin;C\:\\Users\\Peter.HOME\\AppData\\Roaming\\npm;C\:\\Users\\Peter.HOME\\atlassian-plugin-sdk\\bin;D\:\\Development\\BBB\\gcc-linaro\\arm-linux-gnueabihf\\include\\c++\\4.8.2;D\:\\Developer\\mingw\\bin
 environment/project/cdt.managedbuild.config.gnu.cross.exe.debug.75134037.28775405/append=true
 environment/project/cdt.managedbuild.config.gnu.cross.exe.debug.75134037.28775405/appendContributed=true
 environment/project/cdt.managedbuild.config.gnu.mingw.exe.debug.1017965839/MINGW_HOME/delimiter=;
