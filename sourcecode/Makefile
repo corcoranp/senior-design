@@ -65,6 +65,9 @@ ifeq ($(TARGET),ANGSTROM)
 	#BBB options		
 	CFLAGS += -march=armv4t
 	CFLAGS += -mfloat-abi=soft
+	
+	CXXFLAGS += -march=armv4t
+	CXXFLAGS += -mfloat-abi=soft
 endif
 
 CFLAGS += -O0 
@@ -75,6 +78,7 @@ CFLAGS += $(CDEFINE)
 
 #C++ FLAGS NEEDED FOR THREADING------------------ 
 CXXFLAGS += --std=c++11 -O0 -g -I.
+CXXFLAGS += -I$(CINCLUDE) 
 CXXFLAGS += -pthread -D__GCC_HAVE_SYNC_COMPARE_AND_SWAP_1 -D__GCC_HAVE_SYNC_COMPARE_AND_SWAP_2 -D__GCC_HAVE_SYNC_COMPARE_AND_SWAP_4 -D__GCC_HAVE_SYNC_COMPARE_AND_SWAP_8
 
 
