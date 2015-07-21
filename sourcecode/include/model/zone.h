@@ -26,16 +26,17 @@
 
 using namespace std;
 
-class Zone{
-public:
+namespace blaze {
+	class Zone{
+		public:
 
-	string color();
-
-
-private:
-
-};
+			string color();
 
 
+		private:
+
+	};
+
+}
 
 #endif /* INCLUDE_ZONE_H_ */

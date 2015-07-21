@@ -8,7 +8,7 @@
  */
 #include <iostream>
 
-#include "../include/qrcode.h"
+#include "model/qrcode.h"
 
 using namespace std;
 

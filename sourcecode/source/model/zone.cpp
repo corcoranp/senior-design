@@ -8,10 +8,11 @@
  */
 
 #include <iostream>
-#include "../include/robotcore.h"
-#include "../include/zone.h"
+#include "blazecore.h"
+#include "model/zone.h"
 
 using namespace std;
+using namespace blaze;
 
 string Zone :: color()
 {

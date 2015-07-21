@@ -14,6 +14,7 @@
 PROJECT=SeniorDesign
 TARGET=ANGSTROM
 BIN=blazebot
+RES_DIR=resources
 # ANGSTROM: Used to indicate BeagleBone
 BUILD_DIR	=./builds/angstrom
 	
@@ -39,6 +40,8 @@ OBJDIR=object
 # rm is part of yagarto-tools
 SHELL  = cmd
 REMOVE = rm -f
+COPY = cp -f
+
 	
 #---------------------------------------------------------------------
 # ECHO STATEMENTS
@@ -86,8 +89,9 @@ CXXFLAGS += -pthread -D__GCC_HAVE_SYNC_COMPARE_AND_SWAP_1 -D__GCC_HAVE_SYNC_COMP
 # SOURCE FILES
 #---------------------------------------------------------------------
 
-SOURCES  := $(wildcard source/*.cpp)
-INCLUDES := $(wildcard include/*.h)
+# wildcard search for files in the source or include directory and sub dirs.
+SOURCES  := $(wildcard source/*.cpp) $(wildcard source/**/*.cpp)
+INCLUDES := $(wildcard include/*.h) $(wildcard include/**/*.h)
 OBJECTS  := $(SOURCES:$(SRCDIR)/%.cpp=$(OBJDIR)/%.o)
 
 #---------------------------------------------------------------------
@@ -117,7 +121,7 @@ $(OBJECTS): $(OBJDIR)/%.o : $(SRCDIR)/%.cpp
 	
 clean:
 	@echo Clean Builds
-	$(REMOVE) $(OBJDIR)/*.o
+	$(REMOVE) $(OBJDIR)/*.o $(OBJDIR)/**/*.o
 	$(REMOVE) $(BIN)
 
 	

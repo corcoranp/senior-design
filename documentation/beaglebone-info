@@ -1,0 +1,36 @@
+Beaglebone Information
+
+
+
+i2c information
+
+youtube video: https://www.youtube.com/watch?v=8C2zk6B-eLU#t=775
+
+
+There are 3 i2c buses on the beaglebone
+
+- 1 is disabled by default
+
+- the three buses are:
+
+i2c0: Not exposed in the expansion headers
+i2c1: pins P9 17,18 (and 24,26)
+i2c2: pins P9 19,20 (and 21,22)
+
+
+But, not all three buses are exported by default and more confusingly, under linux, the buses are named in the order they are enumerated which may have nothing to do with the physical names.
+
+So, it’s best to check the memory addresses:
+
+i2c0: 0x44E0_B000
+i2c1: 0x4802_A000
+i2c2: 0x4819_C000
+
+
+Then check the mapping in /sys/bus/i2c/devices:
+
+root@beaglebone:~# ls -l /sys/bus/i2c/devices/i2c-*
+
+Enabling all three buses:
+root@arm:~# echo BB-I2C1 > /sys/devices/bone_capemgr.8/slots
+root@arm:~# ls -l /sys/bus/i2c/devices/i2c-*

@@ -1,0 +1,40 @@
+; BLAZE SETTINGS FILE
+; This file is for variable configuration settings for the
+; BLAZE ROBOT
+; © 2015 Peter Corcoran - PMCORCOR@UAB.EDU PMCORCOR@GMAIL.COM
+
+
+[system]								; system configuration
+version				= 1             	; system version
+name 				= BLAZE				; ROBOT NAME
+
+[logging]
+debugLevel			= ERROR				; Current Debug Level: "ERROR", "WARNING", "INFO", "DEBUG", "DEBUG1", "DEBUG2", "DEBUG3", "DEBUG4"
+logFile				= blaze_error.log	; name of the log file to save data to
+enableLogFile 		= true				;
+appendLog			= true				; specifies whether to append to the log (true) or overwrite (false)
+
+[user]
+name 				= Peter Corcoran  	; Spaces around '=' are stripped
+email 				= pmcorcor@uab.edu	; And comments (like this) ignored
+
+
+[camera]
+camera_enabled		= false 			; enables/disables camera
+
+[accelerometer]
+accel_enabled 		= false 			; enables/disables camera
+
+[ultrasonic]
+ultrasonic_enabled	= false 			; enables/disables camera
+
+
+[pins]
+pins_enabled		= false				;
+
+
+
+
+
+
+

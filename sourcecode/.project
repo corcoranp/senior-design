@@ -3,6 +3,7 @@
 	<name>SeniorDesign</name>
 	<comment></comment>
 	<projects>
+		<project>Settings</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
