@@ -4,32 +4,56 @@
 ; © 2015 Peter Corcoran - PMCORCOR@UAB.EDU PMCORCOR@GMAIL.COM
 
 
-[system]								; system configuration
-version				= 1             	; system version
-name 				= BLAZE				; ROBOT NAME
+[SYSTEM]								; system configuration
+VERION				= 1             	; system version
+NAME 				= BLAZE				; ROBOT NAME
+CONTROL_MODE    	= AUTO				; AUTO is fully automated mode
+										; MANUAL is remote control mode.
+START_MODE			= START				; START - start Blaze at starting line wait for light
+										; TUNNEL - start Blaze in navigate tunnel
+										; LOAD - start Blaze in loading mode
+										; DELIVERY - starts Blaze in delivery mode
 
-[logging]
-debugLevel			= ERROR				; Current Debug Level: "ERROR", "WARNING", "INFO", "DEBUG", "DEBUG1", "DEBUG2", "DEBUG3", "DEBUG4"
-logFile				= blaze_error.log	; name of the log file to save data to
-enableLogFile 		= true				;
-appendLog			= true				; specifies whether to append to the log (true) or overwrite (false)
+[LOGGING]
+DEBUG_ENABLED		= true				; Enables or disables robot debug
+DEBUG_LEVEL			= DEBUG				; Current Debug Level: "ERROR", "WARNING", "INFO", "DEBUG", "DEBUG1", "DEBUG2", "DEBUG3", "DEBUG4"
+LOGFILE_ENABLED		= true				;
+LOGFILE_NAME		= blaze_error.log	; name of the log file to save data to
+APPEND_TO_LOG		= true				; specifies whether to append to the log (true) or overwrite (false)
 
-[user]
+[USER]
 name 				= Peter Corcoran  	; Spaces around '=' are stripped
 email 				= pmcorcor@uab.edu	; And comments (like this) ignored
 
+;-----------------------------------------------------
+; HARDWARE CONTROL SECTIONS
+;-----------------------------------------------------
 
-[camera]
+[ARM]
+
+base_enabled		= true				; enable/disables the Arm's base servo
+
+shoulder_enabled	= true				; enable/disable the Arm's shoulder joint
+
+elbow_enabled 		= true				;
+
+wrist_enabled		= true				;
+
+hand_rotation_enabled	= true			;
+
+hand_enabled		= true				;
+
+[CAMERAS]
 camera_enabled		= false 			; enables/disables camera
 
-[accelerometer]
+[ACCELEROMETERS]
 accel_enabled 		= false 			; enables/disables camera
 
-[ultrasonic]
+[ULTRASONICS]
 ultrasonic_enabled	= false 			; enables/disables camera
 
 
-[pins]
+[PINS]
 pins_enabled		= false				;
 
 

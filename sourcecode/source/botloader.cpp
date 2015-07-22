@@ -28,6 +28,7 @@ void debug(string);
 void info(string);
 
 
+
 //================================================================================
 // METHED IMPLEMENTATION
 //================================================================================
@@ -48,23 +49,51 @@ void info(string);
 {
 	try
 	{
-
+		 cout << "blazebot starting" << endl;
 		/*
-		 * STEP 1: Read command args which should specify settings file...
+		 * STEP 1: Read command arguments which should specify settings file...
 		 */
 		char * settingsFile = getCmdOption(argv, argv + argc, "-settings");
 		if(!settingsFile){
+			//sets default settings file
 			settingsFile = "./resources/config.settings";
 		}
 
-		//load settings file
+		/*
+		 * STEP 2: LOAD SETTINGS FILE
+		 */
 		SettingsReader reader(settingsFile);
 
-		//check to see if the setting file was loaded.
+		//check to see if the setting file was loaded correctly...
 		if (reader.ParseError() < 0){
 			std::cout << "Can't load 'config.settings, BLAZE cannot boot up. '\n";
-			return 1;
+			return 1; //exit if there is a problem...
 		}
+
+		/*
+		 * STEP 3: LOAD LOGGING STATE
+		 */
+		print("About to start setLogging");
+		setLogging(reader);
+
+		/*
+		 * SHOW COOL BANNER
+		 */
+		//showBanner();
+
+
+		/*
+		 * STEP 4: LOAD ENVIRONMENT SETTINGS
+		 */
+
+
+
+		/*
+		 * This next section sets all the settings available in the robot from the settings file
+		 */
+
+
+
 		 std::cout << "Config loaded from 'config.settings': version="
 		              << reader.GetInteger("system", "version", -1) << ", debug level="
 					  << reader.Get("logging", "debugLevel", "UNKNOWN") << ", name="
@@ -74,34 +103,16 @@ void info(string);
 		              //<< reader.GetReal("user", "pi", -1) << ", active="
 		              //<< reader.GetBoolean("user", "active", true) << "\n";
 
-		/*
-		 * SET LOGGING LEVELS by settings file...
-		 */
-		string logLevel = reader.Get("logging", "debugLevel", "DEBUG1");    //getCmdOption(argv, argv + argc, "-logLevel");
-		const char * strLogFile = reader.Get("logging", "logFile", "blaze.log").c_str();
-		bool enableLogFile = reader.GetBoolean("logging", "enableLogFile", false);
-
-		//Load from settings file or default to DEBUG1
-		if(logLevel.length() >= 0){
-			FILELog::ReportingLevel() = FILELog::FromString(logLevel);
-		}
-
-		//write to log
-		if(enableLogFile){
-			LOG_TO_FILE(log_file, strLogFile);
-		}
-
-		FILE_LOG(logDEBUG) << argc;
-
-		FILE_LOG(logDEBUG) << argv;
 
 
 		//RUN BOOT METHODS:
 
-		showBanner();
+
+
+		/*
+		 * STEP LAST: STARTS SYSTEM OPERATIONS
+		 */
 		bootSystemOperations();
-
-
 	}
 	catch(const std::exception& e)
 	{
@@ -120,6 +131,37 @@ void info(string);
  //================================================================================
  // Private Methods
  //================================================================================
+
+
+
+ void setLogging(SettingsReader &reader){
+	 print("Starting setLogging Method");
+	//SET LOGGING VARIABLES
+	blaze::DEBUG_ENABLED 	= reader.GetBoolean(LOGGING_SECTION, "DEBUG_ENABLED", true);
+	blaze::DEBUG_LEVEL 		= reader.GetBoolean(LOGGING_SECTION, "DEBUG_LEVEL", "DEBUG");
+	blaze::LOGFILE_ENABLED 	= reader.GetBoolean(LOGGING_SECTION, "LOGFILE_ENABLED", true);
+	blaze::LOGFILE_NAME 	= reader.GetBoolean(LOGGING_SECTION, "LOGFILE_NAME", "./blaze_debug.log");
+	blaze::APPEND_TO_LOG 	= reader.GetBoolean(LOGGING_SECTION, "APPEND_TO_LOG", false);
+
+	/*
+	 * SET LOGGING LEVELS by settings file...
+	 */
+	string logLevel 		= blaze::DEBUG_LEVEL;
+	const char * strLogFile = blaze::LOGFILE_NAME.c_str();
+
+	//Load from settings file or default to DEBUG1
+	if(logLevel.length() >= 0){
+		FILELog::ReportingLevel() = FILELog::FromString(logLevel);
+	}
+
+	//write to log
+	if(blaze::LOGFILE_ENABLED){
+		LOG_TO_FILE(log_file, strLogFile);
+	}
+	print("Debug Configuration Completed");
+	debug(blaze::DEBUG_LEVEL);
+ }
+
 
 /*
  * bootSystemOperations

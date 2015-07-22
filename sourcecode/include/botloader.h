@@ -28,6 +28,7 @@
 #include <unistd.h>			//Needed for usleep
 //used for command options
 #include <algorithm>
+#include <system/SettingsReader.h>
 
 #ifdef LOG1
 #include "system/log1.h"
@@ -42,6 +43,7 @@
 char* getCmdOption(char ** begin, char ** end, const std::string & option);		// Gets command line options
 bool cmdOptionExists(char** begin, char** end, const std::string& option);		// Checks to see if command line option exists
 
+void setLogging(SettingsReader &reader);
 void bootSystemOperations(); 					//boot base system functions
 void showBanner();								//show the application banner
 
