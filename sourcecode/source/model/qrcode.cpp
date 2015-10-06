@@ -11,6 +11,7 @@
 #include "model/qrcode.h"
 
 using namespace std;
+using namespace blaze;
 
 void QRCode :: getCode()
 {
