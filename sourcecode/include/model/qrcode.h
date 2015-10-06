@@ -10,23 +10,23 @@
 #ifndef INCLUDE_QRCODE_H_
 #define INCLUDE_QRCODE_H_
 
+namespace blaze {
+
+	/*
+	 * QR Code Class Header that defines the behavior for QR Codes
+	 *
+	 * author Peter
+	 */
+	class QRCode{
+	public:
+
+		void getCode();
 
 
-/*
- * QR Code Class Header that defines the behavior for QR Codes
- *
- * author Peter
- */
-class QRCode{
-public:
+	private:
 
-	void getCode();
+	};
 
 
-private:
-
-};
-
-
-
+}
 #endif /* INCLUDE_QRCODE_H_ */

@@ -24,6 +24,8 @@
 
 #ifndef I2C_H_
 #define I2C_H_
+
+#include <stdint.h>
 #include"BusDevice.h"
 
 #define BBB_I2C_0 "/dev/i2c-0"
@@ -38,16 +40,27 @@ namespace blaze{
 class I2CDevice:public BusDevice{
 
 public:
-	I2CDevice(unsigned int bus, unsigned int device);
-	virtual int open();
+
+	I2CDevice(unsigned int bus, unsigned int device);		//bus address, device address
+	virtual int open();										//open connection
+
 	virtual int write(unsigned char value);
+
 	virtual unsigned char readRegister(unsigned int registerAddress);
 	virtual unsigned char* readRegisters(unsigned int number, unsigned int fromAddress=0);
+	virtual uint8_t readByte(unsigned int registerAddress);
+	virtual int16_t readWord(uint8_t MSB, uint8_t LSB);
+
 	virtual int writeRegister(unsigned int registerAddress, unsigned char value);
+	virtual int writeRegister(unsigned int registerAddress, unsigned int value);
+	virtual void writeRegisterBit(unsigned int registerAddress, unsigned int data, unsigned int bitNumber);
+
 	virtual void debugDumpRegisters(unsigned int number = 0xff);
-	virtual void close();
+
+	virtual void close();									//close connection
 	virtual ~I2CDevice();
 };
+
 
 } /* namespace exploringBB */
 

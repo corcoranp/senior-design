@@ -3,7 +3,9 @@
 ; BLAZE ROBOT
 ; © 2015 Peter Corcoran - PMCORCOR@UAB.EDU PMCORCOR@GMAIL.COM
 
-
+;-----------------------------------------------------
+; SYSTEM CONTROL SECTIONS
+;-----------------------------------------------------
 [SYSTEM]								; system configuration
 VERION				= 1             	; system version
 NAME 				= BLAZE				; ROBOT NAME
@@ -25,29 +27,35 @@ APPEND_TO_LOG		= true				; specifies whether to append to the log (true) or over
 name 				= Peter Corcoran  	; Spaces around '=' are stripped
 email 				= pmcorcor@uab.edu	; And comments (like this) ignored
 
+
+;-----------------------------------------------------
+; ROBOT PHYSICAL PROPERTIES SECTIONS
+;-----------------------------------------------------
+robot_x				= 12				; the robots width or x component in feet
+robot_y				= 12				; the robot's height or y component in feet
+
+
 ;-----------------------------------------------------
 ; HARDWARE CONTROL SECTIONS
 ;-----------------------------------------------------
 
 [ARM]
-
+arm_enabled			= false				; enable/disable the Arm
 base_enabled		= true				; enable/disables the Arm's base servo
-
 shoulder_enabled	= true				; enable/disable the Arm's shoulder joint
-
 elbow_enabled 		= true				;
-
 wrist_enabled		= true				;
-
 hand_rotation_enabled	= true			;
-
 hand_enabled		= true				;
+
 
 [CAMERAS]
 camera_enabled		= false 			; enables/disables camera
 
+
 [ACCELEROMETERS]
 accel_enabled 		= false 			; enables/disables camera
+
 
 [ULTRASONICS]
 ultrasonic_enabled	= false 			; enables/disables camera
@@ -58,7 +66,9 @@ pins_enabled		= false				;
 
 
 
-
+;-----------------------------------------------------
+; PORT COORDINATE DEFINITION
+;-----------------------------------------------------
 
 
 

@@ -28,6 +28,7 @@
 #include<fcntl.h>
 #include<iomanip>
 #include<stdio.h>
+
 #include<unistd.h>
 #include<sys/ioctl.h>
 #include<linux/i2c.h>
@@ -87,6 +88,41 @@ int I2CDevice::writeRegister(unsigned int registerAddress, unsigned char value){
    return 0;
 }
 
+int I2CDevice::writeRegister(unsigned int registerAddress, unsigned int value){
+   unsigned int buffer[2];
+   buffer[0] = registerAddress;
+   buffer[1] = value;
+   if(::write(this->file, buffer, 2)!=2){
+      perror("I2C: Failed write to the device\n");
+      return 1;
+   }
+   return 0;
+}
+
+/**
+ * @function writeBit(uint8_t DEV_ADD, uint8_t DATA_REGADD, uint8_t data, int bitNum)
+ * @param DEV_ADD Device Address.
+ * @param registerAddress Data Register Address.
+ * @param data Writing data.
+ * @param bitNum Bit Number for writing.
+ * @return void.
+ */
+void I2CDevice::writeRegisterBit(unsigned int registerAddress, unsigned int data, unsigned int bitNumber) {
+	unsigned int temp = this->readRegister(registerAddress);
+	if (data == 0) {
+		temp = temp & ~(1 << bitNumber);
+	} else if (data == 1) {
+		temp = temp | (1 << bitNumber);
+	} else {
+		perror("I2C: Failed to write bit to device");
+	}
+
+	this->writeRegister(registerAddress, temp);
+
+}
+
+
+
 /**
  * Write a single value to the I2C device. Used to set up the device to read from a
  * particular address.
@@ -118,6 +154,16 @@ unsigned char I2CDevice::readRegister(unsigned int registerAddress){
    return buffer[0];
 }
 
+uint8_t I2CDevice::readByte(unsigned int registerAddress){
+   this->write(registerAddress);
+   uint8_t buffer[1];
+   if(::read(this->file, buffer, 1)!=1){
+      perror("I2C: Failed to read in the value.\n");
+      return 1;
+   }
+   return buffer[0];
+}
+
 /**
  * Method to read a number of registers from a single device. This is much more efficient than
  * reading the registers individually. The from address is the starting address to read from, which
@@ -135,6 +181,19 @@ unsigned char* I2CDevice::readRegisters(unsigned int number, unsigned int fromAd
     }
 	return data;
 }
+
+/**
+ * @function readWord(uint8_t DEV_ADD, uint8_t MSB, uint8_t LSB)
+ * @param MSB 16-bit values Most Significant Byte Address.
+ * @param LSB 16-bit values Less Significant Byte Address..
+ * @return void.
+ */
+int16_t I2CDevice::readWord(uint8_t MSB, uint8_t LSB) {
+	uint8_t msb = this->readByte(MSB);
+	uint8_t lsb = this->readByte(LSB);
+	return ((int16_t) msb << 8) + lsb;
+}
+
 
 /**
  * Method to dump the registers to the standard output. It inserts a return character after every

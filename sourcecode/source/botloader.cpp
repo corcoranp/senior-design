@@ -12,14 +12,20 @@
  */
 #include "botloader.h"
 #include "blazecore.h"
-#include "blaze_controller.h"
+#include "controllers/RobotController.h"
 #include "system/SettingsReader.h"
 
 #include "model/qrcode.h"
 #include "model/zone.h"
 
+#include "io/dcmotor.h"
+//region xcell
+#include <stdio.h>
+#include "MPU6050.h"
 
-
+using namespace cacaosd_bbb_i2c;
+using namespace cacaosd_mpu6050;
+//endregion xcell
 using namespace std;
 using namespace blaze;
 
@@ -47,6 +53,35 @@ void info(string);
  */
  int main(int argc, char* argv[])
 {
+
+		// First way
+		BBB_I2C i2c(0x68, 1);
+		MPU6050 mpu(i2c);
+
+		float k = 16000;
+
+		//Second way
+		//MPU6050 mpu;
+
+		mpu.init();
+
+		while (true) {
+			printf("Accel X: %.3f\n", (float) mpu.getAccelerationX() / k);
+			printf("Accel Y: %.3f\n", (float) mpu.getAccelerationY() / k);
+			printf("Accel Z: %.3f\n", (float) mpu.getAccelerationZ() / k);
+			printf("---------------\n");
+
+			usleep(200000);
+		}
+
+		return 0;
+
+
+
+
+
+
+
 	try
 	{
 		 cout << "blazebot starting" << endl;
@@ -107,7 +142,20 @@ void info(string);
 
 		//RUN BOOT METHODS:
 
-
+		 DCMotor dcm(new PWM("pwm_test_P9_42.12"), 116); //will export GPIO116
+		   dcm.setDirection(DCMotor::ANTICLOCKWISE);
+		   dcm.setSpeedPercent(50.0f);   //make it clear that a float is passed
+		   dcm.go();
+		   cout << "Rotating Anti-clockwise at 50% speed" << endl;
+		   usleep(5000000);    //sleep for 5 seconds
+		   dcm.reverseDirection();
+		   cout << "Rotating clockwise at 50% speed" << endl;
+		   usleep(5000000);
+		   dcm.setSpeedPercent(100.0f);
+		   cout << "Rotating clockwise at 100% speed" << endl;
+		   usleep(5000000);
+		   dcm.stop();
+		   cout << "End of EBB DC Motor Example" << endl;
 
 		/*
 		 * STEP LAST: STARTS SYSTEM OPERATIONS
@@ -174,7 +222,7 @@ void bootSystemOperations(){
 	//OPTIONAL: Define the data received back from pthread.
 	void* result;
 	//STEP 2: Create thread, pass reference, addr of the function and data
-	if(pthread_create(&controllerEntry, NULL, &controller::entry, NULL)){
+	if(pthread_create(&controllerEntry, NULL, &RobotController::entry, NULL)){
 		cout <<"Failed to create the thread" << endl;
 		return;
 	}

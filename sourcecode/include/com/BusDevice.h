@@ -23,7 +23,7 @@
  */
 
 #ifndef BUSDEVICE_H_
-#define BUSDEVICE_H_
+#define BUSDEVICE_H_C
 
 namespace blaze {
 

@@ -10,10 +10,17 @@
 
 static const std::string SYSTEM_SECTION 		= "SYSTEM";
 static const std::string LOGGING_SECTION 		= "LOGGING";
+static const std::string LOGISTICS_SECTION 		= "LOGISTICS";
+static const std::string IMAGING_SECTION 		= "IMAGING";
 static const std::string ARM_SECTION 			= "ARM";
-static const std::string CAMERA_SECTION 		= "CAMERAS";
+static const std::string MOTORS_SECTION 		= "MOTORS";
+
+//SENSORS ----------------------------------------------------------
+static const std::string CAMERA_SECTION 		= "CAMRA";
 static const std::string ACCELEROMETER_SECTION 	= "ACCELEROMETERS";
 static const std::string ULTRASONIC_SECTION 	= "ULTRASONICS";
+
+//MICROCONTROLLER --------------------------------------------------
 static const std::string PINS_SECTION			= "PINS";
 
 namespace blaze {

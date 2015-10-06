@@ -12,7 +12,7 @@
 class Point {
 
 private:
-	double xval, yval;
+	double xval, yval, zval, theta;
 public:
 	// Constructor uses default arguments to allow calling with zero, one,
 	// or two values.
