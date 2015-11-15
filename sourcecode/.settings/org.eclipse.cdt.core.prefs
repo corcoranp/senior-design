@@ -15,6 +15,11 @@ environment/project/cdt.managedbuild.config.gnu.mingw.exe.debug.1017965839/MSYS_
 environment/project/cdt.managedbuild.config.gnu.mingw.exe.debug.1017965839/MSYS_HOME/value=D\:\\Developer\\mingw\\msys\\1.0
 environment/project/cdt.managedbuild.config.gnu.mingw.exe.debug.1017965839/append=true
 environment/project/cdt.managedbuild.config.gnu.mingw.exe.debug.1017965839/appendContributed=true
+environment/project/cdt.managedbuild.toolchain.gnu.cross.base.147242521.1081271097/PATH/delimiter=\:
+environment/project/cdt.managedbuild.toolchain.gnu.cross.base.147242521.1081271097/PATH/operation=replace
+environment/project/cdt.managedbuild.toolchain.gnu.cross.base.147242521.1081271097/PATH/value=/usr/local/linaro/arm-linux-gnueabihf/bin\:/usr/bin\:/bin\:/usr/sbin\:/sbin;${ProjDirPath}/include;
+environment/project/cdt.managedbuild.toolchain.gnu.cross.base.147242521.1081271097/append=true
+environment/project/cdt.managedbuild.toolchain.gnu.cross.base.147242521.1081271097/appendContributed=true
 environment/project/cdt.managedbuild.toolchain.gnu.cross.base.147242521/PATH/delimiter=\:
 environment/project/cdt.managedbuild.toolchain.gnu.cross.base.147242521/PATH/operation=replace
 environment/project/cdt.managedbuild.toolchain.gnu.cross.base.147242521/PATH/value=/usr/local/linaro/arm-linux-gnueabihf/bin\:/usr/bin\:/bin\:/usr/sbin\:/sbin;${ProjDirPath}/include;
