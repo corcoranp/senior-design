@@ -6,7 +6,8 @@
  *
  *	A waypoint is a position on the port
  */
-#include "model/waypoint.h"
+#include <string>
+#include "../../include/model/waypoint.h"
 
 using namespace blaze;
 using namespace std;
@@ -26,5 +27,5 @@ void waypoint::setTheta(double val){
 }
 
 string waypoint::toString(){
-	return "(" + to_string(xval) + "," + to_string(yval) + "," + to_string(theta) + ")";
+	return "(" ;//+ to_string(xval) + "," + to_string(yval) + "," + to_string(theta) + ")";
 }

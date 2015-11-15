@@ -8,7 +8,7 @@
  */
 #include <iostream>
 
-#include "model/qrcode.h"
+#include "../../include/model/qrcode.h"
 
 using namespace std;
 using namespace blaze;

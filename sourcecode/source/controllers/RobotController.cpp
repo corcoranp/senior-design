@@ -20,8 +20,8 @@
 #include <map>
 #include <string>
 
-#include "system/console.h"
-#include "controllers/RobotController.h"
+#include "../../include/system/console.h"
+#include "../../include/controllers/RobotController.h"
 
 
 

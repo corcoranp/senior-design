@@ -6,8 +6,8 @@
  */
 
 
-#include "io/GPIO.h"
-#include "io/filesys.h"
+#include "../../include/io/GPIO.h"
+#include "../../include/io/filesys.h"
 #include<iostream>
 #include<fstream>
 #include<string>

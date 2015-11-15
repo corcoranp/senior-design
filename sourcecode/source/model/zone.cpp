@@ -8,8 +8,8 @@
  */
 
 #include <iostream>
-#include "blazecore.h"
-#include "model/zone.h"
+#include "../../include/blazecore.h"
+#include "../../include/model/zone.h"
 
 using namespace std;
 using namespace blaze;

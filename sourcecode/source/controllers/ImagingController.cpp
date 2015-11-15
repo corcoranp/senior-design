@@ -4,7 +4,7 @@
 
 
 
-#include "controllers/ImagingController.h"
+#include "../../include/controllers/ImagingController.h"
 
 using namespace blaze;
 

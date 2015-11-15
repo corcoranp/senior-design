@@ -10,7 +10,7 @@
 #include <ctype.h>
 #include <string.h>
 
-#include "system/settings.h"
+#include "../../include/system/settings.h"
 
 #if !SETTINGS_USE_STACK
 #include <stdlib.h>

@@ -13,21 +13,19 @@
 /*
  * BLAZEBOT INCLUDES
  */
-#include "botloader.h"
-#include "blazecore.h"
-#include "controllers/RobotController.h"
+#include "../include/botloader.h"
+#include "../include/blazecore.h"
+#include "../include/controllers/RobotController.h"
 
-#include "system/console.h"
-#include "system/SettingsReader.h"
+#include "../include/system/console.h"
+#include "../include/system/SettingsReader.h"
 
-#include "model/qrcode.h"
-#include "model/zone.h"
+#include "../include/model/qrcode.h"
+#include "../include/model/zone.h"
 
-#include "io/dcmotor.h"
-#include "MPU6050.h"
+#include "../include/io/dcmotor.h"
 
-using namespace cacaosd_bbb_i2c;
-using namespace cacaosd_mpu6050;
+
 
 using namespace std;
 using namespace blaze;
@@ -217,7 +215,8 @@ void bootSystemOperations(){
 	//OPTIONAL: Define the data received back from pthread.
 	void* result;
 	//STEP 2: Create thread, pass reference, addr of the function and data
-	if(pthread_create(&controllerEntry, NULL, &RobotController::entry, NULL)){
+
+	 if(pthread_create(&controllerEntry, NULL, &RobotController::entry, NULL)){
 		FILE_LOG(logERROR) << "Failed to create the thread, exiting.";
 		return;
 	}
@@ -350,7 +349,7 @@ void bootSystemOperations(){
 	 console::info("       |-|             2016 IEEE SOUTHEASTCON             |-|");
 	 console::info("       |-|           UAB ELECTRICAL ENGINEERING           |-|");
 	 console::info("       |-|                                                |-|");
-	 console::info("       |-|      ¸.´¯`·.¸¸.·´¯`·.BLAZE.·´¯`·.¸¸.´¯`·.¸     |-|");
+	 console::info("       |-|      	 ~~~~~~~~~~ BLAZE ~~~~~~~~~           |-|");
 	 console::info("       |-|                                                |-|");
 	 console::info("       |-|\\_____________________________________________  |-|");
 	 console::info("       (@)                 / ,/ \\_____/ \\ ~\\/~         `\\|-|");

@@ -28,7 +28,7 @@
 #include <unistd.h>			//Needed for usleep
 //used for command options
 #include <algorithm>
-#include <system/SettingsReader.h>
+#include "system/SettingsReader.h"
 
 
 #ifdef LOG1

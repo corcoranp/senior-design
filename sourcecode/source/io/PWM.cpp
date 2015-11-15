@@ -22,8 +22,8 @@
  * For more details, see http://www.derekmolloy.ie/
  */
 
-#include "io/PWM.h"
-#include "io/filesys.h"
+#include "../../include/io/PWM.h"
+#include "../../include/io/filesys.h"
 #include <cstdlib>
 
 namespace blaze {

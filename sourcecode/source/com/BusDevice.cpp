@@ -22,7 +22,7 @@
  * For more details, see http://www.derekmolloy.ie/
  */
 
-#include "com/BusDevice.h"
+#include "../../include/com/BusDevice.h"
 
 namespace blaze {
 

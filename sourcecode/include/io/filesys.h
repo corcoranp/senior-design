@@ -11,7 +11,7 @@
 #ifdef LOG1
 #include "system/log1.h"
 #else
-#include "system/log.h"
+#include "../../include/system/log.h"
 #endif
 
 #include <string>

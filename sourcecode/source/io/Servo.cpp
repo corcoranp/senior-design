@@ -22,7 +22,7 @@
  * For more details, see http://www.derekmolloy.ie/
  */
 
-#include "io/Servo.h"
+#include "../../include/io/Servo.h"
 
 namespace blaze {
 

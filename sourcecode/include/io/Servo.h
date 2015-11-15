@@ -25,7 +25,7 @@
 #ifndef SERVO_H_
 #define SERVO_H_
 #include<string>
-#include "io/pwm.h"
+#include "../../include/io/pwm.h"
 using std::string;
 
 namespace blaze {

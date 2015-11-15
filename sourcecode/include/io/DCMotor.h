@@ -24,8 +24,8 @@
 
 #ifndef DCMOTOR_H_
 #define DCMOTOR_H_
-#include "io/gpio.h"
-#include "io/pwm.h"
+#include "../../include/io/gpio.h"
+#include "../../include/io/pwm.h"
 
 #define DEFAULT_DCMOTOR_PWM_PERIOD 4000
 #define DEFAULT_DCMOTOR_SPEED      50.0f

@@ -22,7 +22,7 @@
  * For more details, see http://www.derekmolloy.ie/
  */
 
-#include "io/StepperMotor.h"
+#include "../../include/io/StepperMotor.h"
 #include<iostream>
 #include<unistd.h>
 #include<cmath>

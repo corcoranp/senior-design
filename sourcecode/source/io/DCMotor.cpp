@@ -22,7 +22,7 @@
  * For more details, see http://www.derekmolloy.ie/
  */
 
-#include "io/DCMotor.h"
+#include "../../include/io/DCMotor.h"
 
 namespace blaze {
 

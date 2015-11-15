@@ -24,7 +24,7 @@
 
 #ifndef STEPPERMOTOR_H_
 #define STEPPERMOTOR_H_
-#include "io/gpio.h"
+#include "../../include/io/gpio.h"
 
 namespace blaze {
 

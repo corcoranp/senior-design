@@ -16,13 +16,14 @@ TARGET=ANGSTROM
 BIN=blazebot
 RES_DIR=resources
 # ANGSTROM: Used to indicate BeagleBone
-BUILD_DIR	=./builds/angstrom
+BUILD_DIR	=./builds
 	
 #Compiler & Linker to use when building for BeagleBone 
 # Added as environment variable
-CC = $(CPP_BBB_COMPILER)
-LD = $(CPP_BBB_LINKER)
-	
+#CC = $(CPP_BBB_COMPILER)
+#LD = $(CPP_BBB_LINKER)
+CC = /usr/local/linaro/arm-linux-gnueabihf/bin/arm-linux-gnueabihf-g++
+LD = /usr/local/linaro/arm-linux-gnueabihf/bin/arm-linux-gnueabihf-g++
 
 #---------------------------------------------------------------------
 # DIRECTORIES
@@ -38,7 +39,7 @@ OBJDIR=object
 # Setup of variables that can be used in place of command
 #---------------------------------------------------------------------	
 # rm is part of yagarto-tools
-SHELL  = cmd
+#SHELL  = cmd
 REMOVE = rm -f
 COPY = cp -f
 

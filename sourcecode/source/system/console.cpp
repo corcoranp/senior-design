@@ -9,8 +9,8 @@
 #include <stdio.h>
 #include <time.h>
 
-#include "system/console.h"
-#include "blazecore.h"
+#include "../../include/system/console.h"
+#include "../../include/blazecore.h"
 
 using namespace blaze;
 

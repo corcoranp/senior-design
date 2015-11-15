@@ -1,8 +1,9 @@
 #include <algorithm>
 #include <cctype>
 #include <cstdlib>
-#include "system/settings.h"
-#include "system/SettingsReader.h"
+
+#include "../../include/system/settings.h"
+#include "../../include/system/SettingsReader.h"
 
 using std::string;
 

@@ -12,7 +12,7 @@
  *
  */
 
-#include "io/filesys.h"
+#include "../../include/io/filesys.h"
 #include <iostream>
 #include <sstream>
 #include <fstream>

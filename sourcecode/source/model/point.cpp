@@ -9,7 +9,7 @@
 
 #include <iostream>
 #include <math.h>
-#include "model/point.h"
+#include "../../include/model/point.h"
 
 
 // Constructor uses default arguments to allow calling with zero, one,

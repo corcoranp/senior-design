@@ -22,7 +22,7 @@
  * For more details, see http://www.derekmolloy.ie/
  */
 
-#include "com/SPIDevice.h"
+#include "../../include/com/SPIDevice.h"
 #include <iostream>
 #include <sstream>
 #include <iomanip>
