@@ -19,14 +19,11 @@
 #include <iostream>
 #include <map>
 #include <string>
+
+#include "system/console.h"
 #include "controllers/RobotController.h"
 
 
-#ifdef LOG1
-#include "system/log1.h"
-#else
-#include "system/log.h"
-#endif
 
 using namespace std;
 using namespace blaze;
@@ -44,11 +41,10 @@ void *RobotController::entry(void *args){
  * Start function runs at boot to handle check events....
  */
 void RobotController::start(){
-	FILE_LOG(logDEBUG)  << "SysOps Started";
-
+	console::debug("RobotController Started");
 	//Thread that runs the main robot functions.
 
-	cout << "SysOps Ended" << endl;
+	console::debug("RobotController Ended");
 }
 
 

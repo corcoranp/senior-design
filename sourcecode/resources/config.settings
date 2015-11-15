@@ -6,33 +6,42 @@
 ;-----------------------------------------------------
 ; SYSTEM CONTROL SECTIONS
 ;-----------------------------------------------------
-[SYSTEM]								; system configuration
-VERION				= 1             	; system version
-NAME 				= BLAZE				; ROBOT NAME
-CONTROL_MODE    	= AUTO				; AUTO is fully automated mode
-										; MANUAL is remote control mode.
-START_MODE			= START				; START - start Blaze at starting line wait for light
-										; TUNNEL - start Blaze in navigate tunnel
-										; LOAD - start Blaze in loading mode
-										; DELIVERY - starts Blaze in delivery mode
+[SYSTEM]									; system configuration
+VERSION					= 1             	; system version
+NAME 					= BLAZE				; ROBOT NAME
+CONTROL_MODE    		= AUTO				; AUTO is fully automated mode
+											; CMD starts program and waits for commands.
+START_MODE				= START				; START - start Blaze at starting line wait for light
+											; TUNNEL - start Blaze in navigate tunnel
+											; LOAD - start Blaze in loading mode
+											; DELIVERY - starts Blaze in delivery mode
+											; ZONEAL - start Blaze in Zone A Load mode
+											; ZONEBL - start Blaze in Zone B Load mode
+											; ZONECL - start Blaze in Zone C Load mode
+											; BOATD - start Blaze in Boat Delivery mode
+											; YRAILD - start Blaze in Yellow Rail Delivery mode
+											; BRAILD - start Blaze in Blue Rail Delivery mode
+											; GRAILD - start Blaze in Green Rail Delivery mode
+											; RRAILD - start Blaze in Red Rail Delivery mode
+											; TRUCKA - start Blaze in Truck Delivery mode
+											; TRUCKB - start Blaze in Zone C Boat Delivery mode
 
 [LOGGING]
-DEBUG_ENABLED		= true				; Enables or disables robot debug
-DEBUG_LEVEL			= DEBUG				; Current Debug Level: "ERROR", "WARNING", "INFO", "DEBUG", "DEBUG1", "DEBUG2", "DEBUG3", "DEBUG4"
-LOGFILE_ENABLED		= true				;
-LOGFILE_NAME		= blaze_error.log	; name of the log file to save data to
-APPEND_TO_LOG		= true				; specifies whether to append to the log (true) or overwrite (false)
-
-[USER]
-name 				= Peter Corcoran  	; Spaces around '=' are stripped
-email 				= pmcorcor@uab.edu	; And comments (like this) ignored
+CONSOLE_ENABLED			= true				; Enables or disables robot console output
+DEBUG_ENABLED			= true				; Enables or disables robot debug
+DEBUG_LEVEL				= DEBUG				; Current Debug Level: "ERROR", "WARNING", "INFO", "DEBUG", "DEBUG1", "DEBUG2", "DEBUG3", "DEBUG4"
+LOGFILE_ENABLED			= true				;
+LOGFILE_NAME			= blaze_error.log	; name of the log file to save data to
+APPEND_TO_LOG			= true				; specifies whether to append to the log (true) or overwrite (false)
 
 
 ;-----------------------------------------------------
 ; ROBOT PHYSICAL PROPERTIES SECTIONS
 ;-----------------------------------------------------
-robot_x				= 12				; the robots width or x component in feet
-robot_y				= 12				; the robot's height or y component in feet
+[ROBOT]
+robot_x					= 12				; the robots width or x component in inches
+robot_y					= 12				; the robot's length or y component in inches
+robot_z					= 12				; the robot's height or z component in inches
 
 
 ;-----------------------------------------------------
@@ -40,35 +49,107 @@ robot_y				= 12				; the robot's height or y component in feet
 ;-----------------------------------------------------
 
 [ARM]
-arm_enabled			= false				; enable/disable the Arm
-base_enabled		= true				; enable/disables the Arm's base servo
-shoulder_enabled	= true				; enable/disable the Arm's shoulder joint
-elbow_enabled 		= true				;
-wrist_enabled		= true				;
-hand_rotation_enabled	= true			;
-hand_enabled		= true				;
+arm_enabled				= false				; enable/disable the Arm
+base_enabled			= true				; enable/disables the Arm's base servo
+shoulder_enabled		= true				; enable/disable the Arm's shoulder joint
+elbow_enabled 			= true				;
+wrist_enabled			= true				;
+hand_rotation_enabled	= true				;
+hand_enabled			= true				;
 
+[MOTORS]
+motors_enabled 			= false
+m1_max_speed			= 255				; maximum speed allowed for motor
+m2_max_speed			= 255				; maximum speed allowed for motor
 
 [CAMERAS]
-camera_enabled		= false 			; enables/disables camera
+camera_enabled			= false 			; enables/disables
 
 
 [ACCELEROMETERS]
-accel_enabled 		= false 			; enables/disables camera
+accel_enabled 			= false 			; enables/disables
 
 
 [ULTRASONICS]
-ultrasonic_enabled	= false 			; enables/disables camera
+ultrasonic_enabled		= false 			; enables/disables
+
+[LIDAR]
+LIDAR_enabled			= false 			; enables/disables
 
 
 [PINS]
-pins_enabled		= false				;
-
+pins_enabled			= false				;
 
 
 ;-----------------------------------------------------
-; PORT COORDINATE DEFINITION
+; NAMED WAYPOINTS
 ;-----------------------------------------------------
+
+[NAMED_WAYPOINTS]
+WP_TUNNEL_EXIT			= 20.0,1.1,1.3
+ZONEA_INVENTORY			= 20.0,1.1,1.3
+ZONEB_INVENTORY			= 20.0,1.1,1.3
+ZONEC_INVENTORY			= 20.0,1.1,1.3
+ZONEA_LOAD_START		= 20.0,1.1,1.3
+ZONEB_LOAD_START		= 20.0,1.1,1.3
+ZONEC_LOAD_START		= 20.0,1.1,1.3
+TRUCK_DELIVERY_START 	= 20.0,1.1,1.3
+BOAT_DELIVERY_START 	= 20.0,1.1,1.3
+YRAIL_DELIVERY_START 	= 20.0,1.1,1.3
+BRAIL_DELIVERY_START 	= 20.0,1.1,1.3
+GRAIL_DELIVERY_START 	= 20.0,1.1,1.3
+RRAIL_DELIVERY_START 	= 20.0,1.1,1.3
+
+;-----------------------------------------------------
+; PORT SETTINGS
+;-----------------------------------------------------
+[PORT_COORDINATES]
+PORT_SCALE				= 1					; Size of port grid in inches
+PORTA_ZONE_ORDER		= A,B,C				; Order of Port A Zone resolution
+PORTB_ZONE_ORDER		= C,B,A				; Order of Port B Zone resolution
+
+; Set of points (x, y, z) that define the boundary of an item
+; the first point is the closest to the origin, then moving in a clockwise 
+PA_START_BOUND			= 76,0,0,76,30,0,96,30,0,96,0,0
+PA_ZONEA_BOUND			= 1,2,3,1,2,3,1,2,3,1,2,3  
+PA_ZONEB_BOUND			= 1,2,3,1,2,3,1,2,3,1,2,3
+PA_ZONEC_BOUND			= 1,2,3,1,2,3,1,2,3,1,2,3  
+PA_BOAT_BOUND			= 0,0,0.5,0,24,0.5,36,24,0.5,36,0,0.5
+PA_TRUCK_BOUND			= 1,2,3,1,2,3,1,2,3,1,2,3
+PA_TRUCKOPENING_BOUND	= 1,2,3,1,2,3,1,2,3,1,2,3
+PA_RAIL1_TOP_BOUND		= 1,2,3,1,2,3,1,2,3,1,2,3
+PA_RAIL2_TOP_BOUND		= 1,2,3,1,2,3,1,2,3,1,2,3
+PA_RAIL3_TOP_BOUND		= 1,2,3,1,2,3,1,2,3,1,2,3
+PA_RAIL4_TOP_BOUND		= 1,2,3,1,2,3,1,2,3,1,2,3
+PA_TUNNEL_ENTRANCE		= 1,2,3,1,2,3,1,2,3,1,2,3
+PA_TUNNEL_EXIT			= 1,2,3,1,2,3,1,2,3,1,2,3
+
+PB_START_BOUND			= 1,2,3,1,2,3,1,2,3,1,2,3
+PB_ZONEA_BOUND			= 1,2,3,1,2,3,1,2,3,1,2,3  
+PB_ZONEB_BOUND			= 1,2,3,1,2,3,1,2,3,1,2,3
+PB_ZONEC_BOUND			= 1,2,3,1,2,3,1,2,3,1,2,3  
+PB_BOAT_BOUND			= 1,2,3,1,2,3,1,2,3,1,2,3
+PB_TRUCK_BOUND			= 1,2,3,1,2,3,1,2,3,1,2,3
+PB_TRUCKOPENING_BOUND	= 1,2,3,1,2,3,1,2,3,1,2,3
+PB_RAIL1_TOP_BOUND		= 1,2,3,1,2,3,1,2,3,1,2,3
+PB_RAIL2_TOP_BOUND		= 1,2,3,1,2,3,1,2,3,1,2,3
+PB_RAIL3_TOP_BOUND		= 1,2,3,1,2,3,1,2,3,1,2,3
+PB_RAIL4_TOP_BOUND		= 1,2,3,1,2,3,1,2,3,1,2,3
+PB_TUNNEL_ENTRANCE		= 1,2,3,1,2,3,1,2,3,1,2,3
+PB_TUNNEL_EXIT			= 1,2,3,1,2,3,1,2,3,1,2,3
+
+
+;-----------------------------------------------------
+; ROUTE SETTINGS - like a move 
+;-----------------------------------------------------
+[ROUTES]
+PORTA_ZONEA 			= 1
+PORTA_ZONEB 			= 1
+PORTA_ZONEC 			= 1
+PORTB_ZONEA 			= 1
+PORTB_ZONEB 			= 1
+PORTB_ZONEC 			= 1
+
 
 
 

@@ -20,6 +20,7 @@ public:
     static TLogLevel& ReportingLevel();
     static std::string ToString(TLogLevel level);
     static TLogLevel FromString(const std::string& level);
+
 protected:
     std::ostringstream os;
 private:

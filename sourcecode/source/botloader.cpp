@@ -7,31 +7,30 @@
  *
  */
 
+#include <ctime>
+#include <stdio.h>
+
 /*
  * BLAZEBOT INCLUDES
  */
 #include "botloader.h"
 #include "blazecore.h"
 #include "controllers/RobotController.h"
+
+#include "system/console.h"
 #include "system/SettingsReader.h"
 
 #include "model/qrcode.h"
 #include "model/zone.h"
 
 #include "io/dcmotor.h"
-//region xcell
-#include <stdio.h>
 #include "MPU6050.h"
 
 using namespace cacaosd_bbb_i2c;
 using namespace cacaosd_mpu6050;
-//endregion xcell
+
 using namespace std;
 using namespace blaze;
-
-void print(string);
-void debug(string);
-void info(string);
 
 
 
@@ -54,37 +53,14 @@ void info(string);
  int main(int argc, char* argv[])
 {
 
-		// First way
-		BBB_I2C i2c(0x68, 1);
-		MPU6050 mpu(i2c);
-
-		float k = 16000;
-
-		//Second way
-		//MPU6050 mpu;
-
-		mpu.init();
-
-		while (true) {
-			printf("Accel X: %.3f\n", (float) mpu.getAccelerationX() / k);
-			printf("Accel Y: %.3f\n", (float) mpu.getAccelerationY() / k);
-			printf("Accel Z: %.3f\n", (float) mpu.getAccelerationZ() / k);
-			printf("---------------\n");
-
-			usleep(200000);
-		}
-
-		return 0;
-
-
-
-
-
-
+	 console::print(console::currentDateTime());
 
 	try
 	{
-		 cout << "blazebot starting" << endl;
+		console::print("USAGE: ./blazebot -settings <path>");
+		console::print("");
+		console::print("STEP 1 - Read Command Arguments ");
+
 		/*
 		 * STEP 1: Read command arguments which should specify settings file...
 		 */
@@ -97,69 +73,67 @@ void info(string);
 		/*
 		 * STEP 2: LOAD SETTINGS FILE
 		 */
+		console::print("STEP 2 - Load All Settings... ");
 		SettingsReader reader(settingsFile);
 
 		//check to see if the setting file was loaded correctly...
 		if (reader.ParseError() < 0){
-			std::cout << "Can't load 'config.settings, BLAZE cannot boot up. '\n";
+			console::print("Can't load 'config.settings, BLAZE cannot boot up. '");
 			return 1; //exit if there is a problem...
 		}
+
+		loadAllSettings(reader);
 
 		/*
 		 * STEP 3: LOAD LOGGING STATE
 		 */
-		print("About to start setLogging");
-		setLogging(reader);
+		console::print("STEP 3 - Loading Logging State...");
+		//console::setLogging(blaze::DEBUG_LEVEL, blaze::LOGFILE_NAME.c_str(),blaze::LOGFILE_ENABLED);
+		setLogging();
+		console::debug("- Switching to debug mode. Debug message - " );
 
 		/*
 		 * SHOW COOL BANNER
 		 */
-		//showBanner();
-
-
-		/*
-		 * STEP 4: LOAD ENVIRONMENT SETTINGS
-		 */
+		showBanner();
 
 
 
-		/*
-		 * This next section sets all the settings available in the robot from the settings file
-		 */
+	/*
+	 * STEP 4: TEST CODE SECTION ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 */
+		console::debug("STEP 4 - CUSTOM START UP CODE !!! ");
 
-
-
-		 std::cout << "Config loaded from 'config.settings': version="
+		 std::cout << "- Config loaded from 'config.settings': version="
 		              << reader.GetInteger("system", "version", -1) << ", debug level="
-					  << reader.Get("logging", "debugLevel", "UNKNOWN") << ", name="
+					  << reader.Get("LOGGING", "DEBUG_LEVEL", "UNKNOWN") << ", name="
 		              << reader.Get("user", "name", "UNKNOWN") << ", email="
-		              << reader.Get("user", "email", "UNKNOWN") << ", pi=";
-
-		              //<< reader.GetReal("user", "pi", -1) << ", active="
-		              //<< reader.GetBoolean("user", "active", true) << "\n";
+		              << reader.Get("user", "email", "UNKNOWN") << ", pi=" << endl;
 
 
 
-		//RUN BOOT METHODS:
 
-		 DCMotor dcm(new PWM("pwm_test_P9_42.12"), 116); //will export GPIO116
-		   dcm.setDirection(DCMotor::ANTICLOCKWISE);
-		   dcm.setSpeedPercent(50.0f);   //make it clear that a float is passed
-		   dcm.go();
-		   cout << "Rotating Anti-clockwise at 50% speed" << endl;
-		   usleep(5000000);    //sleep for 5 seconds
-		   dcm.reverseDirection();
-		   cout << "Rotating clockwise at 50% speed" << endl;
-		   usleep(5000000);
-		   dcm.setSpeedPercent(100.0f);
-		   cout << "Rotating clockwise at 100% speed" << endl;
-		   usleep(5000000);
-		   dcm.stop();
-		   cout << "End of EBB DC Motor Example" << endl;
+
+
+		 console::debug( "- Tunnel Exit " + reader.Get("NAMED_WAYPOINTS", "WP_TUNNEL_EXIT", "UNKNOWN"));
+		 console::debug("To String of Tunnel WayPoint: " + blaze::WP_TUNNEL_EXIT->toString());
+
+
+
+		/*
+		 * STEP 5: CHECK START UP MODE ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		 */
+		 //SYSTEM>CONTROL_MODE
+		 if(reader.Get("SYSTEM", "CONTROL_MODE", "UNKNOWN") == "CMD"){
+			 console::debug("GOING INTO COMMAND MODE");
+			 commandMode();
+		 }
 
 		/*
 		 * STEP LAST: STARTS SYSTEM OPERATIONS
 		 */
+		console::debug("");
+		console::debug("LAST STEP: Start Robot Controller - Do NOT expect console output");
 		bootSystemOperations();
 	}
 	catch(const std::exception& e)
@@ -173,7 +147,23 @@ void info(string);
 }
 
 
-
+/*
+ * TODO: Throw away
+ * 		 DCMotor dcm(new PWM("pwm_test_P9_42.12"), 116); //will export GPIO116
+		   dcm.setDirection(DCMotor::ANTICLOCKWISE);
+		   dcm.setSpeedPercent(50.0f);   //make it clear that a float is passed
+		   dcm.go();
+		   cout << "Rotating Anti-clockwise at 50% speed" << endl;
+		   usleep(5000000);    //sleep for 5 seconds
+		   dcm.reverseDirection();
+		   cout << "Rotating clockwise at 50% speed" << endl;
+		   usleep(5000000);
+		   dcm.setSpeedPercent(100.0f);
+		   cout << "Rotating clockwise at 100% speed" << endl;
+		   usleep(5000000);
+		   dcm.stop();
+		   cout << "End of EBB DC Motor Example" << endl;
+ */
 
 
  //================================================================================
@@ -181,15 +171,19 @@ void info(string);
  //================================================================================
 
 
+ void commandMode(){
+	 std::string s;
 
- void setLogging(SettingsReader &reader){
-	 print("Starting setLogging Method");
-	//SET LOGGING VARIABLES
-	blaze::DEBUG_ENABLED 	= reader.GetBoolean(LOGGING_SECTION, "DEBUG_ENABLED", true);
-	blaze::DEBUG_LEVEL 		= reader.GetBoolean(LOGGING_SECTION, "DEBUG_LEVEL", "DEBUG");
-	blaze::LOGFILE_ENABLED 	= reader.GetBoolean(LOGGING_SECTION, "LOGFILE_ENABLED", true);
-	blaze::LOGFILE_NAME 	= reader.GetBoolean(LOGGING_SECTION, "LOGFILE_NAME", "./blaze_debug.log");
-	blaze::APPEND_TO_LOG 	= reader.GetBoolean(LOGGING_SECTION, "APPEND_TO_LOG", false);
+	 while(s != "exit"){
+		 std::cout << "Enter string:" << flush;
+		 std::getline(std::cin, s);
+		 std::cout << "the string was: " << s << std::endl;
+	 }
+ }
+
+
+ void setLogging(){
+	 console::print("- Starting setLogging Method");
 
 	/*
 	 * SET LOGGING LEVELS by settings file...
@@ -202,12 +196,13 @@ void info(string);
 		FILELog::ReportingLevel() = FILELog::FromString(logLevel);
 	}
 
+	cout << strLogFile << endl;
 	//write to log
 	if(blaze::LOGFILE_ENABLED){
 		LOG_TO_FILE(log_file, strLogFile);
 	}
-	print("Debug Configuration Completed");
-	debug(blaze::DEBUG_LEVEL);
+	FILE_LOG(logDEBUG) << "Completed";
+	console::debug("- Debug Configuration Completed: " + blaze::DEBUG_LEVEL);
  }
 
 
@@ -216,17 +211,18 @@ void info(string);
  * Function spins off a thread to start the system operations object...
  */
 void bootSystemOperations(){
-	debug("started bootloader::bootSystemOperations");
+	console::debug("- Starting System Operation Thread");
 	//STEP 1: Define Handle to the Thread:
 	pthread_t controllerEntry;
 	//OPTIONAL: Define the data received back from pthread.
 	void* result;
 	//STEP 2: Create thread, pass reference, addr of the function and data
 	if(pthread_create(&controllerEntry, NULL, &RobotController::entry, NULL)){
-		cout <<"Failed to create the thread" << endl;
+		FILE_LOG(logERROR) << "Failed to create the thread, exiting.";
 		return;
 	}
 	//STEP 3: Allow the Thread to complete...
+	console::debug("- Allow Robot Controller Thread to Complete.");
 	pthread_join (controllerEntry, &result);
 
 	return;
@@ -240,15 +236,25 @@ void bootSystemOperations(){
 /*
  * Generic Method for printing text to the console
  */
- void print (string msg){
+ /*void print (string msg){
 	 cout << msg << endl;
  }
  void debug (string msg){
-	 FILE_LOG(logDEBUG) << msg;
+	if(blaze::LOGFILE_ENABLED){
+		FILE_LOG(logDEBUG) << msg;
+	}
+	if(blaze::DEBUG_ENABLED){
+		print(msg);
+	}
  }
  void info (string msg){
-	 FILE_LOG(logINFO) << msg;
- }
+	if(blaze::LOGFILE_ENABLED){
+		FILE_LOG(logINFO) << msg;
+	}
+	if(blaze::DEBUG_ENABLED){
+		print(msg);
+	}
+ }*/
 
  // Get Command Line Options
  char* getCmdOption(char ** begin, char ** end, const std::string & option)
@@ -270,7 +276,50 @@ void bootSystemOperations(){
 
 
 
+ void loadAllSettings(SettingsReader &reader){
 
+	 //SET SYSTEM SETTINGS
+	 blaze::VERSION = reader.GetInteger("system", "version", -1);
+	 blaze::NAME 		= reader.Get("system", "name", "BLAZE");
+
+	 //SET LOGGING VARIABLES ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 blaze::DEBUG_ENABLED 		= reader.GetBoolean(LOGGING_SECTION, "DEBUG_ENABLED", true);
+	 blaze::DEBUG_LEVEL 		= reader.Get(LOGGING_SECTION, "DEBUG_LEVEL", "DEBUG");
+	 blaze::LOGFILE_ENABLED 	= reader.GetBoolean(LOGGING_SECTION, "LOGFILE_ENABLED", true);
+	 blaze::LOGFILE_NAME 		= reader.Get(LOGGING_SECTION, "LOGFILE_NAME", "./blaze_debug.log");
+	 blaze::APPEND_TO_LOG 		= reader.GetBoolean(LOGGING_SECTION, "APPEND_TO_LOG", false);
+
+
+
+	 //USER SETTINGS ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+	 // HARDWARE CONTROL SETTINGS~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 //	ARM
+
+	 // MOTORS
+
+	 // CAMERAS
+
+	 // LIDAR
+
+	 // PINS
+
+
+	 // NAMED WAYPOINTS ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 string wp = reader.Get("named_waypoints", "wp_tunnel_exit", "");
+	 //blaze::WP_TUNNEL_EXIT = new waypoint(0.0, 0.0, 0.0);
+	 blaze::WP_TUNNEL_EXIT = new waypoint(wp);
+
+
+	 // PORT COORDINATE DEF ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 // 		= reader.Get("named_waypoint", "wp_tunnel_exit", "");
+
+
+	 // ROUTE DEFINITIONS ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 // 		= reader.Get("named_waypoint", "wp_tunnel_exit", "");
+
+ }
 
 
 
@@ -280,39 +329,39 @@ void bootSystemOperations(){
  * BLAZE BOT BANNER TEXT
  */
  void showBanner(){
-	 info("                     _                    _");
-	 info("                  ,/                        \\,");
-	 info("        _________{(                          })_________");
-	 info("       /.-------./\\                        //\\.-------.\\");
-	 info("      //@@@@@@@//@@\\\\  )                (  //@@\\\\@@@@@@@\\\\");
-	 info("     //@@@@@@@//@@@@>>/                  \\<<@@@@\\\\@@@@@@@\\\\");
-	 info("    //O@O@O@O//@O@O//                      \\\\O@O@\\\\O@O@O@O\\\\");
-	 info("  //OOOOOOOO//OOOO||          \\  /          ||OOOO\\\\OOOOOOOO\\\\");
-	 info(" //O%O%O%O%//O%O%O%\\\\         ))((         //%O%O%O\\\\%O%O%O%O\\\\");
-	 info("||%%%%%%%%//'  `%%%%\\\\       //  \\       //%%%%'   `\\\\%%%%%%%||");
-	 info("((%%%%%%%((      %%%%%\\\\    ((    ))    //%%%%%       ))%%%%%%))");
-	 info(" \\\\:::' `::\\      `:::::\\\\   \\)~~(/    //:::::'      //::' `:::/");
-	 info("  )'     `;)'      (`  ` \\\\ `<@  @>' / / '  ')      `(;'     `(");
-	 info("          (               \\`\\ )^^( /  /               )");
-	 info("        _                  ) \\\\oo/   (");
-	 info("       (@)                  \\  `'   /                      _");
-	 info("       |-|\\__________________\\__^__<________oOo__________ (@)");
-	 info("       |-|                                  VVV          \\|-|");
-	 info("       |-|             2016 IEEE SOUTHEASTCON             |-|");
-	 info("       |-|           UAB ELECTRICAL ENGINEERING           |-|");
-	 info("       |-|                                                |-|");
-	 info("       |-|      ¸.´¯`·.¸¸.·´¯`·.BLAZE.·´¯`·.¸¸.´¯`·.¸     |-|");
-	 info("       |-|                                                |-|");
-	 info("       |-|\\_____________________________________________  |-|");
-	 info("       (@)                 / ,/ \\_____/ \\ ~\\/~         `\\|-|");
-	 info("        ~             ___//^~      \\____/\\               (@)");
-	 info("                     <<<  \\     __  <____/||               ~");
-	 info("                               <   \\ <___/||");
-	 info("                                  || <___//");
-	 info("                                  \\ \\/__//");
-	 info("                                   ~----~");
-	 info("");
-	 info("");
-	 info("Starting Birmingham's Logistics Actuating Zone Evaluator ...");
-	 	 return;
+	 console::info("                     _                    _");
+	 console::info("                  ,/                        \\,");
+	 console::info("        _________{(                          })_________");
+	 console::info("       /.-------./\\                        //\\.-------.\\");
+	 console::info("      //@@@@@@@//@@\\\\  )                (  //@@\\\\@@@@@@@\\\\");
+	 console::info("     //@@@@@@@//@@@@>>/                  \\<<@@@@\\\\@@@@@@@\\\\");
+	 console::info("    //O@O@O@O//@O@O//                      \\\\O@O@\\\\O@O@O@O\\\\");
+	 console::info("  //OOOOOOOO//OOOO||          \\  /          ||OOOO\\\\OOOOOOOO\\\\");
+	 console::info(" //O%O%O%O%//O%O%O%\\\\         ))((         //%O%O%O\\\\%O%O%O%O\\\\");
+	 console::info("||%%%%%%%%//'  `%%%%\\\\       //  \\       //%%%%'   `\\\\%%%%%%%||");
+	 console::info("((%%%%%%%((      %%%%%\\\\    ((    ))    //%%%%%       ))%%%%%%))");
+	 console::info(" \\\\:::' `::\\      `:::::\\\\   \\)~~(/    //:::::'      //::' `:::/");
+	 console::info("  )'     `;)'      (`  ` \\\\ `<@  @>' / / '  ')      `(;'     `(");
+	 console::info("          (               \\`\\ )^^( /  /               )");
+	 console::info("        _                  ) \\\\oo/   (");
+	 console::info("       (@)                  \\  `'   /                      _");
+	 console::info("       |-|\\__________________\\__^__<________oOo__________ (@)");
+	 console::info("       |-|                                  VVV          \\|-|");
+	 console::info("       |-|             2016 IEEE SOUTHEASTCON             |-|");
+	 console::info("       |-|           UAB ELECTRICAL ENGINEERING           |-|");
+	 console::info("       |-|                                                |-|");
+	 console::info("       |-|      ¸.´¯`·.¸¸.·´¯`·.BLAZE.·´¯`·.¸¸.´¯`·.¸     |-|");
+	 console::info("       |-|                                                |-|");
+	 console::info("       |-|\\_____________________________________________  |-|");
+	 console::info("       (@)                 / ,/ \\_____/ \\ ~\\/~         `\\|-|");
+	 console::info("        ~             ___//^~      \\____/\\               (@)");
+	 console::info("                     <<<  \\     __  <____/||               ~");
+	 console::info("                               <   \\ <___/||");
+	 console::info("                                  || <___//");
+	 console::info("                                  \\ \\/__//");
+	 console::info("                                   ~----~");
+	 console::info("");
+	 console::info("");
+	 console::info("Starting Birmingham's Logistics Actuating Zone Evaluator ...");
+	 return;
  }
