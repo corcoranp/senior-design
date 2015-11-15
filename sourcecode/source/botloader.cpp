@@ -349,7 +349,7 @@ void bootSystemOperations(){
 	 console::info("       |-|             2016 IEEE SOUTHEASTCON             |-|");
 	 console::info("       |-|           UAB ELECTRICAL ENGINEERING           |-|");
 	 console::info("       |-|                                                |-|");
-	 console::info("       |-|      	 ~~~~~~~~~~ BLAZE ~~~~~~~~~           |-|");
+	 console::info("       |-|           ~~~~~~~~~~ BLAZE ~~~~~~~~~           |-|");
 	 console::info("       |-|                                                |-|");
 	 console::info("       |-|\\_____________________________________________  |-|");
 	 console::info("       (@)                 / ,/ \\_____/ \\ ~\\/~         `\\|-|");
