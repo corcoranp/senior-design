@@ -25,6 +25,8 @@
 
 #include "../include/io/dcmotor.h"
 
+#include "../include/system/fileSerializer.h"
+
 
 
 using namespace std;
@@ -50,8 +52,9 @@ using namespace blaze;
  */
  int main(int argc, char* argv[])
 {
-
 	 console::print(console::currentDateTime());
+
+
 
 	try
 	{

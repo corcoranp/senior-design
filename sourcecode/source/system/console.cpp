@@ -21,7 +21,7 @@ using namespace blaze;
 	 cout << msg << endl;
  }
  void console::debug (string msg){
-	 cout << "DEBUG: " << blaze::LOGFILE_ENABLED << endl;
+	// cout << "DEBUG: " << blaze::LOGFILE_ENABLED ;
 	if(blaze::LOGFILE_ENABLED){
 		FILE_LOG(logDEBUG) << msg;
 	}

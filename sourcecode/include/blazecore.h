@@ -39,6 +39,11 @@ static const string ROUTES_SECTION 				= "ROUTES";
 
 
 namespace blaze {
+
+
+
+
+
 // DEFINES SYSTEM SETTINGS VARIABLES
 	static int VERSION;
 	static string NAME;
@@ -101,7 +106,6 @@ namespace blaze {
 
 	enum Color {BLUE, GREEN, YELLOW, RED };
 	enum Axis {x=1, y=2, z=3};
-
 
 
 
