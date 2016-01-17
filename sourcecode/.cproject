@@ -82,12 +82,14 @@
 							<builder buildPath="${workspace_loc:/SeniorDesign}/Default" id="cdt.managedbuild.builder.gnu.cross.1555869809" keepEnvironmentInBuildfile="false" managedBuildOn="true" name="Gnu Make Builder" superClass="cdt.managedbuild.builder.gnu.cross"/>
 							<tool id="cdt.managedbuild.tool.gnu.cross.c.compiler.827133442" name="Cross GCC Compiler" superClass="cdt.managedbuild.tool.gnu.cross.c.compiler">
 								<option id="gnu.c.compiler.option.include.paths.1329492316" name="Include paths (-I)" superClass="gnu.c.compiler.option.include.paths" useByScannerDiscovery="false" valueType="includePath">
+									<listOptionValue builtIn="false" value="/development/BeagleBone/opencv-2.4.11/build/usr/local/include/opencv"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/SeniorDesign/include}&quot;"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.c.compiler.input.610943602" superClass="cdt.managedbuild.tool.gnu.c.compiler.input"/>
 							</tool>
 							<tool id="cdt.managedbuild.tool.gnu.cross.cpp.compiler.1630800043" name="Cross G++ Compiler" superClass="cdt.managedbuild.tool.gnu.cross.cpp.compiler">
 								<option id="gnu.cpp.compiler.option.include.paths.1030923826" name="Include paths (-I)" superClass="gnu.cpp.compiler.option.include.paths" useByScannerDiscovery="false" valueType="includePath">
+									<listOptionValue builtIn="false" value="/development/BeagleBone/opencv-2.4.11/build/usr/local/include/opencv"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/SeniorDesign/include}&quot;"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.67734936" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"/>
@@ -95,6 +97,15 @@
 							<tool id="cdt.managedbuild.tool.gnu.cross.c.linker.1535324331" name="Cross GCC Linker" superClass="cdt.managedbuild.tool.gnu.cross.c.linker"/>
 							<tool id="cdt.managedbuild.tool.gnu.cross.cpp.linker.8731046" name="Cross G++ Linker" superClass="cdt.managedbuild.tool.gnu.cross.cpp.linker">
 								<option id="gnu.cpp.link.option.flags.1135370884" name="Linker flags" superClass="gnu.cpp.link.option.flags" value="-pthread" valueType="string"/>
+								<option id="gnu.cpp.link.option.paths.1525137332" name="Library search path (-L)" superClass="gnu.cpp.link.option.paths" valueType="libPaths">
+									<listOptionValue builtIn="false" value="/development/BeagleBone/opencv-2.4.11/build/usr/local/lib/"/>
+								</option>
+								<option id="gnu.cpp.link.option.libs.259525077" name="Libraries (-l)" superClass="gnu.cpp.link.option.libs" valueType="libs">
+									<listOptionValue builtIn="false" value="rt"/>
+									<listOptionValue builtIn="false" value="opencv_highgui"/>
+									<listOptionValue builtIn="false" value="opencv_imgproc"/>
+									<listOptionValue builtIn="false" value="opencv_core"/>
+								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.linker.input.1571894851" superClass="cdt.managedbuild.tool.gnu.cpp.linker.input">
 									<additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>
 									<additionalInput kind="additionalinput" paths="$(LIBS)"/>
@@ -137,7 +148,13 @@
 	</storageModule>
 	<storageModule moduleId="scannerConfiguration">
 		<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
+		<scannerConfigBuildInfo instanceId="cdt.managedbuild.toolchain.gnu.cross.base.147242521.1081271097;cdt.managedbuild.toolchain.gnu.cross.base.147242521.1081271097.;cdt.managedbuild.tool.gnu.cross.cpp.compiler.1630800043;cdt.managedbuild.tool.gnu.cpp.compiler.input.67734936">
+			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
+		</scannerConfigBuildInfo>
 		<scannerConfigBuildInfo instanceId="cdt.managedbuild.toolchain.gnu.cross.base.147242521;cdt.managedbuild.toolchain.gnu.cross.base.147242521.164998169;cdt.managedbuild.tool.gnu.cross.c.compiler.1915488049;cdt.managedbuild.tool.gnu.c.compiler.input.1191077735">
+			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
+		</scannerConfigBuildInfo>
+		<scannerConfigBuildInfo instanceId="cdt.managedbuild.toolchain.gnu.cross.base.147242521.1081271097;cdt.managedbuild.toolchain.gnu.cross.base.147242521.1081271097.;cdt.managedbuild.tool.gnu.cross.c.compiler.827133442;cdt.managedbuild.tool.gnu.c.compiler.input.610943602">
 			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
 		</scannerConfigBuildInfo>
 		<scannerConfigBuildInfo instanceId="cdt.managedbuild.toolchain.gnu.cross.base.147242521;cdt.managedbuild.toolchain.gnu.cross.base.147242521.164998169;cdt.managedbuild.tool.gnu.cross.cpp.compiler.1344140419;cdt.managedbuild.tool.gnu.cpp.compiler.input.2109370258">

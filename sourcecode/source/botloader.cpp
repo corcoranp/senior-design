@@ -14,7 +14,7 @@
  * BLAZEBOT INCLUDES
  */
 #include "../include/botloader.h"
-#include "../include/blazecore.h"
+#include "../include/globals.h"
 #include "../include/controllers/RobotController.h"
 
 #include "../include/system/console.h"
@@ -53,8 +53,6 @@ using namespace blaze;
  int main(int argc, char* argv[])
 {
 	 console::print(console::currentDateTime());
-
-
 
 	try
 	{
@@ -117,7 +115,7 @@ using namespace blaze;
 
 
 		 console::debug( "- Tunnel Exit " + reader.Get("NAMED_WAYPOINTS", "WP_TUNNEL_EXIT", "UNKNOWN"));
-		 console::debug("To String of Tunnel WayPoint: " + blaze::WP_TUNNEL_EXIT->toString());
+		 console::debug("To String of Tunnel WayPoint: " + blaze::PAWP_TUNNEL_EXIT->toString());
 
 
 
@@ -125,7 +123,7 @@ using namespace blaze;
 		 * STEP 5: CHECK START UP MODE ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		 */
 		 //SYSTEM>CONTROL_MODE
-		 if(reader.Get("SYSTEM", "CONTROL_MODE", "UNKNOWN") == "CMD"){
+		 if(CONTROL_MODE == "CMD"){
 			 console::debug("GOING INTO COMMAND MODE");
 			 commandMode();
 		 }
@@ -189,8 +187,8 @@ using namespace blaze;
 	/*
 	 * SET LOGGING LEVELS by settings file...
 	 */
-	string logLevel 		= blaze::DEBUG_LEVEL;
-	const char * strLogFile = blaze::LOGFILE_NAME.c_str();
+	string logLevel 		= DEBUG_LEVEL;
+	const char * strLogFile = LOGFILE_NAME.c_str();
 
 	//Load from settings file or default to DEBUG1
 	if(logLevel.length() >= 0){
@@ -203,7 +201,7 @@ using namespace blaze;
 		LOG_TO_FILE(log_file, strLogFile);
 	}
 	FILE_LOG(logDEBUG) << "Completed";
-	console::debug("- Debug Configuration Completed: " + blaze::DEBUG_LEVEL);
+	console::debug("- Debug Configuration Completed: " + DEBUG_LEVEL);
  }
 
 
@@ -235,28 +233,6 @@ void bootSystemOperations(){
 //================================================================================
 // HELPER METHODS
 //================================================================================
-/*
- * Generic Method for printing text to the console
- */
- /*void print (string msg){
-	 cout << msg << endl;
- }
- void debug (string msg){
-	if(blaze::LOGFILE_ENABLED){
-		FILE_LOG(logDEBUG) << msg;
-	}
-	if(blaze::DEBUG_ENABLED){
-		print(msg);
-	}
- }
- void info (string msg){
-	if(blaze::LOGFILE_ENABLED){
-		FILE_LOG(logINFO) << msg;
-	}
-	if(blaze::DEBUG_ENABLED){
-		print(msg);
-	}
- }*/
 
  // Get Command Line Options
  char* getCmdOption(char ** begin, char ** end, const std::string & option)
@@ -280,39 +256,56 @@ void bootSystemOperations(){
 
  void loadAllSettings(SettingsReader &reader){
 
-	 //SET SYSTEM SETTINGS
-	 blaze::VERSION = reader.GetInteger("system", "version", -1);
-	 blaze::NAME 		= reader.Get("system", "name", "BLAZE");
+	 //SET [SYSTEM] SETTINGS
+	 blaze::VERSION 		= reader.GetInteger("system", "version", -1);
+	 blaze::NAME 			= reader.Get("system", "name", "BLAZE");
+	 blaze::CONTROL_MODE 	= reader.Get("system", "control_mode", "CMD");
+	 blaze::START_MODE		= reader.Get("system", "start_mode", "START");
+
 
 	 //SET LOGGING VARIABLES ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 blaze::DEBUG_ENABLED 		= reader.GetBoolean(LOGGING_SECTION, "DEBUG_ENABLED", true);
-	 blaze::DEBUG_LEVEL 		= reader.Get(LOGGING_SECTION, "DEBUG_LEVEL", "DEBUG");
-	 blaze::LOGFILE_ENABLED 	= reader.GetBoolean(LOGGING_SECTION, "LOGFILE_ENABLED", true);
-	 blaze::LOGFILE_NAME 		= reader.Get(LOGGING_SECTION, "LOGFILE_NAME", "./blaze_debug.log");
-	 blaze::APPEND_TO_LOG 		= reader.GetBoolean(LOGGING_SECTION, "APPEND_TO_LOG", false);
+	 blaze::CONSOLE_ENABLED		= reader.GetBoolean("logging", "console_enabled", true);
+	 blaze::DEBUG_ENABLED 		= reader.GetBoolean("logging", "DEBUG_ENABLED", true);
+	 blaze::DEBUG_LEVEL 		= reader.Get("logging", "DEBUG_LEVEL", "DEBUG");
+	 blaze::LOGFILE_ENABLED 	= reader.GetBoolean("logging", "LOGFILE_ENABLED", true);
+	 blaze::LOGFILE_NAME 		= reader.Get("logging", "LOGFILE_NAME", "./blaze_debug.log");
+	 blaze::APPEND_TO_LOG 		= reader.GetBoolean("logging", "APPEND_TO_LOG", false);
 
+	 //Set [ROBOT] Physical settings
 
+	 blaze::ROBOT_X 			= reader.GetInteger("robot", "robot_x", 12);
+	 blaze::ROBOT_Y 			= reader.GetInteger("robot", "robot_y", 12);
+	 blaze::ROBOT_Z 			= reader.GetInteger("robot", "robot_z", 12);
 
 	 //USER SETTINGS ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
 	 // HARDWARE CONTROL SETTINGS~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 //	ARM
+	 ARM_ENABLED 				= reader.GetBoolean("arm", "arm_enabled", true);
+
 
 	 // MOTORS
 
+	 MOTORS_ENABLED				= reader.GetBoolean("motors", "motors_enabled", true);
+	 M1_MAX_SPEED				= reader.GetInteger("motors", "m1_max_speed", true);
+	 M2_MAX_SPEED				= reader.GetInteger("motors", "m2_max_speed", true);
+
 	 // CAMERAS
+	 CAMERAS_ENABLED			= reader.GetBoolean("cameras", "camera_enabled", true);
 
 	 // LIDAR
+	 LIDAR_ENABLED				= reader.GetBoolean("lidar", "lidar_enabled", true);
 
 	 // PINS
-
+	 PINS_ENABLED				= reader.GetBoolean("pins", "pins_enabled", true);
 
 	 // NAMED WAYPOINTS ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 string wp = reader.Get("named_waypoints", "wp_tunnel_exit", "");
-	 //blaze::WP_TUNNEL_EXIT = new waypoint(0.0, 0.0, 0.0);
-	 blaze::WP_TUNNEL_EXIT = new waypoint(wp);
+	 string pawp_tunnel_exit 	= reader.Get("named_waypoints", "pawp_tunnel_exit", "");
+	 PAWP_TUNNEL_EXIT 			= new waypoint(pawp_tunnel_exit);
 
+	 string pbwp_tunnel_exit 	= reader.Get("named_waypoints", "pbwp_tunnel_exit", "");
+	 PBWP_TUNNEL_EXIT 			= new waypoint(pbwp_tunnel_exit);
 
 	 // PORT COORDINATE DEF ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 // 		= reader.Get("named_waypoint", "wp_tunnel_exit", "");
@@ -323,6 +316,30 @@ void bootSystemOperations(){
 
  }
 
+
+
+ /*
+  * Generic Method for printing text to the console
+  */
+  /*void print (string msg){
+ 	 cout << msg << endl;
+  }
+  void debug (string msg){
+ 	if(blaze::LOGFILE_ENABLED){
+ 		FILE_LOG(logDEBUG) << msg;
+ 	}
+ 	if(blaze::DEBUG_ENABLED){
+ 		print(msg);
+ 	}
+  }
+  void info (string msg){
+ 	if(blaze::LOGFILE_ENABLED){
+ 		FILE_LOG(logINFO) << msg;
+ 	}
+ 	if(blaze::DEBUG_ENABLED){
+ 		print(msg);
+ 	}
+  }*/
 
 
 

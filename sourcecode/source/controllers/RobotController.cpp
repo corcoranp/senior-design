@@ -24,7 +24,6 @@
 #include "../../include/controllers/RobotController.h"
 
 
-
 using namespace std;
 using namespace blaze;
 
@@ -43,6 +42,12 @@ void *RobotController::entry(void *args){
 void RobotController::start(){
 	console::debug("RobotController Started");
 	//Thread that runs the main robot functions.
+
+	//. Identify Port @ startup
+	//. Navigate through tunnel
+	//. Solve section A
+	//. Solve section C
+	//. Solve section B
 
 	console::debug("RobotController Ended");
 }

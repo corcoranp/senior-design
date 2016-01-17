@@ -12,23 +12,28 @@
 class Point {
 
 private:
-	double xval, yval, zval, theta;
+	double xval, yval, zval, thetaval;
 public:
 	// Constructor uses default arguments to allow calling with zero, one,
 	// or two values.
-	Point(double x = 0.0, double y = 0.0) {
+	Point(double x = 0.0, double y = 0.0, double z = 0.0, double theta = 0.0) {
 			xval = x;
 			yval = y;
+			zval = z;
+			thetaval = theta;
 	}
 
 	double x();
 	double y();
+	double z();
+	double theta();
 
 	// Distance to another point.  Pythagorean thm.
 	double dist(Point other);
 	Point add(Point b);
 	Point sub(Point b);
 	void move(double a, double b);
+	void move(double a, double b, double c, double d);
 };
 
 

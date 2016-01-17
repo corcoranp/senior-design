@@ -13,8 +13,8 @@
 class fileSerializer {
 
 public:
-	static void write(char* filename, blaze::config& cfg);
-	static blaze::config& load(char* filename);
+	//static void write(char* filename, blaze::config& cfg);
+	//static blaze::config& load(char* filename);
 
 };
 

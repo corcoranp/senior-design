@@ -11,13 +11,13 @@
 #include <cstring>
 #include <stdlib.h>
 #include <fstream>
-#include "../include/blazecore.h"
+#include "../include/globals.h"
 #include "../include/system/fileSerializer.h"
 
 using namespace std;
 using namespace blaze;
 
-
+/*
 void fileSerializer::write(char* filename, config& cfg){
 
 		ofstream outfile;
@@ -38,3 +38,4 @@ blaze::config& fileSerializer::load(char* filename){
 
 	return cfg;
 }
+*/

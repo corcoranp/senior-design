@@ -21,25 +21,24 @@ class waypoint {
 		double xval, yval, theta;
 
 	public:
-
+		//waypoint constructor that accepts a comma delimited string
 		waypoint(string commaDelimited){
 			std::istringstream ss(commaDelimited);
 			std::vector<double> vect;
 			std::string token;
 			double di;
-			//std::cout << "here";
+
 			while (ss >> di)
 			{
 			    vect.push_back(di);
 			    if (ss.peek() == ',')
 			        ss.ignore();
 			}
+
 			xval = vect[0];
-			//std::cout << xval;
 			yval = vect[1];
-			//std::cout << yval;
 			theta = vect[2];
-			//std::cout << theta << endl;
+
 		};
 		waypoint(double x = 0.0, double y = 0.0, double t = 0.0) {
 			xval = x;

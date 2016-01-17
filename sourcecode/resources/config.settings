@@ -73,8 +73,11 @@ accel_enabled 			= false 			; enables/disables
 [ULTRASONICS]
 ultrasonic_enabled		= false 			; enables/disables
 
+[IMAGING]
+imaging_enabled			= false				; enables/disables imaging
+
 [LIDAR]
-LIDAR_enabled			= false 			; enables/disables
+lidar_enabled			= false 			; enables/disables
 
 
 [PINS]
@@ -86,7 +89,8 @@ pins_enabled			= false				;
 ;-----------------------------------------------------
 
 [NAMED_WAYPOINTS]
-WP_TUNNEL_EXIT			= 20.0,1.1,1.3
+PAWP_TUNNEL_EXIT		= 20.0,1.1,1.3
+PBWP_TUNNEL_EXIT		= 20.0,1.1,1.3
 ZONEA_INVENTORY			= 20.0,1.1,1.3
 ZONEB_INVENTORY			= 20.0,1.1,1.3
 ZONEC_INVENTORY			= 20.0,1.1,1.3
@@ -103,11 +107,18 @@ RRAIL_DELIVERY_START 	= 20.0,1.1,1.3
 ;-----------------------------------------------------
 ; PORT SETTINGS
 ;-----------------------------------------------------
-[PORT_COORDINATES]
+
+[PORT_SETTINGS]
 PORT_SCALE				= 1					; Size of port grid in inches
 PORTA_ZONE_ORDER		= A,B,C				; Order of Port A Zone resolution
 PORTB_ZONE_ORDER		= C,B,A				; Order of Port B Zone resolution
 
+
+;-----------------------------------------------------
+; PORT LANDMARKS
+;-----------------------------------------------------
+
+[LANDMARKS]
 ; Set of points (x, y, z) that define the boundary of an item
 ; the first point is the closest to the origin, then moving in a clockwise 
 PA_START_BOUND			= 76,0,0,76,30,0,96,30,0,96,0,0

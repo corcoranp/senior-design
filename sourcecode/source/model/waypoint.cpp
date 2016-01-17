@@ -4,8 +4,9 @@
  *  Created on: Oct 6, 2015
  *      Author: Peter
  *
- *	A waypoint is a position on the port
+ *	A waypoint is a position & direction on the port (x,y,theta)
  */
+
 #include <string>
 #include "../../include/model/waypoint.h"
 

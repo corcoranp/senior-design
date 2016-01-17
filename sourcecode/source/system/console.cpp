@@ -10,7 +10,7 @@
 #include <time.h>
 
 #include "../../include/system/console.h"
-#include "../../include/blazecore.h"
+#include "../../include/globals.h"
 
 using namespace blaze;
 

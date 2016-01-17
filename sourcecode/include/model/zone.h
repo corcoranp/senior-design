@@ -29,7 +29,6 @@ using namespace std;
 namespace blaze {
 	class Zone{
 		public:
-
 			string color();
 
 
