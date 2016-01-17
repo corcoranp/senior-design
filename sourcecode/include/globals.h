@@ -15,6 +15,8 @@ using namespace std;
 namespace blaze {
 
 
+
+
 // DEFINES [SYSTEM] SETTINGS VARIABLES
 	static int VERSION = 0;
 	static string NAME;
@@ -83,6 +85,14 @@ namespace blaze {
 
 // ROUTE DEFINITIIONS
 
+
+	// PORT SETTINGS
+	static string PA_ZONEA_INVENTORY;
+	static string PA_ZONEB_INVENTORY;
+	static string PA_ZONEC_INVENTORY;
+	static string PB_ZONEA_INVENTORY;
+	static string PB_ZONEB_INVENTORY;
+	static string PB_ZONEC_INVENTORY;
 
 }
 

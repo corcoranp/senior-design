@@ -6,5 +6,13 @@
  */
 
 #include "../../include/model/block.h"
+#include "../../include/enums.h"
+
+using namespace std;
+using namespace blaze;
 
 
+
+Color block::getColor(){
+	return block::myColor;
+}

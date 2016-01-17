@@ -314,6 +314,19 @@ void bootSystemOperations(){
 	 // ROUTE DEFINITIONS ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 // 		= reader.Get("named_waypoint", "wp_tunnel_exit", "");
 
+	 // PORT SETTINGS
+	 PA_ZONEA_INVENTORY 		= reader.Get("PORT_SETTINGS", "pa_zonea_inventory", "");
+	 console::debug(PA_ZONEA_INVENTORY);
+	 PA_ZONEB_INVENTORY 		= reader.Get("PORT_SETTINGS", "pa_zoneb_inventory", "");
+	 console::debug(PA_ZONEB_INVENTORY);
+	 PA_ZONEC_INVENTORY 		= reader.Get("PORT_SETTINGS", "pa_zonec_inventory", "");
+	 console::debug(PA_ZONEC_INVENTORY);
+	 PB_ZONEA_INVENTORY 		= reader.Get("PORT_SETTINGS", "pb_zonea_inventory", "");
+	 console::debug(PB_ZONEA_INVENTORY);
+	 PB_ZONEB_INVENTORY 		= reader.Get("PORT_SETTINGS", "pb_zoneb_inventory", "");
+	 console::debug(PB_ZONEB_INVENTORY);
+	 PB_ZONEC_INVENTORY 		= reader.Get("PORT_SETTINGS", "pb_zonec_inventory", "");
+	 console::debug(PB_ZONEC_INVENTORY);
  }
 
 

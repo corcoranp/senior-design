@@ -11,11 +11,13 @@
 namespace blaze {
 
 	class LogisticsController {
-	public:
-
 	private:
 
-	};
 
+	public:
+
+
+
+	};
 }
 #endif /* INCLUDE_CONTROLLERS_LOGISTICSCONTROLLER_H_ */

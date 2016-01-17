@@ -7,4 +7,14 @@
 
 #include "../../include/model/robot.h"
 
+using namespace std;
+using namespace blaze;
+
+
+/*
+ * Function returns the storage object of the robot
+ */
+storage robot::getStorage(){
+	return robot::botStorage;
+}
 

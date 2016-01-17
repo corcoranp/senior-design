@@ -112,6 +112,12 @@ RRAIL_DELIVERY_START 	= 20.0,1.1,1.3
 PORT_SCALE				= 1					; Size of port grid in inches
 PORTA_ZONE_ORDER		= A,B,C				; Order of Port A Zone resolution
 PORTB_ZONE_ORDER		= C,B,A				; Order of Port B Zone resolution
+PA_ZONEA_INVENTORY		= 16,0,0,0,0,0,0,0  ; Port A Zone A start inventory BLUE 5", BLUE 2.5",G5,G2.5,R5,R2.5,Y5,Y2.5)
+PA_ZONEB_INVENTORY		= 3,2,3,2,3,2,3,2	; Port A Zone B start inventory (B5,B2.5,G5,G2.5, R5,R2.5,Y5,Y2.5)
+PA_ZONEC_INVENTORY		= 4,0,4,0,4,0,4,0	; Port A Zone C start inventory
+PB_ZONEA_INVENTORY		= 16,0,0,0,0,0,0,0  ; Port B Zone A start inventory BLUE 5", BLUE 2.5",G5,G2.5,R5,R2.5,Y5,Y2.5)
+PB_ZONEB_INVENTORY		= 3,2,3,2,3,2,3,2	; Port B Zone B start inventory (B5,B2.5,G5,G2.5, R5,R2.5,Y5,Y2.5)
+PB_ZONEC_INVENTORY		= 4,0,4,0,4,0,4,0	; Port B Zone C start inventory
 
 
 ;-----------------------------------------------------

@@ -14,13 +14,12 @@
  */
 
 #include <iostream>
-#include "../../include/model/color.h"
+
 #include "../../include/model/zone.h"
 
 using namespace std;
 using namespace blaze;
 
-string Zone :: color()
-{
-	return "string return";
-};
+
+
+
