@@ -61,6 +61,9 @@ StepperMotor::StepperMotor(int gpio_MS1, int gpio_MS2, int gpio_MS3, int gpio_ST
 	this->gpio_STEP->setDirection(GPIO::OUTPUT);
 	this->gpio_SLP->setDirection(GPIO::OUTPUT);
 	this->gpio_DIR->setDirection(GPIO::OUTPUT);
+	this->gpio_EN->setDirection(GPIO::OUTPUT);
+	this->gpio_LSW->setDirection(GPIO::INPUT);
+	this->gpio_RSW->setDirection(GPIO::INPUT);
 	this->init(speedRPM, stepsPerRevolution);
 }
 

@@ -13,7 +13,7 @@ namespace blaze {
 	 * The Image Controller is responsible for interacting with the
 	 * camera, and processing images.
 	 */
-	class ImagingController {
+	class ArmController {
 	public:
 		void reset();
 	private:

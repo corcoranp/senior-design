@@ -71,13 +71,15 @@ namespace blaze {
 // DEFINES [ARM] SETTINGS
 
 	static bool ARM_ENABLED;
-	static bool BASE_ENABLED;
+	static string ARM_PORT;
+
+	/*static bool BASE_ENABLED;
 	static bool SHOULDER_ENABLED;
 	static bool ELBOW_ENABLED;
 	static bool WRIST_ENABLED;
 	static bool HAND_ROTAION_ENABLED;
 	static bool HAND_ENABLED;
-
+*/
 
 // DEFINES MOTOR SETTINGS
 	static bool MOTORS_ENABLED;
@@ -86,14 +88,13 @@ namespace blaze {
 
 // DEFNIES CAMERAS SETTINGS
 	static bool CAMERAS_ENABLED;
+	static string CAMERA_PORT;
 
 // DEFINES ACCELEROMETERS SETTINGS
 
-
-// DEFINES ULTRASONICS SETTINGS
-
 // DEFINES LIDAR SETTINGS
 	static bool LIDAR_ENABLED;
+	static string LIDAR_PORT;
 
 // MICROCONTROLLER SETTINGS
 // DEFINES PINS

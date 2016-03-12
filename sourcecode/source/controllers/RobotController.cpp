@@ -43,6 +43,8 @@ void RobotController::start(){
 	console::debug("RobotController Started");
 	//Thread that runs the main robot functions.
 
+
+
 	//. Identify Port @ startup
 	//. Navigate through tunnel
 	//. Solve section A
