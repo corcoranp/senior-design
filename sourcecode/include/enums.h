@@ -13,7 +13,7 @@ namespace blaze{
 	enum Color {BLUE, GREEN, YELLOW, RED };
 	enum PortConfig {A, B };
 	enum Size { SMALL, LARGE};
-
+	enum DIRECTION{ CLOCKWISE, ANTICLOCKWISE };
 
 }
 

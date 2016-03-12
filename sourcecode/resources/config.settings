@@ -59,8 +59,12 @@ hand_enabled			= true				;
 
 [MOTORS]
 motors_enabled 			= false
+motor_pwm_period		= 20000000			; 20 ms
 m1_max_speed			= 255				; maximum speed allowed for motor
+m1_pwm_gpio				= 0					; pin used for PWM control
+
 m2_max_speed			= 255				; maximum speed allowed for motor
+m2_pwm_gpio				= 0					; pin used for PWM control of m2
 
 [CAMERAS]
 camera_enabled			= false 			; enables/disables
@@ -78,7 +82,7 @@ imaging_enabled			= false				; enables/disables imaging
 
 [LIDAR]
 lidar_enabled			= false 			; enables/disables
-
+lidar_port				= 
 
 [PINS]
 pins_enabled			= false				;

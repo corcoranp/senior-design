@@ -15,7 +15,7 @@ using namespace std;
 using std::string;
 using std::ofstream;
 
-#define GPIO_PATH "/sys/class/gpio"
+#define GPIO_PATH "/sys/class/gpio/"
 
 namespace blaze{
 

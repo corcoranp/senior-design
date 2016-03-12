@@ -36,13 +36,15 @@ namespace blaze {
 class StepperMotor {
 
 public:
-	enum STEP_MODE { STEP_FULL, STEP_HALF, STEP_QUARTER, STEP_EIGHT };
+	enum STEP_MODE { STEP_FULL, STEP_HALF, STEP_QUARTER, STEP_EIGHT, STEP_SIXTEEN };
 	enum DIRECTION { CLOCKWISE, ANTICLOCKWISE };
 
 private:
 	// The GPIO pins MS1, MS2 (Microstepping options), STEP (The low->high step)
 	// SLP (Sleep - active low) and DIR (Direction)
-   GPIO *gpio_MS1, *gpio_MS2, *gpio_STEP, *gpio_SLP, *gpio_DIR;
+
+
+   GPIO *gpio_MS1, *gpio_MS2, *gpio_MS3, *gpio_STEP, *gpio_SLP, *gpio_DIR, *gpio_EN, *gpio_LSW, *gpio_RSW;
    unsigned int uSecDelay;
    DIRECTION direction;
    int delayFactor;      // keep constant rpm even with microstepping
@@ -50,13 +52,14 @@ private:
    float speed;
    int stepsPerRevolution;
    bool asleep;
+   bool enabled; //PMC added
    void init(int speedRPM, int stepsPerRevolution);
 
 public:
-   StepperMotor(GPIO *gpio_MS1, GPIO *gpio_MS2, GPIO *gpio_STEP, GPIO *gpio_SLP,
-    			GPIO *gpio_DIR, int speedRPM = 60, int stepsPerRevolution = 200);
-   StepperMotor(int gpio_MS1, int gpio_MS2, int gpio_STEP, int gpio_SLP,
-    			int gpio_DIR, int speedRPM = 60, int stepsPerRevolution = 200);
+   StepperMotor(GPIO *gpio_MS1, GPIO *gpio_MS2, GPIO *gpio_MS3, GPIO *gpio_STEP, GPIO *gpio_SLP,
+    			GPIO *gpio_DIR, GPIO *gpio_EN, GPIO *gpio_LSW, GPIO *gpio_RSW, int speedRPM = 60, int stepsPerRevolution = 200);
+   StepperMotor(int gpio_MS1, int gpio_MS2, int gpio_MS3, int gpio_STEP, int gpio_SLP,
+    			int gpio_DIR, int gpio_EN, int gpio_LSW, int gpio_RSW, int speedRPM = 60, int stepsPerRevolution = 200);
 
    virtual void  step();
    virtual void  step(int numberOfSteps);
@@ -74,6 +77,9 @@ public:
    virtual int   getStepsPerRevolution() { return stepsPerRevolution; }
    virtual void  sleep();
    virtual void  wake();
+   virtual void enable();//PMC added
+   virtual void disable();//PMC added
+   virtual bool isEnabled() {return enabled; } //PMC added
    virtual bool  isAsleep() { return asleep; }
    virtual ~StepperMotor();
 

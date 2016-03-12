@@ -15,6 +15,34 @@ using namespace std;
 namespace blaze {
 
 
+	/*
+	 * Callback functions are implemented in C++ using function pointers
+	 * Function pointers are pointers that store the address of a function.
+	 * It is possible to pass these pointers to other functions, which can
+	 * dereference the function pointer and call the function that is passed.
+	 *
+	 *	These are useful when trying to chain functions together.
+	 *
+	 * to use:
+	 * ...
+	 *  	int doSomething(CallbackType callback){
+	 *  		return callback(10); //execute callback function with passed value 10
+	 *  	}
+	 *
+	 *  	void callbackFunction(int var) {
+	 *  		...
+	 *  		do something useful
+	 *  		...
+	 *  	}
+	 *
+	 * 	int main(){
+	 * 		...
+	 * 		int y = doSomething(&callbackFunction);
+	 * 		...
+	 * 	}
+	 *
+	 */
+	typedef int (*CallbackType) (int);
 
 
 // DEFINES [SYSTEM] SETTINGS VARIABLES

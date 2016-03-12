@@ -30,28 +30,34 @@ using namespace std;
 
 namespace blaze {
 
-StepperMotor::StepperMotor(GPIO *gpio_MS1, GPIO *gpio_MS2, GPIO *gpio_STEP, GPIO *gpio_SLP,
-		 GPIO *gpio_DIR, int speedRPM, int stepsPerRevolution){
+StepperMotor::StepperMotor(GPIO *gpio_MS1, GPIO *gpio_MS2, GPIO *gpio_MS3, GPIO *gpio_STEP, GPIO *gpio_SLP, GPIO *gpio_DIR, GPIO *gpio_EN, GPIO *gpio_LSW, GPIO *gpio_RSW, int speedRPM, int stepsPerRevolution){
 	this->gpio_MS1  = gpio_MS1;
 	this->gpio_MS2  = gpio_MS2;
+	this->gpio_MS3 	= gpio_MS3;
 	this->gpio_STEP = gpio_STEP;
 	this->gpio_SLP  = gpio_SLP;
 	this->gpio_DIR  = gpio_DIR;
+	this->gpio_EN 	= gpio_EN;
+	this->gpio_LSW 	= gpio_LSW;
+	this->gpio_RSW 	= gpio_RSW;
 	// the default speed in rpm
 	this->setSpeed(speedRPM);
 	this->stepsPerRevolution = stepsPerRevolution;
 	this->init(speedRPM, stepsPerRevolution);
 }
 
-StepperMotor::StepperMotor(int gpio_MS1, int gpio_MS2, int gpio_STEP, int gpio_SLP,
- 			int gpio_DIR, int speedRPM, int stepsPerRevolution){
+StepperMotor::StepperMotor(int gpio_MS1, int gpio_MS2, int gpio_MS3, int gpio_STEP, int gpio_SLP, int gpio_DIR, int gpio_EN, int gpio_LSW, int gpio_RSW, int speedRPM, int stepsPerRevolution){
 	this->gpio_MS1 = new GPIO(gpio_MS1);
 	this->gpio_MS2 = new GPIO(gpio_MS2);
 	this->gpio_STEP = new GPIO(gpio_STEP);
 	this->gpio_SLP = new GPIO(gpio_SLP);
 	this->gpio_DIR = new GPIO(gpio_DIR);
+	this->gpio_EN = new GPIO(gpio_EN);
+	this->gpio_LSW = new GPIO(gpio_LSW);
+	this->gpio_RSW = new GPIO(gpio_RSW);
 	this->gpio_MS1->setDirection(GPIO::OUTPUT);
 	this->gpio_MS2->setDirection(GPIO::OUTPUT);
+	this->gpio_MS3->setDirection(GPIO::OUTPUT);
 	this->gpio_STEP->setDirection(GPIO::OUTPUT);
 	this->gpio_SLP->setDirection(GPIO::OUTPUT);
 	this->gpio_DIR->setDirection(GPIO::OUTPUT);
@@ -61,9 +67,13 @@ StepperMotor::StepperMotor(int gpio_MS1, int gpio_MS2, int gpio_STEP, int gpio_S
 void StepperMotor::init(int speedRPM, int stepsPerRevolution){
 	this->gpio_MS1->setDirection(GPIO::OUTPUT);
 	this->gpio_MS2->setDirection(GPIO::OUTPUT);
+	this->gpio_MS3->setDirection(GPIO::OUTPUT);
 	this->gpio_STEP->setDirection(GPIO::OUTPUT);
 	this->gpio_SLP->setDirection(GPIO::OUTPUT);
 	this->gpio_DIR->setDirection(GPIO::OUTPUT);
+	this->gpio_EN->setDirection(GPIO::OUTPUT);
+	this->gpio_LSW->setDirection(GPIO::INPUT);
+	this->gpio_RSW->setDirection(GPIO::INPUT);
 	this->threadRunning = false;
 
 	this->stepsPerRevolution = stepsPerRevolution;
@@ -75,6 +85,7 @@ void StepperMotor::init(int speedRPM, int stepsPerRevolution){
 	setStepsPerRevolution(stepsPerRevolution);
 	// the default speed in rpm
 	this->setSpeed(speedRPM);
+	this->enable();
 	//wake up the controller - holding torque..
 	this->wake();
 }
@@ -85,22 +96,32 @@ void StepperMotor::setStepMode(STEP_MODE mode) {
 	case STEP_FULL:
 		this->gpio_MS1->setValue(GPIO::LOW);
 		this->gpio_MS2->setValue(GPIO::LOW);
+		this->gpio_MS3->setValue(GPIO::LOW);
 		this->delayFactor = 1;
 		break;
 	case STEP_HALF:
 		this->gpio_MS1->setValue(GPIO::HIGH);
 		this->gpio_MS2->setValue(GPIO::LOW);
+		this->gpio_MS3->setValue(GPIO::LOW);
 		this->delayFactor = 2;
 		break;
 	case STEP_QUARTER:
 		this->gpio_MS1->setValue(GPIO::LOW);
 		this->gpio_MS2->setValue(GPIO::HIGH);
+		this->gpio_MS3->setValue(GPIO::LOW);
 		this->delayFactor = 4;
 		break;
 	case STEP_EIGHT:
 		this->gpio_MS1->setValue(GPIO::HIGH);
 		this->gpio_MS2->setValue(GPIO::HIGH);
+		this->gpio_MS3->setValue(GPIO::LOW);
 		this->delayFactor = 8;
+		break;
+	case STEP_SIXTEEN:
+		this->gpio_MS1->setValue(GPIO::HIGH);
+		this->gpio_MS2->setValue(GPIO::HIGH);
+		this->gpio_MS3->setValue(GPIO::HIGH);
+		this->delayFactor = 16;
 		break;
 	}
 }
@@ -125,6 +146,15 @@ void StepperMotor::step(int numberOfSteps){
 }
 
 void StepperMotor::step(){
+
+	if(this->gpio_LSW->VALUE == GPIO::LOW){
+		//switch is tripped...should go right...
+		this->setDirection(DIRECTION::CLOCKWISE);
+	}
+	if(this->gpio_RSW->VALUE == GPIO::LOW){
+		this->setDirection(DIRECTION::ANTICLOCKWISE);
+	}
+
     this->gpio_STEP->setValue(GPIO::LOW);
     this->gpio_STEP->setValue(GPIO::HIGH);
 }
@@ -173,12 +203,30 @@ void StepperMotor::wake(){
 	this->gpio_SLP->setValue(GPIO::HIGH);
 }
 
+//PMC added
+void StepperMotor::enable(){
+	this->enabled = true;
+	this->gpio_EN->setValue(GPIO::LOW);
+}
+//PMC added
+void StepperMotor::disable(){
+	this->enabled = false;
+	this->gpio_EN->setValue(GPIO::HIGH);
+}
+
 StepperMotor::~StepperMotor() {}
 
 // This thread function is a friend function of the class
 void* threadedStep(void *value){
 	StepperMotor *stepper = static_cast<StepperMotor*>(value);
 	while(stepper->threadRunning){
+		if(stepper->gpio_LSW->VALUE == GPIO::LOW){
+			//switch is tripped...should go right...
+			stepper->setDirection(StepperMotor::DIRECTION::CLOCKWISE);
+		}
+		if(stepper->gpio_RSW->VALUE == GPIO::LOW){
+			stepper->setDirection(StepperMotor::DIRECTION::ANTICLOCKWISE);
+		}
 		stepper->step();
 		usleep(stepper->threadedStepPeriod * 1000);  // convert from ms to us
 		if(stepper->threadedStepNumber>0) stepper->threadedStepNumber--;

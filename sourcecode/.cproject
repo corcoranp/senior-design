@@ -73,7 +73,7 @@
 				</extensions>
 			</storageModule>
 			<storageModule moduleId="cdtBuildSystem" version="4.0.0">
-				<configuration artifactName="blazebot" buildProperties="" description="" id="cdt.managedbuild.toolchain.gnu.cross.base.147242521.1081271097" name="Blazebot" parent="org.eclipse.cdt.build.core.emptycfg">
+				<configuration artifactName="blazebot" buildArtefactType="org.eclipse.cdt.build.core.buildArtefactType.exe" buildProperties="org.eclipse.cdt.build.core.buildArtefactType=org.eclipse.cdt.build.core.buildArtefactType.exe" description="" id="cdt.managedbuild.toolchain.gnu.cross.base.147242521.1081271097" name="Blazebot" parent="org.eclipse.cdt.build.core.emptycfg">
 					<folderInfo id="cdt.managedbuild.toolchain.gnu.cross.base.147242521.1081271097." name="/" resourcePath="">
 						<toolChain id="cdt.managedbuild.toolchain.gnu.cross.base.762521061" name="Cross GCC" superClass="cdt.managedbuild.toolchain.gnu.cross.base">
 							<option id="cdt.managedbuild.option.gnu.cross.prefix.1632362138" name="Prefix" superClass="cdt.managedbuild.option.gnu.cross.prefix" value="arm-linux-gnueabihf-" valueType="string"/>
@@ -83,15 +83,20 @@
 							<tool id="cdt.managedbuild.tool.gnu.cross.c.compiler.827133442" name="Cross GCC Compiler" superClass="cdt.managedbuild.tool.gnu.cross.c.compiler">
 								<option id="gnu.c.compiler.option.include.paths.1329492316" name="Include paths (-I)" superClass="gnu.c.compiler.option.include.paths" useByScannerDiscovery="false" valueType="includePath">
 									<listOptionValue builtIn="false" value="/development/BeagleBone/opencv-2.4.11/build/usr/local/include/opencv"/>
+									<listOptionValue builtIn="false" value="/development/BeagleBone/opencv-2.4.11/build/usr/local/include/opencv2"/>
+									<listOptionValue builtIn="false" value="/development/BeagleBone/opencv-2.4.11/build/usr/local/include/"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/SeniorDesign/include}&quot;"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.c.compiler.input.610943602" superClass="cdt.managedbuild.tool.gnu.c.compiler.input"/>
 							</tool>
-							<tool id="cdt.managedbuild.tool.gnu.cross.cpp.compiler.1630800043" name="Cross G++ Compiler" superClass="cdt.managedbuild.tool.gnu.cross.cpp.compiler">
+							<tool commandLinePattern="${COMMAND} ${FLAGS} ${OUTPUT_FLAG} ${OUTPUT_PREFIX}${OUTPUT} ${INPUTS} -std=c++11" id="cdt.managedbuild.tool.gnu.cross.cpp.compiler.1630800043" name="Cross G++ Compiler" superClass="cdt.managedbuild.tool.gnu.cross.cpp.compiler">
 								<option id="gnu.cpp.compiler.option.include.paths.1030923826" name="Include paths (-I)" superClass="gnu.cpp.compiler.option.include.paths" useByScannerDiscovery="false" valueType="includePath">
 									<listOptionValue builtIn="false" value="/development/BeagleBone/opencv-2.4.11/build/usr/local/include/opencv"/>
+									<listOptionValue builtIn="false" value="/development/BeagleBone/opencv-2.4.11/build/usr/local/include/opencv2"/>
+									<listOptionValue builtIn="false" value="/development/BeagleBone/opencv-2.4.11/build/usr/local/include/"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/SeniorDesign/include}&quot;"/>
 								</option>
+								<option id="gnu.cpp.compiler.option.dialect.std.58081011" name="Language standard" superClass="gnu.cpp.compiler.option.dialect.std" useByScannerDiscovery="true" value="gnu.cpp.compiler.dialect.default" valueType="enumerated"/>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.67734936" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"/>
 							</tool>
 							<tool id="cdt.managedbuild.tool.gnu.cross.c.linker.1535324331" name="Cross GCC Linker" superClass="cdt.managedbuild.tool.gnu.cross.c.linker"/>
@@ -99,6 +104,8 @@
 								<option id="gnu.cpp.link.option.flags.1135370884" name="Linker flags" superClass="gnu.cpp.link.option.flags" value="-pthread" valueType="string"/>
 								<option id="gnu.cpp.link.option.paths.1525137332" name="Library search path (-L)" superClass="gnu.cpp.link.option.paths" valueType="libPaths">
 									<listOptionValue builtIn="false" value="/development/BeagleBone/opencv-2.4.11/build/usr/local/lib/"/>
+									<listOptionValue builtIn="false" value="/development/BeagleBone/opencv-2.4.11/build/usr/local/include/opencv"/>
+									<listOptionValue builtIn="false" value="/development/BeagleBone/opencv-2.4.11/build/usr/local/include/opencv2"/>
 								</option>
 								<option id="gnu.cpp.link.option.libs.259525077" name="Libraries (-l)" superClass="gnu.cpp.link.option.libs" valueType="libs">
 									<listOptionValue builtIn="false" value="rt"/>

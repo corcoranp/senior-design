@@ -36,7 +36,9 @@ GPIO::GPIO(int number) {
 	ostringstream s;
 	s << "gpio" << number;
 	this->name = string(s.str());
+
 	this->path = GPIO_PATH + this->name + "/";
+	cout << "path: " + this->path << endl;
 	this->exportGPIO();
 	// need to give Linux time to set up the sysfs structure
 	usleep(250000); // 250ms delay
