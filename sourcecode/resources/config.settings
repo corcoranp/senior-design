@@ -48,22 +48,26 @@ robot_z					= 12				; the robot's height or z component in inches
 ; HARDWARE CONTROL SECTIONS
 ;-----------------------------------------------------
 [GPIO]
-gpio_start_switch		= 125
+gpio_start_switch		= 115
 gpio_stop_switch		= 117
 gpio_stepper_dir		= 61
 gpio_stepper_step		= 65
-gpio_stepper_rst		= 72
+gpio_stepper_rst		= 112
 gpio_stepper_ms3		= 46
 gpio_stepper_ms2		= 26
-gpio_stepper_m1 		= 44
-gpio_stepper_en			= 73
+gpio_stepper_ms1 		= 44
+gpio_stepper_en			= 113
 gpio_stepper_lsw		= 20
 gpio_stepper_rsw		= 7
-gpio_led1				= 72
-gpio_led2				= 73
-gpio_led3				= 74
-gpio_led4				= 75
-
+gpio_led1				= 74
+gpio_led2				= 75
+gpio_led3				= 76
+gpio_led4				= 77
+gpio_motor1_dir			= 45
+gpio_motor2_dir			= 47
+gpio_motor1_pwm			= 71
+gpio_motor2_pwm			= 70
+gpio_linear_pwm			= 81
 
 [ARM]
 arm_enabled				= false				; enable/disable the Arm
@@ -88,11 +92,6 @@ m2_pwm_gpio				= 0					; pin used for PWM control of m2
 [CAMERAS]
 camera_enabled			= false 			; enables/disables
 camera_port				= ttyACM2			; camera usbport 
-
-
-[ACCELEROMETERS]
-accel_enabled 			= false 			; enables/disables
-
 
 [IMAGING]
 imaging_enabled			= false				; enables/disables imaging

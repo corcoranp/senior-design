@@ -13,6 +13,8 @@ namespace blaze {
 class NavigationController {
 public:
 
+
+
 private:
 
 };

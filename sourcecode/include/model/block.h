@@ -9,7 +9,7 @@
 #define BLOCK_H_
 
 #include "../enums.h"
-#include "../globals.h"
+//#include "../globals.h"
 
 using namespace std;
 

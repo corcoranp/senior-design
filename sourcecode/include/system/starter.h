@@ -7,7 +7,7 @@
 
 #ifndef STARTER_H_
 #define STARTER_H_
-
+#include "../../include/io/gpio.h"
 namespace blaze {
 
 class starter {
@@ -20,8 +20,8 @@ public:
 	starter(GPIO *gpio_start, GPIO *gpio_stop);
 	starter(int gpio_start, int gpio_stop);
 
-	virtual bool requestStart();
-	virtual bool requestStop();
+	virtual bool isStartPressed();
+	virtual bool isStopPressed();
 
 	virtual ~starter();
 };

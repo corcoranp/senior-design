@@ -20,6 +20,9 @@
  */
 #include "../include/botloader.h"
 #include "../include/globals.h"
+#include "../include/system/starter.h"
+#include "../include/system/indicator.h"
+
 #include "../include/controllers/RobotController.h"
 
 #include "../include/system/console.h"
@@ -28,6 +31,8 @@
 #include "../include/model/qrcode.h"
 #include "../include/model/zone.h"
 
+#include "../include/io/SimpleGPIO.h"
+#include "../include/io/StepperMotor.h"
 #include "../include/io/dcmotor.h"
 #include "../include/io/gpio.h"
 #include "../include/io/pwm.h"
@@ -90,7 +95,7 @@ using namespace blaze;
 		 * STEP 3: LOAD LOGGING STATE
 		 */
 		console::print("STEP 3 - Loading Logging State...");
-		//console::setLogging(blaze::DEBUG_LEVEL, blaze::LOGFILE_NAME.c_str(),blaze::LOGFILE_ENABLED);
+		//console::setLogging( DEBUG_LEVEL,  LOGFILE_NAME.c_str(), LOGFILE_ENABLED);
 		setLogging();
 		console::debug("- Switching to debug mode. Debug message - " );
 
@@ -118,7 +123,7 @@ using namespace blaze;
 
 
 		 console::debug( "- Tunnel Exit " + reader.Get("NAMED_WAYPOINTS", "WP_TUNNEL_EXIT", "UNKNOWN"));
-		 console::debug("To String of Tunnel WayPoint: " + blaze::PAWP_TUNNEL_EXIT->toString());
+		 console::debug("To String of Tunnel WayPoint: " +  PAWP_TUNNEL_EXIT->toString());
 
 
 
@@ -126,45 +131,33 @@ using namespace blaze;
 		 * STEP 5: CHECK START UP MODE ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		 */
 		 //SYSTEM>CONTROL_MODE
-		 if(CONTROL_MODE == "CMD"){
+		 if( CONTROL_MODE == "CMD"){
 			 console::debug("GOING INTO COMMAND MODE");
 			 commandMode();
 		 }
 
-		 console::debug("GPIO setup: ");
+		 console::debug("Blaze is in automated mode " + to_string( gpio_start_switch));
 
-		 GPIO led1(77);
-		 led1.setDirection(GPIO::OUTPUT);
-		 led1.streamWrite(GPIO::LOW);
+		 indicator ind( gpio_led1,  gpio_led2,  gpio_led3,  gpio_led4 );
+		 starter s( gpio_start_switch,  gpio_stop_switch);
 
-		 /* GPIO led2(76);
-		 GPIO led3(75);
-		 GPIO led4(74);
 
-		 console::debug("Set Direction: ");
+		 while(!s.isStartPressed()){
+			 //wait until start is pressed...
+			 usleep(100000);
+			 ind.blink(100,indicator::LED::TOP);
+		 }
 
-		 led2.setDirection(GPIO::OUTPUT);
-		 led3.setDirection(GPIO::OUTPUT);
-		 led4.setDirection(GPIO::OUTPUT);
+		 ind.started();
 
-		 console::debug("Stream Open: ");
-		 led1.streamOpen(); led2.streamOpen();
-		 led3.streamOpen(); led4.streamOpen();
 
-		 console::debug("stream write low: ");
 
-		 led2.streamWrite(GPIO::LOW);
-		 led3.streamWrite(GPIO::LOW);
-		 led4.streamWrite(GPIO::LOW);
-		 led1.streamWrite(GPIO::HIGH);*/
-
+/*
 PWM pwm("pwm_test_P8_34.13");
 pwm.setPolarity(PWM::ACTIVE_LOW);
 pwm.setDutyCycle(100.0f);
-//pwm.setDutyCycle(45.0f);
-
-
 pwm.run();
+*/
 
 
 		/*
@@ -224,8 +217,8 @@ pwm.run();
 	/*
 	 * SET LOGGING LEVELS by settings file...
 	 */
-	string logLevel 		= DEBUG_LEVEL;
-	const char * strLogFile = LOGFILE_NAME.c_str();
+	string logLevel 		=  DEBUG_LEVEL;
+	const char * strLogFile =  LOGFILE_NAME.c_str();
 
 	//Load from settings file or default to DEBUG1
 	if(logLevel.length() >= 0){
@@ -234,11 +227,11 @@ pwm.run();
 
 	cout << strLogFile << endl;
 	//write to log
-	if(blaze::LOGFILE_ENABLED){
+	if( LOGFILE_ENABLED){
 		LOG_TO_FILE(log_file, strLogFile);
 	}
 	FILE_LOG(logDEBUG) << "Completed";
-	console::debug("- Debug Configuration Completed: " + DEBUG_LEVEL);
+	console::debug("- Debug Configuration Completed: " +  DEBUG_LEVEL);
  }
 
 
@@ -291,81 +284,102 @@ void bootSystemOperations(){
 
 
  void loadAllSettings(SettingsReader &reader){
-
-	 //SET [SYSTEM] SETTINGS
-	 blaze::VERSION 		= reader.GetInteger("system", "version", -1);
-	 blaze::NAME 			= reader.Get("system", "name", "BLAZE");
-	 blaze::CONTROL_MODE 	= reader.Get("system", "control_mode", "CMD");
-	 blaze::START_MODE		= reader.Get("system", "start_mode", "START");
-
-
-	 //SET LOGGING VARIABLES ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 blaze::CONSOLE_ENABLED		= reader.GetBoolean("logging", "console_enabled", true);
-	 blaze::DEBUG_ENABLED 		= reader.GetBoolean("logging", "DEBUG_ENABLED", true);
-	 blaze::DEBUG_LEVEL 		= reader.Get("logging", "DEBUG_LEVEL", "DEBUG");
-	 blaze::LOGFILE_ENABLED 	= reader.GetBoolean("logging", "LOGFILE_ENABLED", true);
-	 blaze::LOGFILE_NAME 		= reader.Get("logging", "LOGFILE_NAME", "./blaze_debug.log");
-	 blaze::APPEND_TO_LOG 		= reader.GetBoolean("logging", "APPEND_TO_LOG", false);
-
-	 //Set [ROBOT] Physical settings
-
-	 blaze::ROBOT_X 			= reader.GetInteger("robot", "robot_x", 12);
-	 blaze::ROBOT_Y 			= reader.GetInteger("robot", "robot_y", 12);
-	 blaze::ROBOT_Z 			= reader.GetInteger("robot", "robot_z", 12);
-
-	 //USER SETTINGS ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	//SET [SYSTEM] SETTINGS
+	VERSION 		= reader.GetInteger("system", "version", -1);
+	NAME 			= reader.Get("system", "name", "BLAZE");
+	CONTROL_MODE 	= reader.Get("system", "control_mode", "CMD");
+	START_MODE		= reader.Get("system", "start_mode", "START");
 
 
-	 // HARDWARE CONTROL SETTINGS~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 //	ARM
-	 ARM_ENABLED 				= reader.GetBoolean("arm", "arm_enabled", true);
-	 ARM_PORT					= reader.Get("arm", "arm_port", "");
+	//SET LOGGING VARIABLES ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	CONSOLE_ENABLED		= reader.GetBoolean("logging", "console_enabled", true);
+	DEBUG_ENABLED 		= reader.GetBoolean("logging", "DEBUG_ENABLED", true);
+	DEBUG_LEVEL 		= reader.Get("logging", "DEBUG_LEVEL", "DEBUG");
+	LOGFILE_ENABLED 	= reader.GetBoolean("logging", "LOGFILE_ENABLED", true);
+	LOGFILE_NAME 		= reader.Get("logging", "LOGFILE_NAME", "./blaze_debug.log");
+	APPEND_TO_LOG 		= reader.GetBoolean("logging", "APPEND_TO_LOG", false);
 
-	 // MOTORS
+	//Set [ROBOT] Physical settings
 
-	 MOTORS_ENABLED				= reader.GetBoolean("motors", "motors_enabled", true);
-	 M1_MAX_SPEED				= reader.GetInteger("motors", "m1_max_speed", true);
-	 M2_MAX_SPEED				= reader.GetInteger("motors", "m2_max_speed", true);
+	ROBOT_X 			= reader.GetInteger("robot", "robot_x", 12);
+	ROBOT_Y 			= reader.GetInteger("robot", "robot_y", 12);
+	ROBOT_Z 			= reader.GetInteger("robot", "robot_z", 12);
 
-	 // CAMERAS
-	 CAMERAS_ENABLED			= reader.GetBoolean("cameras", "camera_enabled", true);
-	 CAMERA_PORT				= reader.Get("cameras", "camera_port", "");
+	gpio_start_switch 	= reader.GetInteger("gpio", "gpio_start_switch", -1);
+	gpio_stop_switch	= reader.GetInteger("gpio", "gpio_stop_switch", -1);
+	gpio_stepper_dir	= reader.GetInteger("gpio", "gpio_stepper_dir", -1);
+	gpio_stepper_step	= reader.GetInteger("gpio", "gpio_stepper_step", -1);
+	gpio_stepper_rst	= reader.GetInteger("gpio", "gpio_stepper_rst", -1);
+	gpio_stepper_ms3	= reader.GetInteger("gpio", "gpio_stepper_ms3", -1);
+	gpio_stepper_ms2	= reader.GetInteger("gpio", "gpio_stepper_ms2", -1);
+	gpio_stepper_m1		= reader.GetInteger("gpio", "gpio_stepper_m1", -1);
+	gpio_stepper_en		= reader.GetInteger("gpio", "gpio_stepper_en", -1);
+	gpio_stepper_lsw	= reader.GetInteger("gpio", "gpio_stepper_lsw", -1);
+	gpio_stepper_rsw	= reader.GetInteger("gpio", "gpio_stepper_rsw", -1);
+	gpio_led1			= reader.GetInteger("gpio", "gpio_led1", -1);
+	gpio_led2			= reader.GetInteger("gpio", "gpio_led2", -1);
+	gpio_led3			= reader.GetInteger("gpio", "gpio_led3", -1);
+	gpio_led4			= reader.GetInteger("gpio", "gpio_led4", -1);
+	gpio_motor1_dir		= reader.GetInteger("gpio", "gpio_motor1_dir", -1);
+	gpio_motor2_dir		= reader.GetInteger("gpio", "gpio_motor2_dir", -1);
+	gpio_motor1_pwm		= reader.GetInteger("gpio", "gpio_motor1_pwm", -1);
+	gpio_motor2_pwm		= reader.GetInteger("gpio", "gpio_motor2_pwm", -1);
+	gpio_linear_pwm		= reader.GetInteger("gpio", "gpio_linear_pwm", -1);
 
-	 // LIDAR
-	 LIDAR_ENABLED				= reader.GetBoolean("lidar", "lidar_enabled", true);
-	 LIDAR_PORT					= reader.Get("lidar", "lidar_port", "");
+
+	//USER SETTINGS ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
-	 // PINS
-	 PINS_ENABLED				= reader.GetBoolean("pins", "pins_enabled", true);
+	// HARDWARE CONTROL SETTINGS~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	//	ARM
+	ARM_ENABLED 		= reader.GetBoolean("arm", "arm_enabled", true);
+	ARM_PORT			= reader.Get("arm", "arm_port", "");
 
-	 // NAMED WAYPOINTS ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 string pawp_tunnel_exit 	= reader.Get("named_waypoints", "pawp_tunnel_exit", "");
-	 PAWP_TUNNEL_EXIT 			= new waypoint(pawp_tunnel_exit);
+	// MOTORS
 
-	 string pbwp_tunnel_exit 	= reader.Get("named_waypoints", "pbwp_tunnel_exit", "");
-	 PBWP_TUNNEL_EXIT 			= new waypoint(pbwp_tunnel_exit);
+	MOTORS_ENABLED		= reader.GetBoolean("motors", "motors_enabled", true);
+	M1_MAX_SPEED		= reader.GetInteger("motors", "m1_max_speed", true);
+	M2_MAX_SPEED		= reader.GetInteger("motors", "m2_max_speed", true);
 
-	 // PORT COORDINATE DEF ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 // 		= reader.Get("named_waypoint", "wp_tunnel_exit", "");
+	// CAMERAS
+	CAMERAS_ENABLED		= reader.GetBoolean("cameras", "camera_enabled", true);
+	CAMERA_PORT			= reader.Get("cameras", "camera_port", "");
+
+	// LIDAR
+	LIDAR_ENABLED		= reader.GetBoolean("lidar", "lidar_enabled", true);
+	LIDAR_PORT			= reader.Get("lidar", "lidar_port", "");
 
 
-	 // ROUTE DEFINITIONS ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 // 		= reader.Get("named_waypoint", "wp_tunnel_exit", "");
+	// PINS
+	PINS_ENABLED		= reader.GetBoolean("pins", "pins_enabled", true);
 
-	 // PORT SETTINGS
-	 PA_ZONEA_INVENTORY 		= reader.Get("PORT_SETTINGS", "pa_zonea_inventory", "");
-	 console::debug(PA_ZONEA_INVENTORY);
-	 PA_ZONEB_INVENTORY 		= reader.Get("PORT_SETTINGS", "pa_zoneb_inventory", "");
-	 console::debug(PA_ZONEB_INVENTORY);
-	 PA_ZONEC_INVENTORY 		= reader.Get("PORT_SETTINGS", "pa_zonec_inventory", "");
-	 console::debug(PA_ZONEC_INVENTORY);
-	 PB_ZONEA_INVENTORY 		= reader.Get("PORT_SETTINGS", "pb_zonea_inventory", "");
-	 console::debug(PB_ZONEA_INVENTORY);
-	 PB_ZONEB_INVENTORY 		= reader.Get("PORT_SETTINGS", "pb_zoneb_inventory", "");
-	 console::debug(PB_ZONEB_INVENTORY);
-	 PB_ZONEC_INVENTORY 		= reader.Get("PORT_SETTINGS", "pb_zonec_inventory", "");
-	 console::debug(PB_ZONEC_INVENTORY);
+	// NAMED WAYPOINTS ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	string pawp_tunnel_exit 	= reader.Get("named_waypoints", "pawp_tunnel_exit", "");
+	PAWP_TUNNEL_EXIT 			= new waypoint(pawp_tunnel_exit);
+
+	string pbwp_tunnel_exit 	= reader.Get("named_waypoints", "pbwp_tunnel_exit", "");
+	PBWP_TUNNEL_EXIT 			= new waypoint(pbwp_tunnel_exit);
+
+	// PORT COORDINATE DEF ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	// 		= reader.Get("named_waypoint", "wp_tunnel_exit", "");
+
+
+	// ROUTE DEFINITIONS ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	// 		= reader.Get("named_waypoint", "wp_tunnel_exit", "");
+
+	// PORT SETTINGS
+	PA_ZONEA_INVENTORY 		= reader.Get("PORT_SETTINGS", "pa_zonea_inventory", "");
+	console::debug( PA_ZONEA_INVENTORY);
+	PA_ZONEB_INVENTORY 		= reader.Get("PORT_SETTINGS", "pa_zoneb_inventory", "");
+	console::debug( PA_ZONEB_INVENTORY);
+	PA_ZONEC_INVENTORY 		= reader.Get("PORT_SETTINGS", "pa_zonec_inventory", "");
+	console::debug( PA_ZONEC_INVENTORY);
+	PB_ZONEA_INVENTORY 		= reader.Get("PORT_SETTINGS", "pb_zonea_inventory", "");
+	console::debug( PB_ZONEA_INVENTORY);
+	PB_ZONEB_INVENTORY 		= reader.Get("PORT_SETTINGS", "pb_zoneb_inventory", "");
+	console::debug( PB_ZONEB_INVENTORY);
+	PB_ZONEC_INVENTORY 		= reader.Get("PORT_SETTINGS", "pb_zonec_inventory", "");
+	console::debug( PB_ZONEC_INVENTORY);
  }
 
 
@@ -377,18 +391,18 @@ void bootSystemOperations(){
  	 cout << msg << endl;
   }
   void debug (string msg){
- 	if(blaze::LOGFILE_ENABLED){
+ 	if( LOGFILE_ENABLED){
  		FILE_LOG(logDEBUG) << msg;
  	}
- 	if(blaze::DEBUG_ENABLED){
+ 	if( DEBUG_ENABLED){
  		print(msg);
  	}
   }
   void info (string msg){
- 	if(blaze::LOGFILE_ENABLED){
+ 	if( LOGFILE_ENABLED){
  		FILE_LOG(logINFO) << msg;
  	}
- 	if(blaze::DEBUG_ENABLED){
+ 	if( DEBUG_ENABLED){
  		print(msg);
  	}
   }*/

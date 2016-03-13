@@ -47,14 +47,18 @@ StepperMotor::StepperMotor(GPIO *gpio_MS1, GPIO *gpio_MS2, GPIO *gpio_MS3, GPIO 
 }
 
 StepperMotor::StepperMotor(int gpio_MS1, int gpio_MS2, int gpio_MS3, int gpio_STEP, int gpio_SLP, int gpio_DIR, int gpio_EN, int gpio_LSW, int gpio_RSW, int speedRPM, int stepsPerRevolution){
+
+	 cout << "*** Stepper constructor" << endl;
 	this->gpio_MS1 = new GPIO(gpio_MS1);
 	this->gpio_MS2 = new GPIO(gpio_MS2);
+	this->gpio_MS3 = new GPIO(gpio_MS3);
 	this->gpio_STEP = new GPIO(gpio_STEP);
 	this->gpio_SLP = new GPIO(gpio_SLP);
 	this->gpio_DIR = new GPIO(gpio_DIR);
 	this->gpio_EN = new GPIO(gpio_EN);
 	this->gpio_LSW = new GPIO(gpio_LSW);
 	this->gpio_RSW = new GPIO(gpio_RSW);
+
 	this->gpio_MS1->setDirection(GPIO::OUTPUT);
 	this->gpio_MS2->setDirection(GPIO::OUTPUT);
 	this->gpio_MS3->setDirection(GPIO::OUTPUT);
@@ -62,8 +66,9 @@ StepperMotor::StepperMotor(int gpio_MS1, int gpio_MS2, int gpio_MS3, int gpio_ST
 	this->gpio_SLP->setDirection(GPIO::OUTPUT);
 	this->gpio_DIR->setDirection(GPIO::OUTPUT);
 	this->gpio_EN->setDirection(GPIO::OUTPUT);
-	this->gpio_LSW->setDirection(GPIO::INPUT);
-	this->gpio_RSW->setDirection(GPIO::INPUT);
+	//this->gpio_LSW->setDirection(GPIO::INPUT);
+	//this->gpio_RSW->setDirection(GPIO::INPUT);
+	 cout << "run init" << endl;
 	this->init(speedRPM, stepsPerRevolution);
 }
 
@@ -150,11 +155,11 @@ void StepperMotor::step(int numberOfSteps){
 
 void StepperMotor::step(){
 
-	if(this->gpio_LSW->VALUE == GPIO::LOW){
+	if(this->gpio_LSW->getValue() == GPIO::LOW){
 		//switch is tripped...should go right...
 		this->setDirection(DIRECTION::CLOCKWISE);
 	}
-	if(this->gpio_RSW->VALUE == GPIO::LOW){
+	if(this->gpio_RSW->getValue() == GPIO::LOW){
 		this->setDirection(DIRECTION::ANTICLOCKWISE);
 	}
 
@@ -223,11 +228,11 @@ StepperMotor::~StepperMotor() {}
 void* threadedStep(void *value){
 	StepperMotor *stepper = static_cast<StepperMotor*>(value);
 	while(stepper->threadRunning){
-		if(stepper->gpio_LSW->VALUE == GPIO::LOW){
+		if(stepper->gpio_LSW->getValue() == GPIO::LOW){
 			//switch is tripped...should go right...
 			stepper->setDirection(StepperMotor::DIRECTION::CLOCKWISE);
 		}
-		if(stepper->gpio_RSW->VALUE == GPIO::LOW){
+		if(stepper->gpio_RSW->getValue() == GPIO::LOW){
 			stepper->setDirection(StepperMotor::DIRECTION::ANTICLOCKWISE);
 		}
 		stepper->step();

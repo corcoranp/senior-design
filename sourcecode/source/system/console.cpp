@@ -22,36 +22,36 @@ using namespace blaze;
  }
  void console::debug (string msg){
 	// cout << "DEBUG: " << blaze::LOGFILE_ENABLED ;
-	if(blaze::LOGFILE_ENABLED){
+	if(LOGFILE_ENABLED){
 		FILE_LOG(logDEBUG) << msg;
 	}
-	if(blaze::CONSOLE_ENABLED){
+	if(CONSOLE_ENABLED){
 		print(currentDateTime() + " - " + msg);
 	}
  }
  void console::info (string msg){
-	if(blaze::LOGFILE_ENABLED){
+	if(LOGFILE_ENABLED){
 		FILE_LOG(logINFO) << msg;
 	}
-	if(blaze::CONSOLE_ENABLED){
+	if(CONSOLE_ENABLED){
 		print(msg);
 	}
  }
 
  void console::warn (string msg){
-	if(blaze::LOGFILE_ENABLED){
+	if(LOGFILE_ENABLED){
 		FILE_LOG(logWARNING) << msg;
 	}
-	if(blaze::CONSOLE_ENABLED){
+	if(CONSOLE_ENABLED){
 		print(msg);
 	}
  }
 
  void console::error (string msg){
-	if(blaze::LOGFILE_ENABLED){
+	if(LOGFILE_ENABLED){
 		FILE_LOG(logERROR) << msg;
 	}
-	if(blaze::CONSOLE_ENABLED){
+	if(CONSOLE_ENABLED){
 		print(msg);
 	}
  }

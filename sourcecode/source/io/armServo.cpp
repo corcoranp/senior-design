@@ -47,7 +47,7 @@ armServo::armServo() {
 			 id = 0;
 		 }
 */
-		 int baudnum = 1;
+		/* int baudnum = 1;
 		 	int GoalPos[2] = {0, 1023};
 		 	//int GoalPos[2] = {0, 4095}; // for Ex series
 		 	int index = 0;
@@ -66,6 +66,7 @@ armServo::armServo() {
 		 	}
 		 	else
 		 		printf( "Succeed to open USB2Dynamixel!\n" );
+		 		*/
 
 	//	 	cout << "ID: " + to_string(dxl_read_word( id, 0 ) ) << endl;
 	//	 	dxl_write_byte( 253, 0x07, 1 );
@@ -128,12 +129,12 @@ armServo::armServo() {
 	*/
 
 		 	// Close device
-		 	dxl_terminate();
+		/* 	dxl_terminate();
 		 	printf( "Press Enter key to terminate...\n" );
 		 	getchar();
 		 	return;
 
-
+*/
 		 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 

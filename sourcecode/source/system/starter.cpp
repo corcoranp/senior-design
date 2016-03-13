@@ -5,7 +5,7 @@
  *      Author: Peter
  */
 
-#include "starter.h"
+#include "../../include/system/starter.h"
 
 namespace blaze {
 
@@ -21,14 +21,14 @@ starter::starter(int gpio_start, int gpio_stop){
 	this->gpio_stop->setDirection(GPIO::INPUT);
 }
 
-bool starter::requestStart(){
-	if(this->gpio_start->getValue() == GPIO::HIGH){
+bool starter::isStartPressed(){
+	if(this->gpio_start->getValue() == GPIO::LOW){
 		return true;
 	}
 	return false;
 }
-bool starter::requestStop(){
-	if(this->gpio_stop->getValue() == GPIO::HIGH){
+bool starter::isStopPressed(){
+	if(this->gpio_stop->getValue() == GPIO::LOW){
 		return true;
 	}
 	return false;

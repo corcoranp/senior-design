@@ -6,7 +6,7 @@
  */
 
 #include "../../include/system/indicator.h"
-
+#include <unistd.h>
 using namespace std;
 
 namespace blaze {
