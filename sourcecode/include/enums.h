@@ -11,10 +11,11 @@
 namespace blaze{
 
 	enum Color {BLUE, GREEN, YELLOW, RED };
-	enum PortConfig {A, B };
+	enum PortConfig {A, B, UNDEFINED };
 	enum Size { SMALL, LARGE};
 	enum DIRECTION{ CLOCKWISE, ANTICLOCKWISE };
-
+	enum SPEED {EIGHTH, QUARTER, THREE_EIGHTH, HALF, FIVE_EIGHTH, THREE_QUARTER, SEVEN_EIGHTH, FULL };
+	enum WALL_FOLLOWING {RIGHT, LEFT};
 }
 
 

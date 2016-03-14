@@ -22,6 +22,20 @@
 #include <iostream>
 #include <math.h>
 
+
+
+#include "../system/indicator.h"
+#include "../model/port.h"
+
+/*
+ * Reference the other controller classes
+ */
+#include "ArmController.h"
+#include "ImagingController.h"
+#include "MotorController.h"
+#include "NavigationController.h"
+#include "StorageController.h"
+
 namespace blaze {
 	/*
  	 * GLOBAL ROBOT PROPERTIES
@@ -42,6 +56,9 @@ namespace blaze {
 		bool isSensorsReady = false;
 		bool isReady = false;
 
+		indicator state_display;
+
+		port currentPort;
 
 
 
@@ -50,6 +67,8 @@ namespace blaze {
 			void hardwareCheck();
 			void sensorCheck();
 			void readyStateCheck();
+
+			MotorController *motorControl;
 	};
 
 

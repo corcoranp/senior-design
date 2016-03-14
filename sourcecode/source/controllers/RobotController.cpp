@@ -21,7 +21,10 @@
 #include <string>
 
 #include "../../include/system/console.h"
+
 #include "../../include/controllers/RobotController.h"
+#include "../include/controllers/NavigationController.h"
+#include "../include/controllers/StorageController.h"
 
 
 using namespace std;
@@ -43,13 +46,80 @@ void RobotController::start(){
 	console::debug("RobotController Started");
 	//Thread that runs the main robot functions.
 
+	console::print("Hello, My name is BLAZE...let me take you on a jouney...");
+
+	//StorageController sc(STORAGE_PWM);
+	//sc.setRestPosition();
+
+	MotorController mc(M1_PWM, M2_PWM, gpio_motor1_dir, gpio_motor2_dir);
 
 
+	console::debug("motor controller created");
+	mc.forward(SPEED::SEVEN_EIGHTH);
+	while(mc.isBusy()){
+		usleep(10000);
+	}
+
+	usleep (2000000);
+
+
+	mc.forward(SPEED::QUARTER);
+		while(mc.isBusy()){
+			usleep(10000);
+		}
+		usleep (4000000);
+
+	mc.stop();
+
+	while(mc.isBusy()){
+		usleep(10000);
+	}
+
+
+	/*
+	this->motorControl = new MotorController(M1_PWM, M2_PWM, gpio_motor1_dir, gpio_motor2_dir);
+
+	console::debug("motor controller created");
+	this->motorControl->forward();
+
+	usleep(1000000);
+
+	this->motorControl->stop();
+*/
 	//. Identify Port @ startup
+/*
+	this->currentPort.portcfg = NavigationController::determinePort();
+	if(this->currentPort.portcfg == PortConfig::A){
+
+		console::info("Port A Detected");
+	}
+	if(this->currentPort.portcfg == PortConfig::B){
+
+		console::info("Port B Detected");
+	}
+	if(this->currentPort.portcfg == PortConfig::UNDEFINED){
+		console::error("Port Undetected");
+		state_display.errorState();
+	}
+
+*/
 	//. Navigate through tunnel
+
+
+
+
+
 	//. Solve section A
 	//. Solve section C
 	//. Solve section B
+
+	 /*if(!LIDAR_ENABLED){
+		 char *port = new char[ LIDAR_PORT.length() + 1];
+		 strcpy(port,  LIDAR_PORT.c_str());
+		 lidarIO lidar(port);
+		 lidar.disable();
+	 }*/
+
 
 	console::debug("RobotController Ended");
 }

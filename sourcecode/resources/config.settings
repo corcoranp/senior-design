@@ -71,7 +71,7 @@ gpio_linear_pwm			= 81
 
 [ARM]
 arm_enabled				= false				; enable/disable the Arm
-arm_port				= ttyACM1			; usb port of arm
+arm_port				= /dev/ttyACM1			; usb port of arm
 base_enabled			= true				; enable/disables the Arm's base servo
 shoulder_enabled		= true				; enable/disable the Arm's shoulder joint
 elbow_enabled 			= true				;
@@ -82,23 +82,28 @@ hand_enabled			= true				;
 
 [MOTORS]
 motors_enabled 			= false
-motor_pwm_period		= 20000000			; 20 ms
+motor_pwm_period		= 500000			; 20 ms
+motor_max_duty			= 400000
 m1_max_speed			= 255				; maximum speed allowed for motor
-m1_pwm_gpio				= 0					; pin used for PWM control
-
+m1_pwm_gpio				= pwm_test_P8_46.16	; pin used for PWM control
+											; left motor pwm_test_P8_46
 m2_max_speed			= 255				; maximum speed allowed for motor
-m2_pwm_gpio				= 0					; pin used for PWM control of m2
+m2_pwm_gpio				= pwm_test_P8_45.15	; pin used for PWM control of m2
+											; right motor pwm_test_P8_45
 
 [CAMERAS]
 camera_enabled			= false 			; enables/disables
-camera_port				= ttyACM2			; camera usbport 
+camera_port				= /dev/ttyACM2			; camera usbport 
 
 [IMAGING]
 imaging_enabled			= false				; enables/disables imaging
 
 [LIDAR]
 lidar_enabled			= false 			; enables/disables
-lidar_port				= ttyACM0			; lidar usb address
+lidar_port				= /dev/ttyACM0			; lidar usb address
+
+[STORAGE]
+storage_pwm				= pwm_test_P8_34.13
 
 [PINS]
 pins_enabled			= false				;

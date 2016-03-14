@@ -8,10 +8,16 @@
 #ifndef GLOBALS_H_
 #define GLOBALS_H_
 
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
+#include <unistd.h>
+
 #include "model/waypoint.h"
 
 using namespace std;
 
+	extern unsigned int ZERO;
 // DEFINES [SYSTEM] SETTINGS VARIABLES
 	extern int VERSION;
 	extern string NAME;
@@ -70,8 +76,12 @@ using namespace std;
 
 	// DEFINES MOTOR SETTINGS
 	extern bool MOTORS_ENABLED;
+	extern int MOTOR_PWM_PERIOD;
+	extern int MOTOR_MAX_DUTY;
 	extern int M1_MAX_SPEED;
 	extern int M2_MAX_SPEED;
+	extern string M1_PWM;
+	extern string M2_PWM;
 
 	// DEFNIES CAMERAS SETTINGS
 	extern bool CAMERAS_ENABLED;
@@ -82,6 +92,8 @@ using namespace std;
 	// DEFINES LIDAR SETTINGS
 	extern bool LIDAR_ENABLED;
 	extern string LIDAR_PORT;
+
+	extern string STORAGE_PWM;
 
 	// MICROCONTROLLER SETTINGS
 	// DEFINES PINS
@@ -112,7 +124,7 @@ using namespace std;
 
 namespace blaze {
 
-
+	char* string2char (string s);
 
 
 	/*

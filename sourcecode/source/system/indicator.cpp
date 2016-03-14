@@ -36,6 +36,10 @@ indicator::indicator(int gpio_led1, int gpio_led2, int gpio_led3, int gpio_led4)
 	this->gpio_led4->setDirection(GPIO::OUTPUT);
 
 	//this->gpio_led1->setValue(GPIO::HIGH);
+
+	//HIGH is OFF
+	//LOW is ON
+
 }
 
 void indicator::blink(int ms, LED led){
@@ -65,7 +69,10 @@ void indicator::blink(int ms, LED led){
 
 }
 void indicator::started(){
-	this->gpio_led1->setValue(GPIO::HIGH);
+	this->gpio_led1->setValue(GPIO::LOW);
+	this->gpio_led2->setValue(GPIO::HIGH);
+	this->gpio_led3->setValue(GPIO::HIGH);
+	this->gpio_led4->setValue(GPIO::HIGH);
 }
 void indicator::motor1running(bool isrunning){
 	if(isrunning){

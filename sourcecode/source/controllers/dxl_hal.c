@@ -17,7 +17,7 @@ Nicolas Saugnier
 
 
 
-int	gSocket_fd	= -1;
+int		gSocket_fd	= -1;
 long	glStartTime	= 0;
 float	gfRcvWaitTime	= 0.0f;
 float	gfByteTransTime	= 0.0f;
@@ -56,22 +56,6 @@ int dxl_hal_open(int deviceIndex, float baudrate)
 	
 	if(gSocket_fd == -1)
 		return 0;
-
-	//USB2AX uses the CDC ACM driver for which these settings do not exist.
-    /*
-	if(ioctl(gSocket_fd, TIOCGSERIAL, &serinfo) < 0) {
-		fprintf(stderr, "Cannot get serial info\n");
-		return 0;
-	}
-	
-	serinfo.flags &= ~ASYNC_SPD_MASK;
-	serinfo.flags |= ASYNC_SPD_CUST;
-	serinfo.custom_divisor = serinfo.baud_base / baudrate;
-	
-	if(ioctl(gSocket_fd, TIOCSSERIAL, &serinfo) < 0) {
-		fprintf(stderr, "Cannot set serial info\n");
-		return 0;
-	}*/
 	
 	dxl_hal_close();
 	
@@ -116,25 +100,6 @@ int dxl_hal_set_baud( float baudrate )
 	
 	if(gSocket_fd == -1)
 		return 0;
-
-	//USB2AX uses the CDC ACM driver for which these settings do not exist.
-    /*
-	if(ioctl(gSocket_fd, TIOCGSERIAL, &serinfo) < 0) {
-		fprintf(stderr, "Cannot get serial info\n");
-		return 0;
-	}
-	
-	serinfo.flags &= ~ASYNC_SPD_MASK;
-	serinfo.flags |= ASYNC_SPD_CUST;
-	serinfo.custom_divisor = serinfo.baud_base / baudrate;
-	
-	if(ioctl(gSocket_fd, TIOCSSERIAL, &serinfo) < 0) {
-		fprintf(stderr, "Cannot set serial info\n");
-		return 0;
-	}
-	*/
-	//dxl_hal_close();
-	//dxl_hal_open(gDeviceName, baudrate);
 	
 	gfByteTransTime = (float)((1000.0f / baudrate) * 12.0f);
 	return 1;

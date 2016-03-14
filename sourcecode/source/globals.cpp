@@ -2,7 +2,9 @@
 #include "../include/globals.h"
 
 using namespace std;
+using namespace blaze;
 
+	unsigned int ZERO = 0;
 // DEFINES [SYSTEM] SETTINGS VARIABLES
 	int VERSION = 0;
 	string NAME;
@@ -62,8 +64,12 @@ using namespace std;
 
 	// DEFINES MOTOR SETTINGS
 	bool MOTORS_ENABLED = false;
+	int MOTOR_PWM_PERIOD = 0;
+	int MOTOR_MAX_DUTY = 0;
 	int M1_MAX_SPEED = 0;
 	int M2_MAX_SPEED = 0;
+	string M1_PWM = "";
+	string M2_PWM = "";
 
 	// DEFNIES CAMERAS SETTINGS
 	bool CAMERAS_ENABLED = false;
@@ -74,6 +80,9 @@ using namespace std;
 	// DEFINES LIDAR SETTINGS
 	bool LIDAR_ENABLED = false;
 	string LIDAR_PORT = "";
+
+	string STORAGE_PWM = "";
+
 
 	// MICROCONTROLLER SETTINGS
 	// DEFINES PINS
@@ -102,4 +111,8 @@ using namespace std;
 	string PB_ZONEB_INVENTORY = "";
 	string PB_ZONEC_INVENTORY = "";
 
-
+char* blaze::string2char (string s){
+	char *retval = new char[ s.length() + 1];
+	strcpy(retval,  s.c_str());
+	return retval;
+}

@@ -1,24 +1,26 @@
 /*
  * NavigationController.h
  *
- *  Created on: Oct 4, 2015
+ *  Created on: Mar 12, 2016
  *      Author: Peter
  */
 
-#ifndef INCLUDE_CONTROLLERS_NAVIGATIONCONTROLLER_H_
-#define INCLUDE_CONTROLLERS_NAVIGATIONCONTROLLER_H_
+#ifndef NAVIGATIONCONTROLLER_H_
+#define NAVIGATIONCONTROLLER_H_
+
+#include "../enums.h"
+#include "../io/lidarIO.h"
 
 namespace blaze {
 
 class NavigationController {
 public:
-
-
-
-private:
+	NavigationController();
+	virtual ~NavigationController();
+	static PortConfig determinePort();
 
 };
 
+} /* namespace blaze */
 
-}
-#endif /* INCLUDE_CONTROLLERS_NAVIGATIONCONTROLLER_H_ */
+#endif /* NAVIGATIONCONTROLLER_H_ */

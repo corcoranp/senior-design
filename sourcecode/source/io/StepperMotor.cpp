@@ -1,5 +1,5 @@
 /*
- * StepperMotor.cpp  Created on: 13 Jun 2014
+gfgff * StepperMotor.cpp  Created on: 13 Jun 2014
  * Copyright (c) 2014 Derek Molloy (www.derekmolloy.ie)
  * Made available for the book "Exploring BeagleBone" 
  * See: www.exploringbeaglebone.com
@@ -48,7 +48,7 @@ StepperMotor::StepperMotor(GPIO *gpio_MS1, GPIO *gpio_MS2, GPIO *gpio_MS3, GPIO 
 
 StepperMotor::StepperMotor(int gpio_MS1, int gpio_MS2, int gpio_MS3, int gpio_STEP, int gpio_SLP, int gpio_DIR, int gpio_EN, int gpio_LSW, int gpio_RSW, int speedRPM, int stepsPerRevolution){
 
-	 cout << "*** Stepper constructor" << endl;
+	cout << "*** Stepper constructor" << endl;
 	this->gpio_MS1 = new GPIO(gpio_MS1);
 	this->gpio_MS2 = new GPIO(gpio_MS2);
 	this->gpio_MS3 = new GPIO(gpio_MS3);

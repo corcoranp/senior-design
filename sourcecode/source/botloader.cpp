@@ -8,8 +8,12 @@
  */
 
 #include <ctime>
-#include <stdio.h>
-#include <stdlib.h>
+//#include <stdio.h>
+//#include <stdlib.h>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
+#include <unistd.h>
 
 #include <termio.h>
 #include <unistd.h>
@@ -25,17 +29,19 @@
 
 #include "../include/controllers/RobotController.h"
 
+
 #include "../include/system/console.h"
 #include "../include/system/SettingsReader.h"
 
+/*
 #include "../include/model/qrcode.h"
 #include "../include/model/zone.h"
 
-#include "../include/io/SimpleGPIO.h"
-#include "../include/io/StepperMotor.h"
+#include "../include/io/lidarIO.h"
 #include "../include/io/dcmotor.h"
 #include "../include/io/gpio.h"
 #include "../include/io/pwm.h"
+*/
 
 using namespace std;
 using namespace blaze;
@@ -91,6 +97,7 @@ using namespace blaze;
 
 		loadAllSettings(reader);
 
+
 		/*
 		 * STEP 3: LOAD LOGGING STATE
 		 */
@@ -105,7 +112,6 @@ using namespace blaze;
 		showBanner();
 
 
-
 	/*
 	 * STEP 4: TEST CODE SECTION ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 */
@@ -116,11 +122,6 @@ using namespace blaze;
 					  << reader.Get("LOGGING", "DEBUG_LEVEL", "UNKNOWN") << ", name="
 		              << reader.Get("user", "name", "UNKNOWN") << ", email="
 		              << reader.Get("user", "email", "UNKNOWN") << ", pi=" << endl;
-
-
-
-
-
 
 		 console::debug( "- Tunnel Exit " + reader.Get("NAMED_WAYPOINTS", "WP_TUNNEL_EXIT", "UNKNOWN"));
 		 console::debug("To String of Tunnel WayPoint: " +  PAWP_TUNNEL_EXIT->toString());
@@ -137,11 +138,12 @@ using namespace blaze;
 		 }
 
 		 console::debug("Blaze is in automated mode " + to_string( gpio_start_switch));
+		 console::debug("Enable/Disable Hardware");
 
 		 indicator ind( gpio_led1,  gpio_led2,  gpio_led3,  gpio_led4 );
 		 starter s( gpio_start_switch,  gpio_stop_switch);
 
-
+		 console::debug("Waiting on Start Signal");
 		 while(!s.isStartPressed()){
 			 //wait until start is pressed...
 			 usleep(100000);
@@ -149,16 +151,6 @@ using namespace blaze;
 		 }
 
 		 ind.started();
-
-
-
-/*
-PWM pwm("pwm_test_P8_34.13");
-pwm.setPolarity(PWM::ACTIVE_LOW);
-pwm.setDutyCycle(100.0f);
-pwm.run();
-*/
-
 
 		/*
 		 * STEP LAST: STARTS SYSTEM OPERATIONS
@@ -177,23 +169,6 @@ pwm.run();
     return 0;
 }
 
-/*
- * TODO: Throw away
- * 		 DCMotor dcm(new PWM("pwm_test_P9_42.12"), 116); //will export GPIO116
-		   dcm.setDirection(DCMotor::ANTICLOCKWISE);
-		   dcm.setSpeedPercent(50.0f);   //make it clear that a float is passed
-		   dcm.go();
-		   cout << "Rotating Anti-clockwise at 50% speed" << endl;
-		   usleep(5000000);    //sleep for 5 seconds
-		   dcm.reverseDirection();
-		   cout << "Rotating clockwise at 50% speed" << endl;
-		   usleep(5000000);
-		   dcm.setSpeedPercent(100.0f);
-		   cout << "Rotating clockwise at 100% speed" << endl;
-		   usleep(5000000);
-		   dcm.stop();
-		   cout << "End of EBB DC Motor Example" << endl;
- */
 
 
  //================================================================================
@@ -253,6 +228,8 @@ void bootSystemOperations(){
 		FILE_LOG(logERROR) << "Failed to create the thread, exiting.";
 		return;
 	}
+
+
 	//STEP 3: Allow the Thread to complete...
 	console::debug("- Allow Robot Controller Thread to Complete.");
 	pthread_join (controllerEntry, &result);
@@ -338,8 +315,12 @@ void bootSystemOperations(){
 	// MOTORS
 
 	MOTORS_ENABLED		= reader.GetBoolean("motors", "motors_enabled", true);
+	MOTOR_PWM_PERIOD 	= reader.GetInteger("motors", "motor_pwm_period", 0);
+	MOTOR_MAX_DUTY 		= reader.GetInteger("motors", "motor_max_duty", 400000);
 	M1_MAX_SPEED		= reader.GetInteger("motors", "m1_max_speed", true);
 	M2_MAX_SPEED		= reader.GetInteger("motors", "m2_max_speed", true);
+	M1_PWM 				= reader.Get("motors", "m1_pwm_gpio", "");
+	M2_PWM 				= reader.Get("motors", "m2_pwm_gpio", "");
 
 	// CAMERAS
 	CAMERAS_ENABLED		= reader.GetBoolean("cameras", "camera_enabled", true);
@@ -349,6 +330,8 @@ void bootSystemOperations(){
 	LIDAR_ENABLED		= reader.GetBoolean("lidar", "lidar_enabled", true);
 	LIDAR_PORT			= reader.Get("lidar", "lidar_port", "");
 
+	//STORAGE
+	STORAGE_PWM 		= reader.Get("STORAGE", "storage_pwm", "");
 
 	// PINS
 	PINS_ENABLED		= reader.GetBoolean("pins", "pins_enabled", true);
@@ -384,28 +367,16 @@ void bootSystemOperations(){
 
 
 
- /*
-  * Generic Method for printing text to the console
-  */
-  /*void print (string msg){
- 	 cout << msg << endl;
-  }
-  void debug (string msg){
- 	if( LOGFILE_ENABLED){
- 		FILE_LOG(logDEBUG) << msg;
- 	}
- 	if( DEBUG_ENABLED){
- 		print(msg);
- 	}
-  }
-  void info (string msg){
- 	if( LOGFILE_ENABLED){
- 		FILE_LOG(logINFO) << msg;
- 	}
- 	if( DEBUG_ENABLED){
- 		print(msg);
- 	}
-  }*/
+
+
+
+
+
+
+
+
+
+
 
 
 
