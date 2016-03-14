@@ -229,6 +229,8 @@ void bootSystemOperations(){
 		return;
 	}
 
+	 //add while loop to check status of robot...
+
 
 	//STEP 3: Allow the Thread to complete...
 	console::debug("- Allow Robot Controller Thread to Complete.");

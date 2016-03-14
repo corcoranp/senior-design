@@ -17,7 +17,9 @@ class NavigationController {
 public:
 	NavigationController();
 	virtual ~NavigationController();
+
 	static PortConfig determinePort();
+	void moveToFirstPosition();
 
 };
 

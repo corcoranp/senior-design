@@ -23,6 +23,7 @@
 #include "../../include/system/console.h"
 
 #include "../../include/controllers/RobotController.h"
+#include "../include/controllers/ArmController.h"
 #include "../include/controllers/NavigationController.h"
 #include "../include/controllers/StorageController.h"
 
@@ -51,7 +52,14 @@ void RobotController::start(){
 	//StorageController sc(STORAGE_PWM);
 	//sc.setRestPosition();
 
+	ArmController ac;
+	ac.printServoIds();
+
+
+
 	MotorController mc(M1_PWM, M2_PWM, gpio_motor1_dir, gpio_motor2_dir);
+	StorageController sc(STORAGE_PWM);
+	sc.setRestPosition();
 
 
 	console::debug("motor controller created");
@@ -62,19 +70,17 @@ void RobotController::start(){
 
 	usleep (2000000);
 
-
-	mc.forward(SPEED::QUARTER);
-		while(mc.isBusy()){
-			usleep(10000);
-		}
-		usleep (4000000);
-
 	mc.stop();
 
 	while(mc.isBusy()){
 		usleep(10000);
 	}
 
+
+	//usleep(3000000);
+	//sc.setDrivePostion();
+	//usleep(3000000);
+	//sc.setRestPosition();
 
 	/*
 	this->motorControl = new MotorController(M1_PWM, M2_PWM, gpio_motor1_dir, gpio_motor2_dir);

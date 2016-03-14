@@ -207,7 +207,7 @@ void* threadedForward(void *value){
 	unsigned int dutym2 = mc->m2->getDutyCycle();
 	unsigned int new_velocity = 0;
 	bool isStepUp = true;
-
+	unsigned int adj;
 	if(dutym1 > mc->new_velocity){
 		//step down
 		isStepUp = false;
@@ -223,7 +223,8 @@ void* threadedForward(void *value){
 		if(isStepUp){
 			new_velocity = new_velocity + mc->velocity_step;
 			if(dutym1 < new_velocity){
-				mc->m1->setDutyCycle(new_velocity);
+				//adj = new_velocity * mc->correctionFactor;
+				mc->m1->setDutyCycle(new_velocity );
 				dutym1 = new_velocity;
 			}
 
@@ -233,6 +234,7 @@ void* threadedForward(void *value){
 			}
 		}else{
 			new_velocity = new_velocity - mc->velocity_step;
+				//adj = new_velocity * mc->correctionFactor;
 				mc->m1->setDutyCycle(new_velocity);
 				dutym1 = new_velocity;
 

@@ -53,6 +53,12 @@ using namespace blaze;
 
 	bool ARM_ENABLED = false;
 	string ARM_PORT = "";
+	int ARM_SHOULDER_ID = 20;
+	int ARM_ELBOW1_ID = 21;
+	int ARM_ELBOW2_ID = 22;
+	int ARM_ELBOW3_ID = 23;
+	int ARM_WRIST_ID = 24;
+	int ARM_HAND_ID = 25;
 
 	/*bool BASE_ENABLED;
 	bool SHOULDER_ENABLED;

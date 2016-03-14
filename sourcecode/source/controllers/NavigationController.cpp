@@ -72,7 +72,10 @@ PortConfig NavigationController::determinePort(){
 	return PortConfig::UNDEFINED;
 }
 
+void NavigationController::moveToFirstPosition(){
 
+
+}
 
 
 

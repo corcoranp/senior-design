@@ -65,6 +65,12 @@ using namespace std;
 
 	extern bool ARM_ENABLED;
 	extern string ARM_PORT;
+	extern int ARM_SHOULDER_ID;
+	extern int ARM_ELBOW1_ID;
+	extern int ARM_ELBOW2_ID;
+	extern int ARM_ELBOW3_ID;
+	extern int ARM_WRIST_ID;
+	extern int ARM_HAND_ID;
 
 	/*extern bool BASE_ENABLED;
 	extern bool SHOULDER_ENABLED;

@@ -15,7 +15,13 @@ namespace blaze {
 	 */
 	class ArmController {
 	public:
+		ArmController();
+		virtual ~ArmController();
 		void reset();
+
+		void printServoIds();
+
+
 	private:
 
 	};
