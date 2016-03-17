@@ -12,10 +12,14 @@
 #include <cstdlib>
 #include <cstring>
 #include <unistd.h>
+#include <mutex>
 
 #include "model/waypoint.h"
 
 using namespace std;
+
+	extern double dist[365];
+	extern mutex bot_mutex;
 
 	extern unsigned int ZERO;
 // DEFINES [SYSTEM] SETTINGS VARIABLES
@@ -98,6 +102,9 @@ using namespace std;
 	// DEFINES LIDAR SETTINGS
 	extern bool LIDAR_ENABLED;
 	extern string LIDAR_PORT;
+	extern int FRONT_MAX;
+	extern int FRONT_MIN;
+
 
 	extern string STORAGE_PWM;
 

@@ -8,6 +8,7 @@
 
 #include "../../include/io/lidarIO.h"
 #include "../include/system/console.h"
+#include "../../include/model/pdata.h"
 #include <iostream>
 #include <cstdio>
 #include <cstdlib>
@@ -17,140 +18,32 @@
 #include <fstream>
 #include <unistd.h>
 
-/*
-<cstring>/<cstdio>/<cstdlib>/etc,
-rather than C's <string.h>/<stdio.h>/<stdlib.h>/etc.
-*/
 using namespace std;
 using namespace blaze;
-
 
 int lidar_fd = -1;
 
 int lidar_open(int deviceIndex){}
 void lidar_close(){}
 
+pdata *pdata::s_instance = 0;
 
-/*
- * Usage:
+
+lidarIO::~lidarIO() {
+	close(this->lidarFileDescriptor);
+}
+
+/* Usage:
 
  	#include "./lidar_io.h"
-
  	...
-
 	lidarIO lidar("/dev/tty.usbmodem12341");
 	lidar.connect();
 	lidar.getData(lidar.lidarFileDescriptor);
  */
 
-
 int lidarIO::lidarFileDescriptor = -1;
 
-
-void lidarIO::readData(){
-	//std::ofstream outfile;
-	//outfile.open("lidarreadings.txt", std::ios_base::app);
-
-	//http://stackoverflow.com/questions/18108932/linux-c-serial-port-reading-writing
-
-	this->zeroRef = 275;
-
-	static int fd;
-	double distances[360];
-
-	//Descriptor for the port
-	fd = open( lidarIO::port, O_RDWR | O_NOCTTY | O_NONBLOCK ) ;
-	fcntl(fd, F_SETFL, FNDELAY);
-
-	set_interface_attribs(fd);
-
-	//send lidar control commands...
-	char hideRaw[] = "HideRaw \n\r";
-	char showDist[] = "ShowDist \n\r";
-	char motorOn[] = "MotorOn \n\r";
-
-	write(fd, hideRaw, sizeof(hideRaw));
-	write(fd, showDist, sizeof(showDist));
-
-	bool startCount = false;
-	bool dontStopLoop = true;
-	int items = 0;
-
-
-	while (dontStopLoop) { 	//pull data
-		//usleep(1000000); //sleep thread
-
-		char buffer[64] = {0};
-		int pos = 0;
-		string angle = "";
-		string dist;
-
-		//Loop through the buffer and find the line terminator
-		while( pos < 63 ) {
-			read(fd, buffer+pos, 1);           // Note you should be checking the result
-			if( buffer[pos] == '\n' || buffer[pos] == '\r') break;
-				pos++;
-		}
-
-		string delimiter = " ";
-		string s(buffer);
-		size_t posi = 0;
-		string token;
-		int count;
-		count =1;
-		bool isFinished;
-		isFinished = false;
-
-		//Parse the Lidar Data...
-		while ((posi = s.find(delimiter)) != std::string::npos) {
-
-			token = s.substr(0, posi);
-
-			if(token == "Time"){
-				isFinished = true;
-			}
-			if(count==1 && !isFinished){
-				token.pop_back();
-				angle = token;
-				items++;
-			}
-			if(count ==2 && !isFinished){
-				dist = token;
-			}
-
-			s.erase(0, posi + delimiter.length());
-			count++;
-		}
-
-		if(!isFinished && angle != "" && startCount){
-			double d = atof (dist.c_str()); //convert string to double
-			if(items < 360){
-				distances[items] = d;
-			}
-			//cout << to_string(items-1) + ":" +   dist + ", ";   //has a line break.
-		}
-
-		//must come first..
-		if(startCount && angle == to_string(zeroRef)){
-			dontStopLoop = false;
-		}
-		if(angle == std::to_string(zeroRef)){
-			//Lidar alignment...
-			startCount = true; //loop until first end...
-			items = 0;
-		}
-
-		count = 0;
-
-		angle ="";
-		dist= "";
-	}
-
-	close(fd);
-
-	//close (outfile);
-	//Lidar's orientation is 286 degrees is at the rear...
-}
 
 
 double * lidarIO::getData(int fd, double *returnArray){
@@ -158,10 +51,8 @@ double * lidarIO::getData(int fd, double *returnArray){
 	/*
 	 * Zero Reference is the angle that represents 0 degrees
 	 */
-	zeroRef = 290;
-	//console::debug("LidarIO: getData start");
+	zeroRef = 207;
 
-	//double distances[360];
 
 	/*
 	 * Control flag for determining when to start the "counter"
@@ -179,7 +70,7 @@ double * lidarIO::getData(int fd, double *returnArray){
 	 */
 	while (dontStopLoop) {
 		//sleep thread for a moment...
-		usleep(100); //sleep thread
+		usleep(1000); //sleep thread
 
 		//character buffer
 		char buffer[64] = {0};
@@ -215,10 +106,6 @@ double * lidarIO::getData(int fd, double *returnArray){
 			if( buffer[pos] == '\n' || buffer[pos] == '\r') break;
 				pos++; //update the position
 		}
-
-		//cout << buffer << endl;
-
-
 		string s(buffer); 	// 	convert buffer into string
 		count = 1;			//	start count at 1
 
@@ -231,7 +118,7 @@ double * lidarIO::getData(int fd, double *returnArray){
 
 			//check for "Time" string
 			if(token == "Time"){
-				console::debug("time: ");
+				//console::debug("time: ");
 				isFinished = true;
 			}
 			// First delimited item:
@@ -253,15 +140,18 @@ double * lidarIO::getData(int fd, double *returnArray){
 		if(angle.length() > 0){
 			//write out data if needed...
 			//console::debug("adjusted angle: " + to_string(items) + " dist: " + dist  );
+			string str = angle;
 		}
 		if(!isFinished && angle != "" && startCount){
 			double d = atof (dist.c_str()); //convert string to double
 			if(items < 360){
 				returnArray[items] = d;
+			//	pdata::instance()->updateElement(items, d);
 			}
 		}
 
 		if(startCount && angle == to_string(zeroRef)){
+			console::debug("lidarIO: Reached end of lidar data");
 			dontStopLoop = false;  //stop the main while loop...
 
 		} //end of if
@@ -270,7 +160,7 @@ double * lidarIO::getData(int fd, double *returnArray){
 		//Start counting angles...
 		if(angle == to_string(zeroRef)){
 			//Lidar alignment...
-			console::debug("angle is at zeroRef");
+			//console::debug("lidarIO:  angle is at zeroRef");
 			startCount = true; //loop until first end...
 			items = 0;
 		}
@@ -279,7 +169,7 @@ double * lidarIO::getData(int fd, double *returnArray){
 		angle ="";
 		dist= "";
 	}
-
+	console::debug("lidarIO: finished reading lidar data");
 }
 
 int lidarIO::connect(){
@@ -406,59 +296,6 @@ int lidarIO::set_interface_attribs (int fd)
 	HideRaw - Stop outputting the raw data from the lidar
 	ShowRaw - Enable the output of the raw lidar data
  */
-/*void lidarIO::send(char * cmd){
-	cout << cmd << endl;
-	//writeout command
-
-	//cout << to_string(fileDescriptor) << endl;
-	write(fileDescriptor, cmd, sizeof(cmd));
-}*/
-
-/*
- * Read Line
- */
-/*
-string lidarIO::readline(int fd){
-	char buffer[64] = {0};
-	int pos = 0;
-
-	while( pos < 63 ) {
-	    read(fd, buffer+pos, 1);           // Note you should be checking the result
-	    if( buffer[pos] == '\n' || buffer[pos] == '\r') break;
-	    pos++;
-	}
-
-	// Normally you would null-terminate string, but noticed I initialised the
-	// buffer to all zeroes at the beginning.  So this is not strictly necessary.
-	// However, in this case it will remove the newline character.
-	//buffer[pos] = 0;
-cout << buffer << endl;
-
-	string str(buffer);
-	return str;
-}*/
-
-/*
- * LIDAR connection
- */
-/*
-int lidarIO::connect(char * device){
-
-	static int fd;
-	//Descriptor for the port
-	fd = open( device, O_RDWR | O_NOCTTY | O_NONBLOCK ) ;
-
-	set_interface_attribs(fd);
-
-	return fd;
-}*/
-
-
-/*
-void lidarIO::disconnect(){
-	close(fileDescriptor);
-}
-*/
 
 /*
  * PRIVATE FUNCTIONS

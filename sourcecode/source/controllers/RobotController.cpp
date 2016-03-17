@@ -47,21 +47,57 @@ void RobotController::start(){
 	console::debug("RobotController Started");
 	//Thread that runs the main robot functions.
 
-	console::print("Hello, My name is BLAZE...let me take you on a jouney...");
+	console::debug("Hello, My name is BLAZE...let me take you on a journey...");
+
+	MotorController mc(M1_PWM, M2_PWM, gpio_motor1_dir, gpio_motor2_dir);
+	//mc.forward(SPEED::HALF);
+	mc.stop();
+
+
+	//Zero Robot....
+	console::debug("RC: creating Navigation Controller");
+	NavigationController nc(&mc);
+
+
+
+	double x = nc.getPosition(Face::Front, DistType::Theta);
+	console::debug( "NC.getPosition = " +  to_string(x) );
+
+
+	console::debug("RC: Aligning To Front Face..");
+	nc.alignToFace(Face::Front);
+
+
 
 	//StorageController sc(STORAGE_PWM);
 	//sc.setRestPosition();
 
+/* Arm Example
 	ArmController ac;
 	ac.printServoIds();
+*/
+
+/* Motor Controller object */
 
 
-
-	MotorController mc(M1_PWM, M2_PWM, gpio_motor1_dir, gpio_motor2_dir);
+	/*Storage Controller */
 	StorageController sc(STORAGE_PWM);
+	//sc.setDrivePostion();
+	//usleep(10000000);
+	console::debug ("Completed lowering storage");
 	sc.setRestPosition();
 
 
+
+	usleep(100000);
+
+//double x = NavigationController::getPosition(Face::Back, DistType::Theta);
+//	cout << "Value: " +  to_string(x) << endl;
+
+	//NavigationController::determinePort();
+	//sc.setRestPosition();
+
+/*
 	console::debug("motor controller created");
 	mc.forward(SPEED::SEVEN_EIGHTH);
 	while(mc.isBusy()){
@@ -75,7 +111,7 @@ void RobotController::start(){
 	while(mc.isBusy()){
 		usleep(10000);
 	}
-
+*/
 
 	//usleep(3000000);
 	//sc.setDrivePostion();

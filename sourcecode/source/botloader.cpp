@@ -331,6 +331,9 @@ void bootSystemOperations(){
 	// LIDAR
 	LIDAR_ENABLED		= reader.GetBoolean("lidar", "lidar_enabled", true);
 	LIDAR_PORT			= reader.Get("lidar", "lidar_port", "");
+	FRONT_MAX			= reader.GetInteger("lidar", "front_max", -1);
+	FRONT_MIN			= reader.GetInteger("lidar", "front_min", -1);
+
 
 	//STORAGE
 	STORAGE_PWM 		= reader.Get("STORAGE", "storage_pwm", "");

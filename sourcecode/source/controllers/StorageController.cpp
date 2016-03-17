@@ -56,10 +56,7 @@ void StorageController::setLoadPosition(){
 }
 void StorageController::setRestPosition(){
 	 PWM pwm(this->pinName);  // P9_42 MUST be loaded as a slot before use
-	   //pwm.setPeriod(500000);         // Set the period in ns
-	   unsigned int i;
-	   i = 0;
-	   pwm.setDutyCycle(i);
+	   pwm.setDutyCycle(ZERO);
 	   pwm.setPolarity(PWM::ACTIVE_HIGH);  // using active low PWM
 	   pwm.stop();
 }

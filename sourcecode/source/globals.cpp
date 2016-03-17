@@ -86,6 +86,16 @@ using namespace blaze;
 	// DEFINES LIDAR SETTINGS
 	bool LIDAR_ENABLED = false;
 	string LIDAR_PORT = "";
+	int FRONT_MAX = -1;
+	int FRONT_MIN = -1;
+	int RIGHT_MAX = -1;
+	int RIGHT_MIN = -1;
+	int LEFT_MAX = -1;
+	int LEFT_MIN = -1;
+	int BACK_MAX = -1;
+	int BACK_MIN = -1;
+
+
 
 	string STORAGE_PWM = "";
 

@@ -31,7 +31,7 @@ CONSOLE_ENABLED			= true				; Enables or disables robot console output
 DEBUG_ENABLED			= true				; Enables or disables robot debug
 DEBUG_LEVEL				= DEBUG				; Current Debug Level: "ERROR", "WARNING", "INFO", "DEBUG", "DEBUG1", "DEBUG2", "DEBUG3", "DEBUG4"
 LOGFILE_ENABLED			= true				;
-LOGFILE_NAME			= blaze_error.log	; name of the log file to save data to
+LOGFILE_NAME			= blog.log	; name of the log file to save data to
 APPEND_TO_LOG			= true				; specifies whether to append to the log (true) or overwrite (false)
 
 
@@ -101,6 +101,8 @@ imaging_enabled			= false				; enables/disables imaging
 [LIDAR]
 lidar_enabled			= false 			; enables/disables
 lidar_port				= /dev/ttyACM0			; lidar usb address
+front_max				= 140
+front_min				= 42
 
 [STORAGE]
 storage_pwm				= pwm_test_P8_34.13

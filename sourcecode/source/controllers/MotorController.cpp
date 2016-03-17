@@ -6,11 +6,20 @@
 #include <unistd.h>
 #include "../../include/controllers/MotorController.h"
 #include "../../include/globals.h"
-#include "../include/system/console.h"
+#include "../../include/system/console.h"
+#include "../../include/system/indicator.h"
 
 using namespace std;
 
 namespace blaze {
+
+
+
+
+MotorController::MotorController(){
+
+}
+
 
 MotorController::MotorController(string m1_pwm_pin, string m2_pwm_pin, GPIO *gpio_m1_dir, GPIO *gpio_m2_dir) {
 	// TODO Auto-generated constructor stub
@@ -55,17 +64,39 @@ void MotorController::init(){
 	console::debug("set m2dir as output");
 	this->gpio_m2_dir->setDirection(GPIO::OUTPUT);
 	console::debug("set m2dir as output completed");
+
+	//Should change this to use config file....
+	m1_correctionFactor = 0.9;
+	m2_correctionFactor = 1;
+
+
 	return;
 }
 
-void MotorController::engage(int motorID, SPEED speed){
+
+
+
+void MotorController::engage(int motorID, SPEED speed, MOVEMENT direction){
 
 	PWM *p ;
+	GPIO *g;
 	if(motorID == 1){
 		p = this->m1;
+		g = this->gpio_m1_dir;
+		//lights.motor1running(true);
 	}else{
+		g = this->gpio_m2_dir;
 		p = this->m2;
+		//lights.motor2running(true);
 	}
+
+	if(direction == MOVEMENT::FORWARD){
+		g->setValue(GPIO::HIGH);
+	} else {
+		g->setValue(GPIO::LOW);
+	}
+
+	p->setDutyCycle(this->getSpeed(speed, motorID));
 
 	p->run();
 
@@ -98,6 +129,53 @@ void MotorController::faster(int motorID){
 
 }
 
+
+
+/*
+ * Function for calculating the motor velocity...
+ */
+unsigned int MotorController::getSpeed(SPEED rate, int motorID){
+
+	double velocity;
+
+	switch(rate){
+		case SPEED::EIGHTH:
+			velocity= MOTOR_MAX_DUTY / 8;
+			break;
+		case SPEED::QUARTER:
+			velocity = MOTOR_MAX_DUTY / 4;
+			break;
+		case SPEED::THREE_EIGHTH:
+			velocity = MOTOR_MAX_DUTY * 0.375;
+			break;
+		case SPEED::HALF:
+			velocity = MOTOR_MAX_DUTY / 2;
+			break;
+		case SPEED::FIVE_EIGHTH:
+			velocity = MOTOR_MAX_DUTY * 0.625;
+			break;
+		case SPEED::THREE_QUARTER:
+			velocity = MOTOR_MAX_DUTY * 0.75;
+			break;
+		case SPEED::SEVEN_EIGHTH:
+			velocity= MOTOR_MAX_DUTY * 0.875;
+			break;
+		case SPEED::FULL:
+			velocity = MOTOR_MAX_DUTY;
+			break;
+		}
+	if(motorID == 1){
+		velocity = velocity * m1_correctionFactor;
+	}
+	if(motorID == 2){
+		velocity = velocity * m2_correctionFactor;
+	}
+
+	return velocity;
+
+}
+
+
 //dual motor
 
 void MotorController::forward(){
@@ -106,8 +184,9 @@ void MotorController::forward(){
 
 
 	unsigned int v = 100000;
+	unsigned int v2 = 90000;
 	this->m1->setDutyCycle(v);
-	this->m2->setDutyCycle(v);
+	this->m2->setDutyCycle(v2);
 
 	this->m1->run();
 	this->m2->run();
@@ -197,6 +276,12 @@ void MotorController::stop(){
     	this->threadRunning = false;
     	return;
     }
+}
+void MotorController::stopNow(){
+	//lights.motor1running(false);
+	//lights.motor2running(false);
+	this->m1->setDutyCycle(ZERO);
+	this->m2->setDutyCycle(ZERO);
 }
 
 

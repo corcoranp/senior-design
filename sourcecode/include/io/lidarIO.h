@@ -44,8 +44,10 @@ public:
 		port = string2char(p);
 	}
 
+	virtual ~lidarIO();
+
 	static int lidarFileDescriptor;
-	void readData();
+	//void readData();
 	double * getData(int fd, double *returnArray);
 	int connect();
 	void disable();

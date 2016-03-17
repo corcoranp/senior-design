@@ -52,17 +52,17 @@ namespace blaze {
 	 * WRITE FUNCTIONS
 	 */
 	int write(string basepath, string filename, string inputVal){
-		console("started write method");
+		//console("started write method");
 		return write((basepath + filename), inputVal);
 	}
 
 	int write(string basepath, string filename, int inputVal){
-		console("started write method");
+		//console("started write method");
 		return write((basepath + filename), inputVal);
 	}
 
 	int write(string fullPath, string inputVal){
-		console("started write method");
+		//console("started write method");
 		ofstream fstrm;
 
 		fstrm.open(fullPath.c_str());
@@ -75,7 +75,7 @@ namespace blaze {
 	   return 0;
 	}
 	int write(string fullPath, int inputVal){
-		console("started write method");
+		//console("started write method");
 		stringstream s;
 		s << inputVal;
 		return write(fullPath, s.str());

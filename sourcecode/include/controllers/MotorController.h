@@ -19,21 +19,24 @@ class MotorController {
 	public:
 		bool isEnabled;
 
-
+		MotorController();
 		 MotorController(string m1_pwm_pin, string m2_pwm_pin, GPIO *gpio_m1_dir, GPIO *gpio_m2_dir);
 		 MotorController(string m1_pwm_pin, string m2_pwm_pin, int gpio_m1_dir, int gpio_m2_dir);
 		 void init();
 
-		double correctionFactor;
+		double m1_correctionFactor;
+		double m2_correctionFactor;
 
 		/*
 		* MOTOR CONTROLLER
 		*/
 
-		void engage(int motorID, SPEED speed);
+		void engage(int motorID, SPEED speed, MOVEMENT direction);
 		void brake(int motorID);
 		void slower(int motorID);
 		void faster(int motorID);
+
+
 
 		/*
 		* Dual Motor Control
@@ -45,6 +48,7 @@ class MotorController {
 		void backward(SPEED rate);
 
 		void stop();
+		void stopNow();
 
 		friend void* threadedStop(void *value);
 		friend void* threadedBreak(void *value);
@@ -64,6 +68,7 @@ class MotorController {
 		 PWM *m1, *m2;
 		 PWM *breakMotor;
 
+
 		 unsigned int m1_v_reduce;
 		 unsigned int m2_v_reduce;
 
@@ -73,6 +78,8 @@ class MotorController {
 		 bool threadRunning;
 
 		 int threadedStepNumber, threadedStepPeriod;
+
+		 unsigned int getSpeed(SPEED rate, int motorID);
 
 	};
 

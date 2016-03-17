@@ -53,7 +53,7 @@ void ArmController::printServoIds(){
  */
 
 
-while (1){
+//while (1){
 
 
 	PresentPos = dxl_read_word( ARM_SHOULDER_ID, P_PRESENT_POSITION_L );
@@ -76,18 +76,16 @@ while (1){
 
 	CommStatus = dxl_get_result();
 
-
-	cout << "Present Position: " + to_string(elbowP - 10) << endl;
+//	cout << "Present Position: " + to_string(elbowP - 10) << endl;
 
 
 	// Close device
 
-	printf( "Press Enter key to terminate...\n" );
-	getchar();
+//	printf( "Press Enter key to terminate...\n" );
+//	getchar();
 
-	int GoalPos[2] = {0, 1023};
-	dxl_write_word( ARM_ELBOW2_ID, P_GOAL_POSITION_L, GoalPos[elbowP + 10] );
+//	int GoalPos[2] = {0, 1023};
+//	dxl_write_word( ARM_ELBOW2_ID, P_GOAL_POSITION_L, GoalPos[elbowP + 10] );
 
-}
 	dxl_terminate();
 }
