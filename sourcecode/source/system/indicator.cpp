@@ -30,11 +30,11 @@ indicator::indicator(int gpio_led1, int gpio_led2, int gpio_led3, int gpio_led4)
 	this->gpio_led3 = new GPIO(gpio_led3);
 	this->gpio_led4 = new GPIO(gpio_led4);
 
-	this->gpio_led1->setDirection(GPIO::OUTPUT);
+	/*this->gpio_led1->setDirection(GPIO::OUTPUT);
 	this->gpio_led2->setDirection(GPIO::OUTPUT);
 	this->gpio_led3->setDirection(GPIO::OUTPUT);
 	this->gpio_led4->setDirection(GPIO::OUTPUT);
-
+*/
 	//this->gpio_led1->setValue(GPIO::HIGH);
 
 	//HIGH is OFF
@@ -56,14 +56,14 @@ void indicator::blink(int ms, LED led){
 		this->gpio_led2->setValue(GPIO::LOW);
 		break;
 	case LED::THRID:
-		this->gpio_led3->setValue(GPIO::HIGH);
-		usleep(ms * 1000);
 		this->gpio_led3->setValue(GPIO::LOW);
+		usleep(ms * 1000);
+		this->gpio_led3->setValue(GPIO::HIGH);
 		break;
 	case LED::BOTTOM:
-		this->gpio_led4->setValue(GPIO::HIGH);
-		usleep(ms * 1000);
 		this->gpio_led4->setValue(GPIO::LOW);
+		usleep(ms * 1000);
+		this->gpio_led4->setValue(GPIO::HIGH);
 		break;
 	}
 
@@ -95,6 +95,22 @@ void indicator::errorState(){
 	this->gpio_led4->setValue(GPIO::HIGH);
 }
 
+void indicator::on(int light){
+	switch(light){
+	case 1: 	this->gpio_led1->setValue(GPIO::LOW); break;
+	case 2: 	this->gpio_led1->setValue(GPIO::LOW); break;
+	case 3: 	this->gpio_led1->setValue(GPIO::LOW); break;
+	case 4: 	this->gpio_led1->setValue(GPIO::LOW); break;
+	}
+}
+void indicator::off(int light){
+	switch(light){
+	case 1: 	this->gpio_led1->setValue(GPIO::HIGH); break;
+	case 2: 	this->gpio_led1->setValue(GPIO::HIGH); break;
+	case 3: 	this->gpio_led1->setValue(GPIO::HIGH); break;
+	case 4: 	this->gpio_led1->setValue(GPIO::HIGH); break;
+	}
+}
 
 indicator::~indicator() {
 	// TODO Auto-generated destructor stub

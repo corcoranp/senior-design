@@ -138,19 +138,7 @@ using namespace blaze;
 		 }
 
 		 console::debug("Blaze is in automated mode " + to_string( gpio_start_switch));
-		 console::debug("Enable/Disable Hardware");
 
-		 indicator ind( gpio_led1,  gpio_led2,  gpio_led3,  gpio_led4 );
-		 starter s( gpio_start_switch,  gpio_stop_switch);
-
-		 console::debug("Waiting on Start Signal");
-		 while(!s.isStartPressed()){
-			 //wait until start is pressed...
-			 usleep(100000);
-			 ind.blink(100,indicator::LED::TOP);
-		 }
-
-		 ind.started();
 
 		/*
 		 * STEP LAST: STARTS SYSTEM OPERATIONS
@@ -215,22 +203,18 @@ using namespace blaze;
  * Function spins off a thread to start the system operations object...
  */
 void bootSystemOperations(){
-
-
 	console::debug("- Starting System Operation Thread");
 	//STEP 1: Define Handle to the Thread:
 	pthread_t controllerEntry;
 	//OPTIONAL: Define the data received back from pthread.
 	void* result;
+
 	//STEP 2: Create thread, pass reference, addr of the function and data
 
 	 if(pthread_create(&controllerEntry, NULL, &RobotController::entry, NULL)){
 		FILE_LOG(logERROR) << "Failed to create the thread, exiting.";
 		return;
 	}
-
-	 //add while loop to check status of robot...
-
 
 	//STEP 3: Allow the Thread to complete...
 	console::debug("- Allow Robot Controller Thread to Complete.");
@@ -286,12 +270,13 @@ void bootSystemOperations(){
 
 	gpio_start_switch 	= reader.GetInteger("gpio", "gpio_start_switch", -1);
 	gpio_stop_switch	= reader.GetInteger("gpio", "gpio_stop_switch", -1);
+	gpio_stepper_sleep	= reader.GetInteger("gpio", "gpio_stepper_sleep", -1);
 	gpio_stepper_dir	= reader.GetInteger("gpio", "gpio_stepper_dir", -1);
 	gpio_stepper_step	= reader.GetInteger("gpio", "gpio_stepper_step", -1);
 	gpio_stepper_rst	= reader.GetInteger("gpio", "gpio_stepper_rst", -1);
 	gpio_stepper_ms3	= reader.GetInteger("gpio", "gpio_stepper_ms3", -1);
 	gpio_stepper_ms2	= reader.GetInteger("gpio", "gpio_stepper_ms2", -1);
-	gpio_stepper_m1		= reader.GetInteger("gpio", "gpio_stepper_m1", -1);
+	gpio_stepper_ms1	= reader.GetInteger("gpio", "gpio_stepper_ms1", -1);
 	gpio_stepper_en		= reader.GetInteger("gpio", "gpio_stepper_en", -1);
 	gpio_stepper_lsw	= reader.GetInteger("gpio", "gpio_stepper_lsw", -1);
 	gpio_stepper_rsw	= reader.GetInteger("gpio", "gpio_stepper_rsw", -1);
@@ -333,7 +318,12 @@ void bootSystemOperations(){
 	LIDAR_PORT			= reader.Get("lidar", "lidar_port", "");
 	FRONT_MAX			= reader.GetInteger("lidar", "front_max", -1);
 	FRONT_MIN			= reader.GetInteger("lidar", "front_min", -1);
-
+	BACK_MAX			= reader.GetInteger("lidar", "back_max", -1);
+	BACK_MIN			= reader.GetInteger("lidar", "back_min", -1);
+	LEFT_MAX			= reader.GetInteger("lidar", "left_max", -1);
+	LEFT_MIN			= reader.GetInteger("lidar", "left_min", -1);
+	RIGHT_MAX			= reader.GetInteger("lidar", "right_max", -1);
+	RIGHT_MIN			= reader.GetInteger("lidar", "right_min", -1);
 
 	//STORAGE
 	STORAGE_PWM 		= reader.Get("STORAGE", "storage_pwm", "");

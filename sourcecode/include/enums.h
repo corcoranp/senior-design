@@ -15,7 +15,7 @@ namespace blaze{
 	enum Size { SMALL, LARGE};
 	enum DIRECTION{ CLOCKWISE, ANTICLOCKWISE }; //clockwise is forward...
 	enum SPEED {EIGHTH, QUARTER, THREE_EIGHTH, HALF, FIVE_EIGHTH, THREE_QUARTER, SEVEN_EIGHTH, FULL };
-	enum WALL_FOLLOWING {RIGHT, LEFT};
+	enum WALL_FOLLOWING {RIGHT, LEFT, DISABLED};
 
 	enum Face {Front, Left, Right, Back, Front_L, Front_C, Front_R, Back_L, Back_C, Back_R};
 	enum DistType {Avg, Min, Max, Theta};

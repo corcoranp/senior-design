@@ -28,6 +28,9 @@ public:
 	virtual void motor2running(bool isrunning);
 	virtual void errorState();
 
+	virtual void on(int light);
+	virtual void off(int light);
+
 	virtual ~indicator();
 
 

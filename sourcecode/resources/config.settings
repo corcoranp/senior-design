@@ -50,6 +50,7 @@ robot_z					= 12				; the robot's height or z component in inches
 [GPIO]
 gpio_start_switch		= 115
 gpio_stop_switch		= 117
+gpio_stepper_sleep		= 30
 gpio_stepper_dir		= 61
 gpio_stepper_step		= 65
 gpio_stepper_rst		= 112
@@ -90,10 +91,12 @@ m1_pwm_gpio				= pwm_test_P8_46.16	; pin used for PWM control
 m2_max_speed			= 255				; maximum speed allowed for motor
 m2_pwm_gpio				= pwm_test_P8_45.15	; pin used for PWM control of m2
 											; right motor pwm_test_P8_45
+m1cf					= 0.9
+m2cf					= 1.0
 
 [CAMERAS]
 camera_enabled			= false 			; enables/disables
-camera_port				= /dev/ttyACM2			; camera usbport 
+camera_port				= /dev/ttyACM2		; camera usbport 
 
 [IMAGING]
 imaging_enabled			= false				; enables/disables imaging
@@ -103,6 +106,13 @@ lidar_enabled			= false 			; enables/disables
 lidar_port				= /dev/ttyACM0			; lidar usb address
 front_max				= 140
 front_min				= 42
+back_max				= 302
+back_min				= 238
+right_max				= 29
+right_min				= -27
+left_max				= 205
+left_min				= 155
+
 
 [STORAGE]
 storage_pwm				= pwm_test_P8_34.13

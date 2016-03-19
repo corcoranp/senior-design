@@ -26,6 +26,7 @@ gfgff * StepperMotor.cpp  Created on: 13 Jun 2014
 #include<iostream>
 #include<unistd.h>
 #include<cmath>
+#include "../../include/system/console.h"
 using namespace std;
 
 namespace blaze {
@@ -66,9 +67,10 @@ StepperMotor::StepperMotor(int gpio_MS1, int gpio_MS2, int gpio_MS3, int gpio_ST
 	this->gpio_SLP->setDirection(GPIO::OUTPUT);
 	this->gpio_DIR->setDirection(GPIO::OUTPUT);
 	this->gpio_EN->setDirection(GPIO::OUTPUT);
-	//this->gpio_LSW->setDirection(GPIO::INPUT);
-	//this->gpio_RSW->setDirection(GPIO::INPUT);
-	 cout << "run init" << endl;
+	this->gpio_LSW->setDirection(GPIO::INPUT);
+	this->gpio_RSW->setDirection(GPIO::INPUT);
+	// cout << "run init" << endl;
+	console::debug("Finished stepper init function;");
 	this->init(speedRPM, stepsPerRevolution);
 }
 
@@ -155,6 +157,9 @@ void StepperMotor::step(int numberOfSteps){
 
 void StepperMotor::step(){
 
+	console::debug("LSW: " + this->gpio_LSW->getValue() );
+	console::debug("RSW: " + this->gpio_RSW->getValue() );
+
 	if(this->gpio_LSW->getValue() == GPIO::LOW){
 		//switch is tripped...should go right...
 		this->setDirection(DIRECTION::CLOCKWISE);
@@ -221,6 +226,8 @@ void StepperMotor::disable(){
 	this->enabled = false;
 	this->gpio_EN->setValue(GPIO::HIGH);
 }
+
+
 
 StepperMotor::~StepperMotor() {}
 

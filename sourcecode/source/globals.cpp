@@ -1,5 +1,6 @@
 
 #include "../include/globals.h"
+#include <cmath>
 
 using namespace std;
 using namespace blaze;
@@ -30,12 +31,13 @@ using namespace blaze;
 
 	int gpio_start_switch = -1;
 	int gpio_stop_switch = -1;
+	int gpio_stepper_sleep = -1;
 	int gpio_stepper_dir = -1;
 	int gpio_stepper_step = -1;
 	int gpio_stepper_rst = -1;
 	int gpio_stepper_ms3 = -1;
 	int gpio_stepper_ms2 = -1;
-	int gpio_stepper_m1 = -1;
+	int gpio_stepper_ms1 = -1;
 	int gpio_stepper_en = -1;
 	int gpio_stepper_lsw = -1;
 	int gpio_stepper_rsw = -1;
@@ -131,4 +133,8 @@ char* blaze::string2char (string s){
 	char *retval = new char[ s.length() + 1];
 	strcpy(retval,  s.c_str());
 	return retval;
+}
+
+bool isValueEqual(double a, double b, double acc) {
+	return abs(a - b) < acc;
 }

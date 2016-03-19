@@ -43,19 +43,27 @@ public:
 		zeroRef = 0;
 		port = string2char(p);
 	}
-
 	virtual ~lidarIO();
 
+	/**
+	* Data Functions
+	*/
 	static int lidarFileDescriptor;
-	//void readData();
 	double * getData(int fd, double *returnArray);
-	int connect();
-	void disable();
+	int zeroRef;
 
+
+	/**
+	 * Connection functions/properties
+	 */
+	int connect();
+	void disconnect();
+	void disable();
 	int set_interface_attribs(int fd);
 	bool isConnected;
 	char * port;
-	int zeroRef;
+
+
 
 private:
 	void debug(char * msg);

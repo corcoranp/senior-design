@@ -11,40 +11,62 @@
 #include "../enums.h"
 #include "../io/lidarIO.h"
 #include "../model/angleRange.h"
-#include "RobotController.h"
+#include "MotorController.h"
 
 namespace blaze {
 
 class NavigationController {
 private:
-
 	lidarIO lidar;
-	MotorController* motorController;
 
-	void calculateAverage(angleRange *p);
-	void calculateMinimum(angleRange *p);
-	void calculateMaximum(angleRange *p);
-	void calculateTheta(angleRange *p);
 
 public:
 
-	NavigationController();
 	NavigationController(MotorController *mc);
 	virtual ~NavigationController();
 	void init();
+
+	static MotorController *motorController;
+	void addMotorController(MotorController *mc);
+
 
 	angleRange currentRightPos;
 	angleRange currentFrontPos;
 	angleRange currentLeftPos;
 	angleRange currentBackPos;
 
-	double data[370];
+	void stopNow();
 
-	PortConfig determinePort();
+	/**
+	 * Data functions
+	 */
+	double data[370];
+	void offset_correction();
 	double getPosition (Face f, DistType dt);
-	void moveToFirstPosition();
+	void updateLocation();
+
+
+	void calculateAverage(angleRange *p);
+	void calculateMinimum(angleRange *p);
+	void calculateMaximum(angleRange *p);
+	void calculateTheta(angleRange *p);
+
+	/**
+	 * Moving Functions
+	 */
 	void move(WALL_FOLLOWING following_mode, int distance, int angle, int forward_target_distance  );
+	void moveUntil(int forward_target_distance, MOVEMENT dir  );
 	void alignToFace(Face f);
+	void turn(int targetAngle, double radius);
+
+	/**
+	 * Complex moves
+	 */
+	PortConfig determinePort();
+	void navigateThroughTunnel();
+	void small_turn();
+
+
 };
 
 } /* namespace blaze */

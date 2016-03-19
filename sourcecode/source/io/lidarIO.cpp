@@ -44,8 +44,6 @@ lidarIO::~lidarIO() {
 
 int lidarIO::lidarFileDescriptor = -1;
 
-
-
 double * lidarIO::getData(int fd, double *returnArray){
 
 	/*
@@ -70,7 +68,7 @@ double * lidarIO::getData(int fd, double *returnArray){
 	 */
 	while (dontStopLoop) {
 		//sleep thread for a moment...
-		usleep(1000); //sleep thread
+		usleep(500); //sleep thread
 
 		//character buffer
 		char buffer[64] = {0};
@@ -139,8 +137,9 @@ double * lidarIO::getData(int fd, double *returnArray){
 
 		if(angle.length() > 0){
 			//write out data if needed...
+
 			//console::debug("adjusted angle: " + to_string(items) + " dist: " + dist  );
-			string str = angle;
+			//string str = angle;
 		}
 		if(!isFinished && angle != "" && startCount){
 			double d = atof (dist.c_str()); //convert string to double
@@ -172,6 +171,9 @@ double * lidarIO::getData(int fd, double *returnArray){
 	console::debug("lidarIO: finished reading lidar data");
 }
 
+
+
+
 int lidarIO::connect(){
 	console::debug( lidarIO::port);
 	console::debug("LidarIO - open file descriptor");
@@ -193,11 +195,26 @@ int lidarIO::connect(){
 	write(lidarFileDescriptor, hideRaw, sizeof(hideRaw));
 	console::debug("LIDAR: show data");
 	write(lidarFileDescriptor, showDist, sizeof(showDist));
-
-
+	this->isConnected = true;
 	return lidarFileDescriptor;
 }
 
+void lidarIO::disconnect(){
+	//not really disconnecting...
+	console::debug("closing file descriptor ");
+	try{
+		close(this->lidarFileDescriptor);
+		this->isConnected = false;
+	}catch ( const std::exception& e ){
+		console::error(e.what());
+	}
+
+}
+
+
+/**
+ * Function to disable the LIDAR
+ */
 void lidarIO::disable(){
 	console::debug("Disable Lidar");
 
@@ -214,6 +231,9 @@ void lidarIO::disable(){
 
 }
 
+/**
+ * Function to set Serial Communication attributes
+ */
 int lidarIO::set_interface_attribs (int fd)
 {
         struct termios tty;

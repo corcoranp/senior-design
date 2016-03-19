@@ -8,6 +8,9 @@
 #ifndef INCLUDE_CONTROLLERS_ARMCONTROLLER_H_
 #define INCLUDE_CONTROLLERS_ARMCONTROLLER_H_
 
+#include "../io/DynaMX12WServo.h"
+#include "../io/StepperMotor.h"
+
 namespace blaze {
 	/*
 	 * The Image Controller is responsible for interacting with the
@@ -15,14 +18,50 @@ namespace blaze {
 	 */
 	class ArmController {
 	public:
-		ArmController();
+		ArmController(StepperMotor *sc);
 		virtual ~ArmController();
-		void reset();
 
+		/**
+		 * Arm Initialization and Control
+		 */
+		void init();
+		void reset();
+		void PrintCommStatus(int CommStatus);
+		void PrintErrorCode();
+
+		long baudRate;
+		bool isConnected;
+		bool isMoving;
+		bool moveCompleted;
+
+		DynaMX12WServo servo20; // MX
+		DynaMX12WServo servo21;
+		DynaMX12WServo servo22;
+		DynaMX12WServo servo23;
+		DynaMX12WServo servo24;
+		DynaMX12WServo servo25;	// MX
+
+		void stopNow();
+
+
+		void startup();
+
+
+		/**
+		 * Servo control system
+		 */
 		void printServoIds();
 
 
+		/**
+		 * Stepper Control system
+		 */
+		void moveStepper();
+
+
+
 	private:
+		StepperMotor *stepper;
 
 	};
 

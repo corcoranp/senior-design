@@ -5,11 +5,11 @@
 #include <cstring>
 #include <unistd.h>
 #include "../../include/controllers/MotorController.h"
-#include "../../include/globals.h"
+
 #include "../../include/system/console.h"
-#include "../../include/system/indicator.h"
 
 using namespace std;
+using namespace blaze;
 
 namespace blaze {
 
@@ -52,11 +52,12 @@ MotorController::MotorController(string m1_pwm_pin, string m2_pwm_pin, int gpio_
 
 
 void MotorController::init(){
+
 	console::debug("init motor controller");
 	this->m1->setPolarity(PWM::POLARITY::ACTIVE_HIGH);
 	this->m2->setPolarity(PWM::POLARITY::ACTIVE_HIGH);
 
-	console::debug("set m1dir as output");
+	//console::debug("set m1dir as output");
 	//this->m1->stop();
 	//this->m2->stop();
 
@@ -83,21 +84,18 @@ void MotorController::engage(int motorID, SPEED speed, MOVEMENT direction){
 	if(motorID == 1){
 		p = this->m1;
 		g = this->gpio_m1_dir;
-		//lights.motor1running(true);
 	}else{
 		g = this->gpio_m2_dir;
 		p = this->m2;
-		//lights.motor2running(true);
 	}
 
 	if(direction == MOVEMENT::FORWARD){
-		g->setValue(GPIO::HIGH);
-	} else {
 		g->setValue(GPIO::LOW);
+	} else {
+		g->setValue(GPIO::HIGH);
 	}
 
 	p->setDutyCycle(this->getSpeed(speed, motorID));
-
 	p->run();
 
 }
@@ -223,6 +221,9 @@ void MotorController::forward(SPEED rate){
 		break;
 	}
 
+	this->gpio_m1_dir->setValue(GPIO::LOW);
+	this->gpio_m2_dir->setValue(GPIO::LOW);
+
 	unsigned int dutym1 = this->m1->getDutyCycle();
 	unsigned int dutym2 = this->m2->getDutyCycle();
 
@@ -252,6 +253,54 @@ void MotorController::backward(){
 
 }
 void MotorController::backward(SPEED rate){
+	this->threadedStepNumber = 5;
+
+		switch(rate){
+		case SPEED::EIGHTH:
+			this->new_velocity = MOTOR_MAX_DUTY / 8;
+			break;
+		case SPEED::QUARTER:
+			this->new_velocity = MOTOR_MAX_DUTY / 4;
+			break;
+		case SPEED::THREE_EIGHTH:
+			this->new_velocity = MOTOR_MAX_DUTY * 0.375;
+			break;
+		case SPEED::HALF:
+			this->new_velocity = MOTOR_MAX_DUTY / 2;
+			break;
+		case SPEED::FIVE_EIGHTH:
+			this->new_velocity = MOTOR_MAX_DUTY * 0.625;
+			break;
+		case SPEED::THREE_QUARTER:
+			this->new_velocity = MOTOR_MAX_DUTY * 0.75;
+			break;
+		case SPEED::SEVEN_EIGHTH:
+			this->new_velocity = MOTOR_MAX_DUTY * 0.875;
+			break;
+		case SPEED::FULL:
+			this->new_velocity = MOTOR_MAX_DUTY;
+			break;
+		}
+
+		this->gpio_m1_dir->setValue(GPIO::HIGH);
+		this->gpio_m2_dir->setValue(GPIO::HIGH);
+
+		unsigned int dutym1 = this->m1->getDutyCycle();
+		unsigned int dutym2 = this->m2->getDutyCycle();
+
+		this->velocity_step = this->new_velocity / 5;
+
+
+		this->threadedStepPeriod=100; //if you ever wanted to stop over time...
+		this->threadRunning = true;
+
+		if(pthread_create(&this->thread, NULL, &threadedForward, static_cast<void*>(this))){
+			perror("StepperMotor: Failed to create the stepping thread");
+			cout << "error" << endl;
+			//console->error("MotorController: Failed to create the stepping thread");
+			this->threadRunning = false;
+			return;
+		}
 
 }
 
@@ -278,8 +327,7 @@ void MotorController::stop(){
     }
 }
 void MotorController::stopNow(){
-	//lights.motor1running(false);
-	//lights.motor2running(false);
+
 	this->m1->setDutyCycle(ZERO);
 	this->m2->setDutyCycle(ZERO);
 }
@@ -287,44 +335,51 @@ void MotorController::stopNow(){
 
 void* threadedForward(void *value){
 	MotorController *mc = static_cast<MotorController*>(value);
-	//cout << " forward" << endl;
 	unsigned int dutym1 = mc->m1->getDutyCycle();
 	unsigned int dutym2 = mc->m2->getDutyCycle();
 	unsigned int new_velocity = 0;
 	bool isStepUp = true;
 	unsigned int adj;
+
 	if(dutym1 > mc->new_velocity){
-		//step down
+		console::debug("Step Down");
+		//Default to step up...however if the duty is higher than the new velocity, step down
 		isStepUp = false;
 		new_velocity = mc->new_velocity;
 	}
 
+	//start motors
 	mc->m1->run();
 	mc->m2->run();
 
 	while(mc->threadRunning){
-		//mc->correctionFactor
+
 
 		if(isStepUp){
 			new_velocity = new_velocity + mc->velocity_step;
+
+			//Only increase if the new velocity is faster
 			if(dutym1 < new_velocity){
-				//adj = new_velocity * mc->correctionFactor;
-				mc->m1->setDutyCycle(new_velocity );
-				dutym1 = new_velocity;
+				//adj = new_velocity * mc->m1_correctionFactor;
+				//mc->m1->setDutyCycle(new_velocity );
+				//dutym1 = new_velocity;
+				mc->m1->setDutyCycle((unsigned int)(new_velocity*mc->m1_correctionFactor) );
+				dutym1 = new_velocity*mc->m1_correctionFactor ;
 			}
 
 			if(dutym2 < new_velocity){
-				mc->m2->setDutyCycle(new_velocity);
-				dutym2 = new_velocity;
+				mc->m2->setDutyCycle((unsigned int)(new_velocity*mc->m2_correctionFactor) );
+				dutym2 = new_velocity*mc->m2_correctionFactor ;
 			}
 		}else{
+			//step down to new velocity
 			new_velocity = new_velocity - mc->velocity_step;
-				//adj = new_velocity * mc->correctionFactor;
-				mc->m1->setDutyCycle(new_velocity);
-				dutym1 = new_velocity;
 
-				mc->m2->setDutyCycle(new_velocity);
-				dutym2 = new_velocity;
+				mc->m1->setDutyCycle((unsigned int)(new_velocity*mc->m1_correctionFactor) );
+				dutym1 = new_velocity*mc->m1_correctionFactor ;
+
+				mc->m2->setDutyCycle((unsigned int)(new_velocity*mc->m2_correctionFactor) );
+				dutym2 = new_velocity*mc->m2_correctionFactor ;
 		}
 
 

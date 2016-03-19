@@ -8,10 +8,11 @@
 #ifndef INCLUDE_CONTROLLERS_MOTORCONTROLLER_H_
 #define INCLUDE_CONTROLLERS_MOTORCONTROLLER_H_
 
-
+#include "../../include/globals.h"
 #include "../enums.h"
 #include "../io/pwm.h"
 #include "../io/gpio.h"
+#include "../../include/system/indicator.h"
 
 namespace blaze {
 
@@ -55,7 +56,12 @@ class MotorController {
 
 		friend void* threadedForward(void *value);
 
+		/**
+		 * Thread control
+		 */
 		bool isBusy();
+
+
 
 
 	private:

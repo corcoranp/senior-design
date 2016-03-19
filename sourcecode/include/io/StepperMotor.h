@@ -81,6 +81,7 @@ public:
    virtual void disable();//PMC added
    virtual bool isEnabled() {return enabled; } //PMC added
    virtual bool  isAsleep() { return asleep; }
+
    virtual ~StepperMotor();
 
 private:

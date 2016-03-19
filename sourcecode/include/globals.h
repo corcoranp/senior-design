@@ -13,10 +13,24 @@
 #include <cstring>
 #include <unistd.h>
 #include <mutex>
+#include <math.h>
 
 #include "model/waypoint.h"
 
 using namespace std;
+#ifndef ANG_TO_RAD
+#define ANG_TO_RAD(angle) ((angle*M_PI)/180.0)
+#endif
+
+#ifndef RAD_TO_ANG
+#define RAD_TO_ANG(x) ((x*180.0)/M_PI)
+#endif
+
+#ifndef uint8_t
+typedef unsigned char uint8_t;
+#endif
+
+extern bool isValueEqual(double a, double b, double acc);
 
 	extern double dist[365];
 	extern mutex bot_mutex;
@@ -46,12 +60,13 @@ using namespace std;
 
 	extern int gpio_start_switch;
 	extern int gpio_stop_switch;
+	extern int gpio_stepper_sleep;
 	extern int gpio_stepper_dir;
 	extern int gpio_stepper_step;
 	extern int gpio_stepper_rst;
 	extern int gpio_stepper_ms3;
 	extern int gpio_stepper_ms2;
-	extern int gpio_stepper_m1;
+	extern int gpio_stepper_ms1;
 	extern int gpio_stepper_en;
 	extern int gpio_stepper_lsw;
 	extern int gpio_stepper_rsw;
@@ -104,7 +119,12 @@ using namespace std;
 	extern string LIDAR_PORT;
 	extern int FRONT_MAX;
 	extern int FRONT_MIN;
-
+	extern int BACK_MAX;
+	extern int BACK_MIN;
+	extern int RIGHT_MAX;
+	extern int RIGHT_MIN;
+	extern int LEFT_MAX;
+	extern int LEFT_MIN;
 
 	extern string STORAGE_PWM;
 

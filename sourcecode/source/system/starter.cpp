@@ -6,7 +6,7 @@
  */
 
 #include "../../include/system/starter.h"
-
+#include <unistd.h>
 namespace blaze {
 
 starter::starter(GPIO *gpio_start, GPIO *gpio_stop){
@@ -15,8 +15,9 @@ starter::starter(GPIO *gpio_start, GPIO *gpio_stop){
 }
 starter::starter(int gpio_start, int gpio_stop){
 	this->gpio_start = new GPIO(gpio_start);
+	//usleep(100);
 	this->gpio_stop = new GPIO(gpio_stop);
-
+	//usleep(100);
 	this->gpio_start->setDirection(GPIO::INPUT);
 	this->gpio_stop->setDirection(GPIO::INPUT);
 }

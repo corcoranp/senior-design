@@ -21,42 +21,55 @@
 
 #include <iostream>
 #include <math.h>
-
-
-
+#include "../system/starter.h"
 #include "../system/indicator.h"
 #include "../model/port.h"
 
 /*
  * Reference the other controller classes
  */
+
 #include "ArmController.h"
 #include "ImagingController.h"
 #include "MotorController.h"
-#include "NavigationController.h"
+
 #include "StorageController.h"
+#include "NavigationController.h"
+#include "../io/StepperMotor.h"
 
 namespace blaze {
+
 	/*
  	 * GLOBAL ROBOT PROPERTIES
  	 */
 	extern int velocity;
-	//extern int max_velocity =100;
-	//extern int low_velocity = 10;
 
 	class RobotController {
 		public :
 
 		static void *entry(void *arg);
+		static bool getIsRunning();
+		static void setIsRunning(bool val);
 		void start();							//Method for starting the Robot
 		void reset();
+
 
 		bool isSystemReady = false;
 		bool isHardwareReady = false;
 		bool isSensorsReady = false;
 		bool isReady = false;
+		static bool m_isRunning;
 
-		indicator state_display;
+		static starter *control_buttons;
+		static indicator *state_display;
+
+		static MotorController *motorControl;
+		static StepperMotor *stepperControl;
+		static ArmController *armControl;
+		static StorageController *storageControl;
+		static ImagingController *imageControl;
+		static NavigationController *navControl;
+
 
 		port currentPort;
 
@@ -68,7 +81,7 @@ namespace blaze {
 			void sensorCheck();
 			void readyStateCheck();
 
-			MotorController *motorControl;
+
 	};
 
 
