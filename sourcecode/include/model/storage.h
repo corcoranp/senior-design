@@ -8,7 +8,7 @@
 #ifndef STORAGE_H_
 #define STORAGE_H_
 
-#include "inventory.h";
+#include "inventory.h"
 
 using namespace std;
 

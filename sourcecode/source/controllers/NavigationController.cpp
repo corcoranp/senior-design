@@ -19,11 +19,7 @@
 #include "../../include/controllers/MotorController.h"
 #include "../../include/controllers/NavigationController.h"
 
-
-
 using namespace std;
-
-
 int angle_in_radians = 0; // Change this value from 0 to output the angle in radians
 
 namespace blaze {
@@ -301,8 +297,6 @@ void NavigationController::calculateMinimum(angleRange *p){
 	int index;
 	double minimum = 5000.0;
 	int minIndex = 0;
-
-
 
 	for (int k=p->MaximumAngle; k>=p->MinimumAngle; k--){
 			if (k<=0){

@@ -1,5 +1,6 @@
 
 #include "../include/globals.h"
+#include "../include/enums.h"
 #include <cmath>
 
 using namespace std;
@@ -137,4 +138,12 @@ char* blaze::string2char (string s){
 
 bool isValueEqual(double a, double b, double acc) {
 	return abs(a - b) < acc;
+}
+
+QUADRANT inQuadrant(int angle){
+	QUADRANT q;
+	if(angle >= 0 && angle < 90){
+		q = QUADRANT::I;
+	}
+	if(angle >= 90 && angle < 180)
 }
