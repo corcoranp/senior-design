@@ -32,7 +32,6 @@
 #include "ArmController.h"
 #include "ImagingController.h"
 #include "MotorController.h"
-
 #include "StorageController.h"
 #include "NavigationController.h"
 #include "../io/StepperMotor.h"
@@ -72,7 +71,7 @@ namespace blaze {
 
 
 		port currentPort;
-
+		workqueue<measurement*>* m_queue;
 
 
 		private:

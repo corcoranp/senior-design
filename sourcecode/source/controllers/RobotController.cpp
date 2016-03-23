@@ -17,6 +17,7 @@
  *
  */
 #include <iostream>
+#include "pthread.h"
 #include <map>
 #include <string>
 
@@ -60,36 +61,20 @@ void RobotController::setIsRunning(bool val){
  */
 void RobotController::start(){
 	console::debug("RobotController Started");
+
 	//Thread that runs the main robot functions.
 	console::debug("Setup Display buttons");
-
 	state_display = new indicator( gpio_led1,  gpio_led2,  gpio_led3,  gpio_led4 );
 
 	console::debug("Setup up Control buttons");
 	control_buttons = new starter( gpio_start_switch,  gpio_stop_switch);
 
 
-
-
-	console::debug("Hello, My name is BLAZE...let me take you on a journey...");
-	console::debug("Press the start button when ready to begin...");
-
-	while(!control_buttons->isStartPressed()){
-		 //wait until start is pressed...
-		 usleep(100000);
-		 state_display->blink(100,indicator::LED::TOP);
-	 }
-
-	console::debug("Let's begin.");
-	//state_display.started();
-	state_display->on(2);
-
-
 	console::debug("Setup Motor Controller");
-
 	motorControl = new MotorController(M1_PWM, M2_PWM, gpio_motor1_dir, gpio_motor2_dir );
 	console::debug("RC: MC-> All Stop");
 	motorControl->stop();
+
 
 	//Zero Robot....
 	console::debug("Setup Navigation Controller");
@@ -107,7 +92,17 @@ void RobotController::start(){
 	storageControl = new StorageController(STORAGE_PWM);
 	storageControl->setRestPosition();
 
+	console::debug("Hello, My name is BLAZE...let me take you on a journey...");
+	console::debug("Press the start button when ready to begin...");
+	while(!control_buttons->isStartPressed()){
+		 //wait until start is pressed...
+		 usleep(10000);
+		 state_display->blink(100,indicator::LED::TOP);
+	 }
 
+	console::debug("Let's begin.");
+	//state_display.started();
+	state_display->on(2);
 
 	//double x = navControl->getPosition(Face::Front, DistType::Theta);
 	//console::debug( "NC.getPosition = " +  to_string(x) );
@@ -117,26 +112,73 @@ void RobotController::start(){
 	 * Execusion code....
 	 *
 	 */
+
 	state_display->on(3);
+	//start position monitor...
+
+	console::debug("work queue setup");
+	workqueue<measurement*> location_queue;
+	console::debug("set queue on nav controller");
+	NavigationController::m_queue = &location_queue;
+
+	console::debug("define pthread");
+
+	pthread_t navLocalization;
+	console::debug("result..");
+
+	void* result;
+	 if(pthread_create(&navLocalization, NULL, &NavigationController::localize, &this->navControl)){
+		return;
+	}
+
+	 console::debug("While loop");
+	while(1){
+
+		if(location_queue.size() > 0){
+
+			//cout << "Item removed from queue...Items in queue: " + to_string(location_queue.size()) << endl;
+
+			measurement* mea = location_queue.remove();
+
+			/*int i;
+			for(i=0; i<=360;i++){
+				cout << to_string(i) + "=" + to_string(mea->distances[i]) + "; " << endl;
+			}*/
+
+			cout << to_string(0) + "=" + to_string(mea->distances[0]) + "; " << endl;
+			cout << " Theta: " + to_string(mea->getIndexOfMinimumInRange(30, -30)) << endl;
+			cout << " Theta: " + to_string(mea->calculateThetaInRange(30, -30, Face::Right)) << endl;
+
+		}else{
+			//cout << "No items in queue" << endl;
+		}
+
+		usleep(100000);
+
+	}
+	console::debug("Finished the while loop");
+	pthread_join (navLocalization, &result);
+
+	//determine which port
 	PortConfig pc = navControl->determinePort();
 
 
-
 	if(pc == PortConfig::A){
-		//turn right
+		//solve port A (right out of tunnel)
 		console::debug("Current Port Config: A");
+
 	}
 	if(pc == PortConfig::B){
-		//turn left
+		//solve port B (left out of tunnel)
 		console::debug("Current Port Config: B");
+
+
 	}
 
 
 
 	navControl->moveUntil(300, MOVEMENT::FORWARD);
-
 	storageControl->setDrivePostion();
-
 	navControl->turn(0,0);
 
 
@@ -146,6 +188,8 @@ void RobotController::start(){
 		navControl->moveUntil(300, MOVEMENT::FORWARD);
 		navControl->turn(0,0);
 	}
+
+
 
 	if(pc == PortConfig::A){
 		//turn right
@@ -157,8 +201,6 @@ void RobotController::start(){
 		console::debug("Current Port Config: B");
 		//navControl->move(WALL_FOLLOWING::RIGHT, 300, 0,200);
 	}
-
-
 
 	//armControl->startup();
 

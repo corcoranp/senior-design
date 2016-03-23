@@ -17,11 +17,13 @@ namespace blaze{
 	enum SPEED {EIGHTH, QUARTER, THREE_EIGHTH, HALF, FIVE_EIGHTH, THREE_QUARTER, SEVEN_EIGHTH, FULL };
 	enum WALL_FOLLOWING {RIGHT, LEFT, DISABLED};
 
-	enum Face {Front, Left, Right, Back, Front_L, Front_C, Front_R, Back_L, Back_C, Back_R};
+	enum Face {Right, Front, Left, Rear };
 	enum DistType {Avg, Min, Max, Theta};
 	enum MOVEMENT {FORWARD, REVERSE};
 
 	enum QUADRANT { I, II, III, IV, NONE};
+	enum CARDINAL { NORTH, SOUTH, EAST, WEST};
+
 }
 
 

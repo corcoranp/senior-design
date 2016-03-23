@@ -14,9 +14,7 @@
 #include <cstdlib>
 #include <cstring>
 #include <unistd.h>
-
 #include <termio.h>
-#include <unistd.h>
 #include "../include/controllers/dynamixel.h"
 
 /*

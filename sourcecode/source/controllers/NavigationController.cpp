@@ -14,6 +14,7 @@
 #include "../../include/enums.h"
 #include "../../include/globals.h"
 #include "../include/system/console.h"
+#include "../include/model/measurement.h"
 
 
 #include "../../include/controllers/MotorController.h"
@@ -24,6 +25,8 @@ int angle_in_radians = 0; // Change this value from 0 to output the angle in rad
 
 namespace blaze {
 
+
+workqueue<measurement*>* NavigationController::m_queue = 0;
 MotorController *NavigationController::motorController = 0 ;
 
 /*
@@ -31,7 +34,10 @@ MotorController *NavigationController::motorController = 0 ;
  */
 NavigationController::NavigationController(MotorController *mc){
 	motorController = mc;
+	hasQueue = false;
+	isLocalizing = false;
 	this->init();
+
 }
 
 void NavigationController::addMotorController(MotorController *mc){
@@ -39,9 +45,8 @@ void NavigationController::addMotorController(MotorController *mc){
 }
 
 void NavigationController::init(){
-
-	lidar = lidarIO(LIDAR_PORT);
-	lidar.connect();
+	lidar = new lidarIO(LIDAR_PORT);
+	//lidar->connect();
 
 	/**
 	 * Added by Terance
@@ -57,9 +62,116 @@ void NavigationController::init(){
 
 }
 
+
+
 NavigationController::~NavigationController() {
 	// TODO Auto-generated destructor stub
 }
+
+
+
+void *NavigationController::localize(void *value){
+	NavigationController *self = (NavigationController *)value;
+
+	if(self == NULL){
+		console::debug("Self is null.");
+	}
+	console::debug("Navigation Controller :: localization function");
+	//if(!self->lidar->isConnected){
+	lidarIO*  l = new lidarIO(LIDAR_PORT);
+	l->connect();
+	//}
+	self->hasQueue = false;
+	self->isLocalizing = true;
+	int items = 0;
+	measurement* m = new measurement();;
+
+	/*
+	 * Main while loop for getting data from lidar
+	 * Should not stop until 360 degrees collected...
+	 */
+	while (self->isLocalizing) {
+		usleep(1000); //sleep thread
+		char buffer[64] = {0};
+		int pos = 0;
+		size_t posi = 0;
+		string angle = "";
+		string delimiter = " ";
+		string token;
+		string dist;
+		int count;
+		count = 1;			//	start count at 1
+		bool isFinished = false;
+
+		//reads buffer
+		while( pos <= 64 ) {
+			read(l->lidarFileDescriptor, buffer+pos, 1);
+			if( buffer[pos] == '\n' || buffer[pos] == '\r') break;
+				pos++;
+		}
+		string s(buffer); 	// 	convert buffer into string
+
+
+		//parse items in line
+		while ((posi = s.find(delimiter)) != std::string::npos) {
+			token = s.substr(0, posi);
+			if(token.length() < 1) break;
+			if(token == "Time"){
+				isFinished = true;
+			}
+			if(count == 1 && !isFinished){
+				token.pop_back();
+				angle = token;
+				items++;
+			}
+			if(count == 2 && !isFinished){
+				dist = token;
+			}
+			s.erase(0, posi + delimiter.length());
+			count++;
+		} //end while
+
+		if(angle.length() > 0 && angle.length() < 4){
+			//Angle has data
+
+			double d = atof (dist.c_str()); //convert string to double
+			int a = atoi(angle.c_str());
+			a = a-l->zeroRef;
+
+			if(a<0){
+				a = a+360;
+			}
+			m->addDistance(a, d);
+
+			if(a >= 359 ){
+				self->m_queue->add(m);
+				//console::debug("Create new measure: " );
+				m = new measurement();
+			}
+
+		}
+
+		/*if(!isFinished && angle != "" ){
+			double d = atof (dist.c_str()); //convert string to double
+			if(items < 360){
+				//cout << "Adding: " + to_string(d) << endl;
+				m->addDistance(items, d);
+			}
+		}*/
+		//reset items, add measure to queue...
+		/*if(angle == to_string(l->zeroRef)){
+			items = 0;
+			self->m_queue->add(m);
+			m = new measurement();
+		}*/
+
+		count = 0; 	//reset angle data...
+		angle = "";
+		dist  = "";
+	}
+}
+
+
 
 /**
  * Function for stopping navigation controller
@@ -67,7 +179,7 @@ NavigationController::~NavigationController() {
 void NavigationController::stopNow(){
 
 	//TODO: implement method
-	lidar.disconnect();
+	lidar->disconnect();
 }
 
 
@@ -83,10 +195,8 @@ PortConfig NavigationController::determinePort(){
 		left_max = 0;
 		right_max = 0;
 
-		//lidarIO lidar(LIDAR_PORT);
-		//lidar.connect();
 		console::debug("LIDAR: get Data");
-		lidar.getData(lidar.lidarFileDescriptor, data);
+		lidar->getData(lidar->lidarFileDescriptor, data);
 
 		for (i=17; i<=50; i++){
 			if(data[i] > left_max) {
@@ -120,7 +230,7 @@ PortConfig NavigationController::determinePort(){
 
 void NavigationController::updateLocation(){
 	console::debug("NAV: Update Location");
-	lidar.getData(lidar.lidarFileDescriptor, data);
+	lidar->getData(lidar->lidarFileDescriptor, data);
 	this->offset_correction();
 
 	this->calculateAverage(&currentFrontPos);
@@ -150,7 +260,7 @@ void NavigationController::updateLocation(){
 double NavigationController::getPosition (Face f, DistType dt){
 
 	console::debug("LIDAR: get Data");
-	lidar.getData(lidar.lidarFileDescriptor, data);
+	lidar->getData(lidar->lidarFileDescriptor, data);
 
 
 	this->calculateAverage(&currentFrontPos);
@@ -189,7 +299,7 @@ double NavigationController::getPosition (Face f, DistType dt){
 		case Face::Front :
 			i = 140;	j = 42;		break;
 
-		case Face::Back :
+		case Face::Rear :
 
 			i = 302;	j = 238;	break;
 		case Face::Right :
@@ -200,12 +310,12 @@ double NavigationController::getPosition (Face f, DistType dt){
 
 			i = 205;	j = 155;	break;
 
-		case Face::Front_L :	i = 140;	j = 107;	break;
+		/*case Face::Front_L :	i = 140;	j = 107;	break;
 		case Face::Front_C : 	i = 106; 	j = 74;		break;
 		case Face::Front_R: 	i = 75; 	j = 42;		break;
 		case Face::Back_L :		i = 309;	j = 284;	break;
 		case Face::Back_C :		i = 283;	j = 258;	break;
-		case Face::Back_R :		i = 257;	j = 231;	break;
+		case Face::Back_R :		i = 257;	j = 231;	break;*/
     }
 
 	for (k=i; k>=j; k--){
@@ -273,7 +383,7 @@ double NavigationController::getPosition (Face f, DistType dt){
 				cout << endl;
 				resultantValue = minIndex - 90;
 				break;
-			case Face::Back :
+			case Face::Rear :
 				resultantValue = minIndex - 270;
 				break;
 			}
@@ -451,13 +561,8 @@ void NavigationController::offset_correction(){
 	double y1;
 	double dt;
 	int theta;
-	//int theta_prime;
-	//double updated_data[360];
+
 	int i;
-	double theta_q1 = i*0.0174533; //radians
-	double theta_q2 = (180 - i)*0.0174533;
-	double theta_q3 = (i -180)*0.0174533;
-	double theta_q4 = (360 -i)*0.0174533;
 
 	for(i=0; i<90; i++){
 
@@ -465,8 +570,7 @@ void NavigationController::offset_correction(){
 		y1=(data[i]*sin(theta)) + (41);
 		dt = sqrt(pow(x1,2)+pow(y1,2));
 		data[i] = dt;
-		//theta_prime = (int) (acos(x1/dt)/0.0174533);
-		//updated_data[theta_prime] = dt;
+
 	}
 
 	for(i=90; i<180; i++){
@@ -475,8 +579,7 @@ void NavigationController::offset_correction(){
 		y1=(data[i]*sin(theta)) + (41);
 		dt = sqrt(pow(x1,2)+pow(y1,2));
 		data[i] = dt;
-		//theta_prime = (int) (180 - (acos(x1/dt)/0.0174533));
-		//updated_data[theta_prime] = dt;
+
 	}
 	for(i=180; i<270; i++){
 		theta = (i -180)*0.0174533;
@@ -484,8 +587,7 @@ void NavigationController::offset_correction(){
 		y1=(data[i]*sin(theta)) + (41);
 		dt = sqrt(pow(x1,2)+pow(y1,2));
 		data[i] = dt;
-		//theta_prime = (int)((acos(x1/dt)/0.0174533) + 180);
-		//updated_data[theta_prime] = dt;
+
 	}
 	for(i=270; i<360; i++){
 		theta = (360 -i)*0.0174533;
@@ -493,8 +595,7 @@ void NavigationController::offset_correction(){
 		y1=(data[i]*sin(theta)) + (41);
 		dt = sqrt(pow(x1,2)+pow(y1,2));
 		data[i] = dt;
-		//theta_prime = (int)(360 - (acos(x1/dt)/0.0174533));
-		//updated_data[theta_prime] = dt;
+
 	}
 }
 

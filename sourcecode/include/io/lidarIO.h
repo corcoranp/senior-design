@@ -14,6 +14,9 @@
 #include <termios.h>
 #include <vector>
 #include "../globals.h"
+#include "../system/workQueue.h"
+#include "../model/measurement.h"
+#include "pthread.h"
 using namespace std;
 
 
@@ -26,22 +29,24 @@ void lidar_close();
 namespace blaze {
 
 class  lidarIO {
+
 public:
 
-	lidarIO(){
+	//lidarIO( workqueue<measurement*>& queue) : m_queue(queue)  {
+	lidarIO( )  {
 		isConnected = false;
-		zeroRef = 0;
 		port = "";
+		isPaused = false;
 	}
-	lidarIO(char * p){
+	lidarIO(char * p) {
 		isConnected = false;
-		zeroRef = 0;
 		port = p;
+		isPaused = false;
 	}
-	lidarIO(string p){
+	lidarIO(string p)  {
 		isConnected = false;
-		zeroRef = 0;
 		port = string2char(p);
+		isPaused = false;
 	}
 	virtual ~lidarIO();
 
@@ -50,7 +55,8 @@ public:
 	*/
 	static int lidarFileDescriptor;
 	double * getData(int fd, double *returnArray);
-	int zeroRef;
+
+	static const int zeroRef = 207;
 
 
 	/**
@@ -58,15 +64,24 @@ public:
 	 */
 	int connect();
 	void disconnect();
+
 	void disable();
 	int set_interface_attribs(int fd);
-	bool isConnected;
-	char * port;
 
+	void showDistances(bool enable);
+	void enableMotor (bool enable);
+	void showRaw (bool enable);
+	void pause(bool enable);
+
+
+	bool isConnected;
+	bool isPaused;
+	char * port;
 
 
 private:
 	void debug(char * msg);
+
 
 };
 

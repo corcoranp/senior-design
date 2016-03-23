@@ -22,10 +22,6 @@ using namespace std;
 using namespace blaze;
 
 int lidar_fd = -1;
-
-int lidar_open(int deviceIndex){}
-void lidar_close(){}
-
 pdata *pdata::s_instance = 0;
 
 
@@ -41,16 +37,13 @@ lidarIO::~lidarIO() {
 	lidar.connect();
 	lidar.getData(lidar.lidarFileDescriptor);
  */
-
 int lidarIO::lidarFileDescriptor = -1;
 
+
+
+
+
 double * lidarIO::getData(int fd, double *returnArray){
-
-	/*
-	 * Zero Reference is the angle that represents 0 degrees
-	 */
-	zeroRef = 207;
-
 
 	/*
 	 * Control flag for determining when to start the "counter"
@@ -173,7 +166,6 @@ double * lidarIO::getData(int fd, double *returnArray){
 
 
 
-
 int lidarIO::connect(){
 	console::debug( lidarIO::port);
 	console::debug("LidarIO - open file descriptor");
@@ -184,20 +176,65 @@ int lidarIO::connect(){
 	console::debug("LidarIO: set interface attribs");
 	set_interface_attribs(lidarFileDescriptor);
 
-
 	//send lidar control commands...
-	char hideRaw[] = "HideRaw \n\r";
-	char showDist[] = "ShowDist \n\r";
-	char motorOn[] = "MotorOn \n\r";
-	console::debug("LIDAR: hide raw data");
-
-	write(lidarFileDescriptor, motorOn, sizeof(motorOn));
-	write(lidarFileDescriptor, hideRaw, sizeof(hideRaw));
-	console::debug("LIDAR: show data");
-	write(lidarFileDescriptor, showDist, sizeof(showDist));
 	this->isConnected = true;
+	this->showRaw(false);
+	this->showDistances(true);
 	return lidarFileDescriptor;
 }
+
+void lidarIO::showDistances(bool enable){
+
+	char showDist[] = "ShowDist \n\r";
+	char hideDist[] = "HideDist \n\r";
+	if(!this->isConnected) return;
+
+	if(enable){
+		console::debug("LIDAR: show Distance");
+		write(lidarFileDescriptor, showDist, sizeof(showDist));
+		console::debug("LIDAR: show Distance Finished");
+	}else{
+		console::debug("LIDAR: hide Distance");
+		write(lidarFileDescriptor, hideDist, sizeof(hideDist));
+	}
+}
+void lidarIO::enableMotor (bool enable){
+	console::debug("LIDAR: enableMotor");
+	char motorOn[] = "MotorOn \n\r";
+	char motorOff[] = "MotorOff \n\r";
+
+	if(!this->isConnected) return;
+
+	if(enable){
+		write(lidarFileDescriptor, motorOn, sizeof(motorOn));
+	}else{
+		write(lidarFileDescriptor, motorOff, sizeof(motorOff));
+	}
+}
+void lidarIO::showRaw (bool enable){
+
+	char showRaw[] = "ShowRaw \n\r";
+	char hideRaw[] = "HideRaw \n\r";
+
+	if(!this->isConnected) return;
+
+	if(enable){
+		console::debug("LIDAR: show Raw");
+		write(lidarFileDescriptor, showRaw, sizeof(showRaw));
+	}else{
+		console::debug("LIDAR: hide Raw");
+		write(lidarFileDescriptor, hideRaw, sizeof(hideRaw));
+	}
+}
+
+void lidarIO::pause(bool enable){
+	showDistances(!enable);
+	showRaw(!enable);
+	this->isPaused = enable;
+}
+
+
+
 
 void lidarIO::disconnect(){
 	//not really disconnecting...
@@ -208,9 +245,7 @@ void lidarIO::disconnect(){
 	}catch ( const std::exception& e ){
 		console::error(e.what());
 	}
-
 }
-
 
 /**
  * Function to disable the LIDAR

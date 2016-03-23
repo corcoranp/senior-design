@@ -188,7 +188,9 @@ namespace blaze {
 	 *
 	 */
 	typedef int (*CallbackType) (int);
+
 }
+
 
 
 

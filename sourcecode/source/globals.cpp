@@ -142,8 +142,10 @@ bool isValueEqual(double a, double b, double acc) {
 
 QUADRANT inQuadrant(int angle){
 	QUADRANT q;
-	if(angle >= 0 && angle < 90){
-		q = QUADRANT::I;
-	}
-	if(angle >= 90 && angle < 180)
+	if(angle >= 0 && angle < 90){ q = QUADRANT::I; }
+	if(angle >= 90 && angle < 180){ q = QUADRANT::II; }
+	if(angle >= 180 && angle < 270){ q = QUADRANT::III; }
+	if(angle >= 270 && angle < 360){ q = QUADRANT::IV; }
+
+	return q;
 }

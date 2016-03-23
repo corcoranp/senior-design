@@ -17,7 +17,7 @@ namespace blaze {
 
 class NavigationController {
 private:
-	lidarIO lidar;
+	lidarIO *lidar;
 
 
 public:
@@ -34,6 +34,14 @@ public:
 	angleRange currentFrontPos;
 	angleRange currentLeftPos;
 	angleRange currentBackPos;
+
+	static void *localize(void *value);
+	static workqueue<measurement*>* m_queue;
+	//void enableLocalication(bool enable);
+	//void addQueue(workqueue<measurement*>* q);
+
+	bool isLocalizing;
+	bool hasQueue;
 
 	void stopNow();
 

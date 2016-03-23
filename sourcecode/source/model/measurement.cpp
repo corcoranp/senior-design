@@ -5,20 +5,35 @@
  *      Author: Peter
  */
 
+
 #include "../../include/globals.h"
-#include "measurement.h"
+#include "../../include/model/measurement.h"
 
-measurement::measurement() {
-	// TODO Auto-generated constructor stub
-
-}
+namespace blaze {
 
 measurement::~measurement() {
 	// TODO Auto-generated destructor stub
 }
 
 
+void measurement::addDistance(int angle, double dist){
 
+	this->distances[angle] = dist;
+/*
+	if(dist>1){
+		double x1 = (dist*cos(angle)) + (-39);
+		double y1 = (dist*sin(angle)) + (41);
+		this->distances[angle] = sqrt( (pow(x1, 2) + pow(y1,2)) ); // dist;
+		x[angle] = x1;
+		y[angle] = y1;
+	}else{
+		this->distances[angle] = 0;
+		x[angle] = 0;
+		y[angle] = 0;
+	}
+
+*/
+}
 
 /*
  * Used to calculate the Minimum distance in position object
@@ -33,8 +48,8 @@ double measurement::getMinimumInRange(int maximumAngle, int minimumAngle){
 			} else{
 				index = k;
 			}
-			if ((distances[index]<minimum) && (distances[index] != 0)){
-				minimum = distances[index];
+			if ((this->distances[index]<minimum) && (this->distances[index] != 0)){
+				minimum = this->distances[index];
 			}
 
 	}
@@ -127,40 +142,33 @@ double measurement::calculateAverageInRange(int maximumAngle, int minimumAngle){
 }
 
 /*
- * Used to calculate the Theta angle, compared to a wall
+ * Used to calculate the Theta angle, compared to a wall.  The Cardinal is the the
  */
-double measurement::calculateThetaInRange(int maximumAngle, int minimumAngle){
+double measurement::calculateThetaInRange(int maximumAngle, int minimumAngle, Face f){
 
+	double theta = -1;
 	int index;
 	index = this->getIndexOfMinimumInRange(maximumAngle, minimumAngle);
 
-
-
-
-	//find the quadrant the min index is in...
-
-	// Check to see if maximum angle is LEFT maximum
-	if(	maximumAngle==LEFT_MAX){
-		resultantValue = minIndex - 180;
+	if(f == Face::Front){
+		theta = 90-index;
 	}
-	//check to see if maximum is the RIGHT maximum
-	else if(maximumAngle == RIGHT_MAX) {
-		if(minIndex<=0){
-			resultantValue = minIndex;
-		}else{
-			resultantValue = minIndex - 360;
-		}
+	if(f == Face::Rear){
+		theta = 270 - index;
 	}
-	else if(maximumAngle==FRONT_MAX){
-		resultantValue = minIndex - 90;
+	if(f == Face::Left){
+		theta = 180-index;
 	}
-	else{
-		resultantValue = minIndex - 270;
+	if(f == Face::Right){
+		theta = 360-index;
 	}
-	//if(angle_in_radians != 0){
-	//	resultantValue *= 0.0174533;
-	//}
 
-	//return
-	return resultantValue;
+	if(theta < 0){
+		theta = theta + 360;
+	}
+
+	return theta;
+}
+
+
 }
