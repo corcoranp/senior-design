@@ -30,6 +30,8 @@ using namespace std;
 using namespace blaze;
 
 bool RobotController::m_isRunning = true;
+bool RobotController::hasPortBeenFound = false;
+PortConfig RobotController::currentPortConfig = PortConfig::UNDEFINED;
 starter *RobotController::control_buttons = 0;
 indicator *RobotController::state_display = 0;
 MotorController *RobotController::motorControl = 0;
@@ -38,6 +40,8 @@ ArmController *RobotController::armControl=0;
 StorageController *RobotController::storageControl = 0;
 ImagingController *RobotController::imageControl = 0;
 NavigationController *RobotController::navControl = 0;
+
+
 
 /*
  * Thread function that will execute when the thread is created
@@ -61,6 +65,7 @@ void RobotController::setIsRunning(bool val){
  */
 void RobotController::start(){
 	console::debug("RobotController Started");
+	//console::debug("ZERO_REF: " + to_string(ZERO_REF));
 
 	//Thread that runs the main robot functions.
 	console::debug("Setup Display buttons");
@@ -75,10 +80,9 @@ void RobotController::start(){
 	console::debug("RC: MC-> All Stop");
 	motorControl->stop();
 
-
 	//Zero Robot....
 	console::debug("Setup Navigation Controller");
-	this->navControl = new NavigationController(motorControl);
+	navControl = new NavigationController(motorControl);
 
 
 	console::debug("Setup Stepper Motor");
@@ -89,23 +93,18 @@ void RobotController::start(){
 	//armControl = new ArmController(stepperControl);
 
 	console::debug("Setup Storage Controller");
-	storageControl = new StorageController(STORAGE_PWM);
+	storageControl = new StorageController(STORAGE_PWM, DRIVE_POSITION, DELIVERY_POSITION, LOAD_POSITION);
 	storageControl->setRestPosition();
 
 	console::debug("Hello, My name is BLAZE...let me take you on a journey...");
 	console::debug("Press the start button when ready to begin...");
+
 	while(!control_buttons->isStartPressed()){
 		 //wait until start is pressed...
 		 usleep(10000);
 		 state_display->blink(100,indicator::LED::TOP);
 	 }
 
-	console::debug("Let's begin.");
-	//state_display.started();
-	state_display->on(2);
-
-	//double x = navControl->getPosition(Face::Front, DistType::Theta);
-	//console::debug( "NC.getPosition = " +  to_string(x) );
 
 	/**********************************************************************************
 	 *
@@ -113,103 +112,125 @@ void RobotController::start(){
 	 *
 	 */
 
-	state_display->on(3);
-	//start position monitor...
+	state_display->offAll();
 
-	console::debug("work queue setup");
+	//start position monitor...
+	console::debug("RobotController: work queue setup");
 	workqueue<measurement*> location_queue;
-	console::debug("set queue on nav controller");
+
+
+	console::debug("RobotController: set queue on nav controller");
 	NavigationController::m_queue = &location_queue;
 
-	console::debug("define pthread");
 
-	pthread_t navLocalization;
-	console::debug("result..");
+	console::debug("RobotController: define navigation thread: navScan");
+	pthread_t navScan;
+	void* result_scan;
+	console::debug("RobotController: Create Thread");
 
-	void* result;
-	 if(pthread_create(&navLocalization, NULL, &NavigationController::localize, &this->navControl)){
+	if(pthread_create(&navScan, NULL, &NavigationController::scan, &navControl)){
 		return;
 	}
+	console::debug("RobotController: Scan Thread Created");
+	QUEUING_ENABLED = true;
+	SCANNING = true;
 
-	 console::debug("While loop");
-	while(1){
+	hasPortBeenFound = false;
+	console::debug("RobotController: Set port has been found to false");
+
+	//determine what port we are in...
+	while(NOT(this->hasPortBeenFound)){
+		//console::debug("RC: Check size of queue;");
 
 		if(location_queue.size() > 0){
-
-			//cout << "Item removed from queue...Items in queue: " + to_string(location_queue.size()) << endl;
-
+			console::debug("Item added to Queue" );
+			//Pull location data from QUEUE:
 			measurement* mea = location_queue.remove();
+			currentPortConfig = navControl->determinePort(mea);
 
-			/*int i;
-			for(i=0; i<=360;i++){
-				cout << to_string(i) + "=" + to_string(mea->distances[i]) + "; " << endl;
-			}*/
+			console::debug("Nav current waypoint" + navControl->lastKnownPoint->toString() );
 
-			cout << to_string(0) + "=" + to_string(mea->distances[0]) + "; " << endl;
-			cout << " Theta: " + to_string(mea->getIndexOfMinimumInRange(30, -30)) << endl;
-			cout << " Theta: " + to_string(mea->calculateThetaInRange(30, -30, Face::Right)) << endl;
+			if(currentPortConfig != PortConfig::UNDEFINED){
+				hasPortBeenFound = true;
+			}
 
-		}else{
-			//cout << "No items in queue" << endl;
 		}
 
-		usleep(100000);
-
+		rest(100);
 	}
+	QUEUING_ENABLED = false; //disable measurement queuing
+
+	//wait .1 second
+	rest(100);
+
+	console::debug("Solve Tunnel");
+	solveTunnel();
+
+	state_display->on(1);
+	solveZoneC();
+
+	state_display->on(2);
+	scanRail();
+
+	state_display->on(3);
+	solveZoneB();
+
+	state_display->on(4);
+	solveZoneA();
+
+
+	dance();
+
+
+//
+//
+//
+//	//All decisions are made based on location context...so
+//	while(true){
+//		if(location_queue.size() > 0){
+//			//Pull location data from QUEUE:
+//			measurement* mea = location_queue.remove();
+//
+//			//check if port has been found...
+//			if(NOT(this->hasPortBeenFound)){
+//
+//			}
+//
+//			//Display location information:
+//			/*int i;
+//			for(i=0; i<=360;i++){
+//				cout << to_string(i) + "=" + to_string(mea->distances[i]) + "; " << endl;
+//			}*/
+//
+//			//Display only Angle 0:
+//			cout << to_string(0) + "=" + to_string(mea->distances[0]) + "; " << endl;
+//			cout << " Theta: " + to_string(mea->getIndexOfMinimumInRange(30, -30)) << endl;
+//			cout << " Theta: " + to_string(mea->calculateThetaInRange(30, -30, Face::Right)) << endl;
+//
+//		}else{
+//			//NO ITEMS IN QUEUE...so just wait...
+//
+//
+//			//How long has no items been in q?  Maybe we need to start the localization function over?
+//		}
+//		usleep(100000);
+//	}
+
+
 	console::debug("Finished the while loop");
-	pthread_join (navLocalization, &result);
-
-	//determine which port
-	PortConfig pc = navControl->determinePort();
+	SCANNING = false;
 
 
-	if(pc == PortConfig::A){
-		//solve port A (right out of tunnel)
-		console::debug("Current Port Config: A");
+	pthread_join (navScan, &result_scan);
 
-	}
-	if(pc == PortConfig::B){
-		//solve port B (left out of tunnel)
-		console::debug("Current Port Config: B");
-
-
-	}
-
-
-
-	navControl->moveUntil(300, MOVEMENT::FORWARD);
-	storageControl->setDrivePostion();
-	navControl->turn(0,0);
-
-
-
-
-	while(0){
-		navControl->moveUntil(300, MOVEMENT::FORWARD);
-		navControl->turn(0,0);
-	}
-
-
-
-	if(pc == PortConfig::A){
-		//turn right
-		console::debug("Current Port Config: A");
-		//navControl->move(WALL_FOLLOWING::LEFT, 300, 0,200);
-	}
-	if(pc == PortConfig::B){
-		//turn left
-		console::debug("Current Port Config: B");
-		//navControl->move(WALL_FOLLOWING::RIGHT, 300, 0,200);
-	}
-
-	//armControl->startup();
 
 
 
 
 
 	//**********************************************************************************
-	bool restart = false;
+
+
 	console::debug("You can now do things and when finished, press the stop button.");
 	 while(!control_buttons->isStopPressed()){
 		 //process until stop is pressed...
@@ -230,107 +251,112 @@ void RobotController::start(){
 	 navControl->stopNow();
 	 storageControl->setRestPosition();
 
+	 rest(1000); //rest for 1000 ms or 1 second
 
-	 if(restart){
+	delete state_display;
+	delete storageControl;
+	delete stepperControl;
+	delete armControl;
+	//delete navControl;
+	delete motorControl;
+
+
+	 if(AUTO_RESTART){
 	 //restart...
 		 system("sudo ./start.sh");
 	 }
-
-
-/*
-	 console::debug("System is not ready to be restarted...");
-	 while(!control_buttons.isStopPressed()){
-		 //process until stop is pressed...
-
-
-		 usleep(100000);
-		 state_display.blink(100,indicator::LED::TOP);
-		 state_display.blink(100,indicator::LED::SECOND);
-		 state_display.blink(100,indicator::LED::THRID);
-		 state_display.blink(100,indicator::LED::BOTTOM);
-	 }
-
-*/
-
-	 //%%%%%%%%%%%%%%%%%%%%%
-
-
-	//StorageController sc(STORAGE_PWM);
-	//sc.setRestPosition();
-
-
-
-
-
-/*
-	console::debug("motor controller created");
-	mc.forward(SPEED::SEVEN_EIGHTH);
-	while(mc.isBusy()){
-		usleep(10000);
-	}
-
-	usleep (2000000);
-
-	mc.stop();
-
-	while(mc.isBusy()){
-		usleep(10000);
-	}
-*/
-
-	//usleep(3000000);
-	//sc.setDrivePostion();
-	//usleep(3000000);
-	//sc.setRestPosition();
-
-	/*
-	this->motorControl = new MotorController(M1_PWM, M2_PWM, gpio_motor1_dir, gpio_motor2_dir);
-
-	console::debug("motor controller created");
-	this->motorControl->forward();
-
-	usleep(1000000);
-
-	this->motorControl->stop();
-*/
-	//. Identify Port @ startup
-/*
-	this->currentPort.portcfg = NavigationController::determinePort();
-	if(this->currentPort.portcfg == PortConfig::A){
-
-		console::info("Port A Detected");
-	}
-	if(this->currentPort.portcfg == PortConfig::B){
-
-		console::info("Port B Detected");
-	}
-	if(this->currentPort.portcfg == PortConfig::UNDEFINED){
-		console::error("Port Undetected");
-		state_display.errorState();
-	}
-
-*/
-	//. Navigate through tunnel
-
-
-
-
-
-	//. Solve section A
-	//. Solve section C
-	//. Solve section B
-
-	 /*if(!LIDAR_ENABLED){
-		 char *port = new char[ LIDAR_PORT.length() + 1];
-		 strcpy(port,  LIDAR_PORT.c_str());
-		 lidarIO lidar(port);
-		 lidar.disable();
-	 }*/
-
 
 	console::debug("RobotController Ended");
 	RobotController::setIsRunning(false);
 }
 
 
+bool RobotController::solveTunnel(){
+	console::debug("RC: Solve Tunnel Function");
 
+	navControl->moveUntil(700, MOVEMENT::FORWARD, SPEED::HALF );
+	//storageControl->setDrivePostion();
+
+
+	return false;
+}
+
+
+bool RobotController::solveZoneA(){
+
+	return false;
+}
+bool RobotController::solveZoneB(){
+
+	return false;
+}
+bool RobotController::solveZoneC(){
+
+	return false;
+}
+
+
+
+bool RobotController::scanRail(){
+
+	return false;
+}
+
+bool RobotController::dance(){
+
+	//return to start....
+
+	return false;
+}
+
+
+
+
+
+//
+//
+//// Navigate through tunnel
+////determine which port
+//PortConfig pc = navControl->determinePort();
+//
+//
+//if(pc == PortConfig::A){
+//	//solve port A (right out of tunnel)
+//	console::debug("Current Port Config: A");
+//
+//}
+//if(pc == PortConfig::B){
+//	//solve port B (left out of tunnel)
+//	console::debug("Current Port Config: B");
+//
+//
+//}
+//
+//
+//
+//navControl->moveUntil(300, MOVEMENT::FORWARD);
+//storageControl->setDrivePostion();
+//navControl->turn(0,0);
+//
+//
+//
+//
+//while(0){
+//	navControl->moveUntil(300, MOVEMENT::FORWARD);
+//	navControl->turn(0,0);
+//}
+//
+//
+//
+//if(pc == PortConfig::A){
+//	//turn right
+//	console::debug("Current Port Config: A");
+//	//navControl->move(WALL_FOLLOWING::LEFT, 300, 0,200);
+//}
+//if(pc == PortConfig::B){
+//	//turn left
+//	console::debug("Current Port Config: B");
+//	//navControl->move(WALL_FOLLOWING::RIGHT, 300, 0,200);
+//}
+//
+////armControl->startup();

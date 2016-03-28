@@ -26,6 +26,7 @@ class measurement {
 public:
 	measurement(){
 		event_time = 0;
+		hasData = false;
 
 	};
 	virtual ~measurement();
@@ -36,16 +37,17 @@ public:
 	double x[361];
 	double y[361];
 	time_t event_time;
+	bool hasData;
 
 	void addDistance(int angle, double dist);
 
 
-	double 	getMinimumInRange(int maximumAngle, int minimumAngle);
-	int 	getIndexOfMinimumInRange(int maximumAngle, int minimumAngle);
-	double 	getMaximumInRange(int maximumAngle, int minimumAngle);
-	int 	getIndexOfMaximumInRange(int maximumAngle, int minimumAngle);
-	double 	calculateAverageInRange(int maximumAngle, int minimumAngle);
-	double 	calculateThetaInRange(int maximumAngle, int minimumAngle, Face f);
+	double 	getMinimumInRange(int minimumAngle , int maximumAngle);
+	int 	getIndexOfMinimumInRange(int minimumAngle , int maximumAngle);
+	double 	getMaximumInRange(int minimumAngle , int maximumAngle);
+	int 	getIndexOfMaximumInRange(int minimumAngle , int maximumAngle);
+	double 	calculateAverageInRange(int minimumAngle , int maximumAngle);
+	double 	calculateThetaInRange(int minimumAngle , int maximumAngle, Face f);
 
 
 

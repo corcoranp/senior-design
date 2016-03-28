@@ -30,6 +30,7 @@ public:
 
 	virtual void on(int light);
 	virtual void off(int light);
+	virtual void offAll();
 
 	virtual ~indicator();
 

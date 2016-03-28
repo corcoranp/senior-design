@@ -18,10 +18,12 @@ using namespace std;
 
 namespace blaze {
 
-StorageController::StorageController(string pwmName) {
+StorageController::StorageController(string pwmName, int drivepos, int deliverypos, int loadpos) {
 	// TODO Auto-generated constructor stub
 	this->pinName = pwmName;
-
+	this->m_deliverypos = deliverypos;
+	this->m_drivepos = drivepos;
+	this->m_loadpos = loadpos;
 }
 
 StorageController::~StorageController() {
@@ -30,27 +32,20 @@ StorageController::~StorageController() {
 
 void StorageController::setDrivePostion(){
 	  PWM pwm(this->pinName);  // P9_42 MUST be loaded as a slot before use
-	   //pwm.setPeriod(500000);         // Set the period in ns
-	   unsigned int i;
-	   i = 350000;
-	   pwm.setDutyCycle(i);
+	   pwm.setDutyCycle(this->m_drivepos);
 	   pwm.setPolarity(PWM::ACTIVE_HIGH);  // using active low PWM
 	   pwm.run();                     // start the PWM output
 
 }
 void StorageController::setDeliveryPosition(){
 	  PWM pwm(this->pinName);  // P9_42 MUST be loaded as a slot before use
-	   unsigned int i;
-	   i = 400000;
-	   pwm.setDutyCycle(i);
+	   pwm.setDutyCycle(this->m_deliverypos);
 	   pwm.setPolarity(PWM::ACTIVE_HIGH);  // using active low PWM
 	   pwm.run();
 }
 void StorageController::setLoadPosition(){
 	  PWM pwm(this->pinName);  // P9_42 MUST be loaded as a slot before use
-	   unsigned int i;
-	   i = 400000;
-	   pwm.setDutyCycle(i);
+	   pwm.setDutyCycle(this->m_loadpos);
 	   pwm.setPolarity(PWM::ACTIVE_HIGH);  // using active low PWM
 	   pwm.run();
 }

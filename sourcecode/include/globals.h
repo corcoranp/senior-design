@@ -41,6 +41,7 @@ extern bool isValueEqual(double a, double b, double acc);
 	extern string NAME;
 	extern string CONTROL_MODE;
 	extern string START_MODE;
+	extern bool AUTO_RESTART;
 
 	// DEFINES [LOGGING] SETTINGS VARIABLES
 	extern bool CONSOLE_ENABLED;
@@ -116,7 +117,10 @@ extern bool isValueEqual(double a, double b, double acc);
 
 	// DEFINES LIDAR SETTINGS
 	extern bool LIDAR_ENABLED;
+	extern bool SCANNING;
+	extern bool QUEUING_ENABLED;
 	extern string LIDAR_PORT;
+	extern int ZERO_REF;
 	extern int FRONT_MAX;
 	extern int FRONT_MIN;
 	extern int BACK_MAX;
@@ -127,6 +131,9 @@ extern bool isValueEqual(double a, double b, double acc);
 	extern int LEFT_MIN;
 
 	extern string STORAGE_PWM;
+	extern int LOAD_POSITION;
+	extern int DRIVE_POSITION;
+	extern int DELIVERY_POSITION;
 
 	// MICROCONTROLLER SETTINGS
 	// DEFINES PINS
@@ -189,6 +196,11 @@ namespace blaze {
 	 */
 	typedef int (*CallbackType) (int);
 
+
+	void rest(int useconds);
+	bool NOT(bool b);
+	bool OR(bool b1, bool b2);
+	bool AND(bool b1, bool b2);
 }
 
 

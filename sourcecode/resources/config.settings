@@ -25,6 +25,7 @@ START_MODE				= START				; START - start Blaze at starting line wait for light
 											; RRAILD - start Blaze in Red Rail Delivery mode
 											; TRUCKA - start Blaze in Truck Delivery mode
 											; TRUCKB - start Blaze in Zone C Boat Delivery mode
+AUTO_RESTART			= false				; Restart robot after each run?
 
 [LOGGING]
 CONSOLE_ENABLED			= true				; Enables or disables robot console output
@@ -103,7 +104,8 @@ imaging_enabled			= false				; enables/disables imaging
 
 [LIDAR]
 lidar_enabled			= false 			; enables/disables
-lidar_port				= /dev/ttyACM0			; lidar usb address
+lidar_port				= /dev/ttyACM0		; lidar usb address
+zero_ref				= 198
 front_max				= 140
 front_min				= 42
 back_max				= 302
@@ -114,8 +116,12 @@ left_max				= 205
 left_min				= 155
 
 
+
 [STORAGE]
 storage_pwm				= pwm_test_P8_34.13
+load_position			= 400000
+drive_position			= 350000
+delivery_position		= 400000
 
 [PINS]
 pins_enabled			= false				;

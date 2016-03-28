@@ -19,14 +19,21 @@ class robot {
 		storage botStorage;
 
 	public:
+		robot();
+		virtual ~robot();
 
 		storage getStorage();
+
+		/*
+		 * ROBOT PROPERTIES
+		 */
 		//properties are in mm
 		int width = 300;
 		int length = 300;
 
 		int lidar_width = 77;
 		int lidar_height = 82;
+
 		//lidar position relative to the robot center
 		//all robot distances will contain this offset when
 		//read raw from the LIDAR system.

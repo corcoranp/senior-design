@@ -12,6 +12,7 @@ using namespace blaze;
 	string NAME;
 	string CONTROL_MODE;
 	string START_MODE;
+	bool AUTO_RESTART = false;
 
 	// DEFINES [LOGGING] SETTINGS VARIABLES
 	bool CONSOLE_ENABLED = true;
@@ -88,7 +89,10 @@ using namespace blaze;
 
 	// DEFINES LIDAR SETTINGS
 	bool LIDAR_ENABLED = false;
+	bool SCANNING = false;
+	bool QUEUING_ENABLED = false;
 	string LIDAR_PORT = "";
+	int ZERO_REF = 207;
 	int FRONT_MAX = -1;
 	int FRONT_MIN = -1;
 	int RIGHT_MAX = -1;
@@ -98,9 +102,12 @@ using namespace blaze;
 	int BACK_MAX = -1;
 	int BACK_MIN = -1;
 
-
-
+	//STORAGE Variables
 	string STORAGE_PWM = "";
+	int LOAD_POSITION = 400000;
+	int DRIVE_POSITION = 350000;
+	int DELIVERY_POSITION = 400000;
+
 
 
 	// MICROCONTROLLER SETTINGS
@@ -148,4 +155,19 @@ QUADRANT inQuadrant(int angle){
 	if(angle >= 270 && angle < 360){ q = QUADRANT::IV; }
 
 	return q;
+}
+
+
+void blaze::rest(int msseconds){
+	usleep(msseconds/1000);
+}
+
+bool blaze::NOT(bool b){
+	return !b;
+}
+bool blaze::OR(bool b1, bool b2){
+	return (b1 || b2);
+}
+bool blaze::AND(bool b1, bool b2){
+	return (b1 && b2);
 }

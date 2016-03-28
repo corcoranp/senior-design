@@ -7,6 +7,7 @@
 
 
 #include "../../include/globals.h"
+#include "../../include/system/console.h"
 #include "../../include/model/measurement.h"
 
 namespace blaze {
@@ -17,7 +18,7 @@ measurement::~measurement() {
 
 
 void measurement::addDistance(int angle, double dist){
-
+	this->hasData = true;
 	this->distances[angle] = dist;
 /*
 	if(dist>1){
@@ -38,39 +39,39 @@ void measurement::addDistance(int angle, double dist){
 /*
  * Used to calculate the Minimum distance in position object
  */
-double measurement::getMinimumInRange(int maximumAngle, int minimumAngle){
+double measurement::getMinimumInRange(int minimumAngle , int maximumAngle){
 	int index;
-	double minimum = 5000.0;
+	double minimum = 2500.0;
 
 	for (int k=maximumAngle; k>=minimumAngle; k--){
-			if (k<=0){
-				index = 360+k;
-			} else{
-				index = k;
-			}
-			if ((this->distances[index]<minimum) && (this->distances[index] != 0)){
-				minimum = this->distances[index];
-			}
-
+		if (k<=0){
+			index = 360+k;
+		} else{
+			index = k;
+		}
+		//console::debug("index=" + to_string(index) + "measured dist: " + to_string(this->distances[index]));
+		if ((this->distances[index]<minimum) && (this->distances[index] != 0)){
+			minimum = this->distances[index];
+		}
 	}
+	//console::debug("The value returning is: " + to_string(minimum));
 	return minimum;
 }
-int measurement::getIndexOfMinimumInRange(int maximumAngle, int minimumAngle){
+int measurement::getIndexOfMinimumInRange(int minimumAngle , int maximumAngle){
 	int index;
 	double minimum = 5000.0;
 	int minIndex = 0;
 
 	for (int k=maximumAngle; k>=minimumAngle; k--){
-			if (k<=0){
-				index = 360+k;
-			} else{
-				index = k;
-			}
-			if ((distances[index]<minimum) && (distances[index] != 0)){
-				minimum = distances[index];
-				minIndex = index;
-			}
-
+		if (k<=0){
+			index = 360+k;
+		} else{
+			index = k;
+		}
+		if ((distances[index]<minimum) && (distances[index] != 0)){
+			minimum = distances[index];
+			minIndex = index;
+		}
 	}
 	return minIndex;
 }
@@ -78,7 +79,7 @@ int measurement::getIndexOfMinimumInRange(int maximumAngle, int minimumAngle){
 /*
  * Used to calculate the Maximum distance in position object
  */
-double measurement::getMaximumInRange(int maximumAngle, int minimumAngle){
+double measurement::getMaximumInRange(int minimumAngle , int maximumAngle){
 	int index;
 	double maximum = 0;
 	int maxIndex = 0;
@@ -89,15 +90,18 @@ double measurement::getMaximumInRange(int maximumAngle, int minimumAngle){
 			} else{
 				index = k;
 			}
-				if (distances[index]>maximum){
-					maximum = distances[index];
-					maxIndex = index;
-				}
+
+			console::debug("index=" + to_string(index) + "measured dist: " + to_string(this->distances[index]));
+
+			if (distances[index]>maximum ){
+				maximum = distances[index];
+				maxIndex = index;
+			}
 	}
 
 	return maximum;
 }
-int measurement::getIndexOfMaximumInRange(int maximumAngle, int minimumAngle){
+int measurement::getIndexOfMaximumInRange(int minimumAngle , int maximumAngle){
 	int index;
 	double maximum = 0;
 	int maxIndex = 0;
@@ -119,7 +123,7 @@ int measurement::getIndexOfMaximumInRange(int maximumAngle, int minimumAngle){
 /*
  * Used to calculate the Average distance in position object
  */
-double measurement::calculateAverageInRange(int maximumAngle, int minimumAngle){
+double measurement::calculateAverageInRange(int minimumAngle , int maximumAngle){
 	int index;
 	double sum = 0;
 	double count;
@@ -144,7 +148,7 @@ double measurement::calculateAverageInRange(int maximumAngle, int minimumAngle){
 /*
  * Used to calculate the Theta angle, compared to a wall.  The Cardinal is the the
  */
-double measurement::calculateThetaInRange(int maximumAngle, int minimumAngle, Face f){
+double measurement::calculateThetaInRange(int minimumAngle , int maximumAngle, Face f){
 
 	double theta = -1;
 	int index;

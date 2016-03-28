@@ -121,8 +121,8 @@ using namespace blaze;
 		              << reader.Get("user", "name", "UNKNOWN") << ", email="
 		              << reader.Get("user", "email", "UNKNOWN") << ", pi=" << endl;
 
-		 console::debug( "- Tunnel Exit " + reader.Get("NAMED_WAYPOINTS", "WP_TUNNEL_EXIT", "UNKNOWN"));
-		 console::debug("To String of Tunnel WayPoint: " +  PAWP_TUNNEL_EXIT->toString());
+		// console::debug( "- Tunnel Exit " + reader.Get("NAMED_WAYPOINTS", "WP_TUNNEL_EXIT", "UNKNOWN"));
+
 
 
 
@@ -250,7 +250,7 @@ void bootSystemOperations(){
 	NAME 			= reader.Get("system", "name", "BLAZE");
 	CONTROL_MODE 	= reader.Get("system", "control_mode", "CMD");
 	START_MODE		= reader.Get("system", "start_mode", "START");
-
+	AUTO_RESTART	= reader.GetBoolean("system", "auto_restart", false);
 
 	//SET LOGGING VARIABLES ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	CONSOLE_ENABLED		= reader.GetBoolean("logging", "console_enabled", true);
@@ -314,6 +314,7 @@ void bootSystemOperations(){
 	// LIDAR
 	LIDAR_ENABLED		= reader.GetBoolean("lidar", "lidar_enabled", true);
 	LIDAR_PORT			= reader.Get("lidar", "lidar_port", "");
+	ZERO_REF			= reader.GetInteger("lidar", "zero_ref", 207);
 	FRONT_MAX			= reader.GetInteger("lidar", "front_max", -1);
 	FRONT_MIN			= reader.GetInteger("lidar", "front_min", -1);
 	BACK_MAX			= reader.GetInteger("lidar", "back_max", -1);
@@ -323,18 +324,23 @@ void bootSystemOperations(){
 	RIGHT_MAX			= reader.GetInteger("lidar", "right_max", -1);
 	RIGHT_MIN			= reader.GetInteger("lidar", "right_min", -1);
 
+
+
 	//STORAGE
 	STORAGE_PWM 		= reader.Get("STORAGE", "storage_pwm", "");
+	LOAD_POSITION		= reader.GetInteger("STORAGE", "load_position", 400000);
+	DRIVE_POSITION		= reader.GetInteger("STORAGE", "drive_position", 350000);
+	DELIVERY_POSITION	= reader.GetInteger("STORAGE", "delivery_position", 400000);
 
 	// PINS
 	PINS_ENABLED		= reader.GetBoolean("pins", "pins_enabled", true);
 
 	// NAMED WAYPOINTS ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	string pawp_tunnel_exit 	= reader.Get("named_waypoints", "pawp_tunnel_exit", "");
-	PAWP_TUNNEL_EXIT 			= new waypoint(pawp_tunnel_exit);
+	//PAWP_TUNNEL_EXIT 			= new waypoint(pawp_tunnel_exit);
 
 	string pbwp_tunnel_exit 	= reader.Get("named_waypoints", "pbwp_tunnel_exit", "");
-	PBWP_TUNNEL_EXIT 			= new waypoint(pbwp_tunnel_exit);
+	//PBWP_TUNNEL_EXIT 			= new waypoint(pbwp_tunnel_exit);
 
 	// PORT COORDINATE DEF ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	// 		= reader.Get("named_waypoint", "wp_tunnel_exit", "");

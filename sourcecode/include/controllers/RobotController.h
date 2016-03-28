@@ -46,22 +46,21 @@ namespace blaze {
 	class RobotController {
 		public :
 
+		//RobotController();
+		//virtual ~RobotController();
+
 		static void *entry(void *arg);
 		static bool getIsRunning();
 		static void setIsRunning(bool val);
 		void start();							//Method for starting the Robot
 		void reset();
 
-
-		bool isSystemReady = false;
-		bool isHardwareReady = false;
-		bool isSensorsReady = false;
-		bool isReady = false;
+		static bool hasPortBeenFound;
 		static bool m_isRunning;
+
 
 		static starter *control_buttons;
 		static indicator *state_display;
-
 		static MotorController *motorControl;
 		static StepperMotor *stepperControl;
 		static ArmController *armControl;
@@ -70,8 +69,8 @@ namespace blaze {
 		static NavigationController *navControl;
 
 
-		port currentPort;
-		workqueue<measurement*>* m_queue;
+		static PortConfig currentPortConfig;
+		static workqueue<measurement*>* m_queue;
 
 
 		private:
@@ -79,6 +78,13 @@ namespace blaze {
 			void hardwareCheck();
 			void sensorCheck();
 			void readyStateCheck();
+
+			static bool solveTunnel();
+			static bool solveZoneA();
+			static bool solveZoneB();
+			static bool solveZoneC();
+			static bool scanRail();
+			static bool dance();
 
 
 	};

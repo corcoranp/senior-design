@@ -21,6 +21,8 @@ namespace blaze{
 	enum DistType {Avg, Min, Max, Theta};
 	enum MOVEMENT {FORWARD, REVERSE};
 
+	enum Zones {AZ, BZ, CZ, TRUCK, BOAT, RAIL_BLUE, RAIL_GREEN, RAIL_RED, RAIL_YELLOW, UNDEFINED_ZONE};
+
 	enum QUADRANT { I, II, III, IV, NONE};
 	enum CARDINAL { NORTH, SOUTH, EAST, WEST};
 

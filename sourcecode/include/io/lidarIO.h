@@ -56,7 +56,7 @@ public:
 	static int lidarFileDescriptor;
 	double * getData(int fd, double *returnArray);
 
-	static const int zeroRef = 207;
+	//static const int zeroRef = ZERO_REF;
 
 
 	/**

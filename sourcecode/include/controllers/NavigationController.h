@@ -10,7 +10,8 @@
 
 #include "../enums.h"
 #include "../io/lidarIO.h"
-#include "../model/angleRange.h"
+#include "../model/waypoint.h"
+
 #include "MotorController.h"
 
 namespace blaze {
@@ -30,50 +31,62 @@ public:
 	void addMotorController(MotorController *mc);
 
 
-	angleRange currentRightPos;
-	angleRange currentFrontPos;
-	angleRange currentLeftPos;
-	angleRange currentBackPos;
-
+	static void *scan(void *value);
 	static void *localize(void *value);
 	static workqueue<measurement*>* m_queue;
-	//void enableLocalication(bool enable);
-	//void addQueue(workqueue<measurement*>* q);
 
+
+	/**
+	 * Data Items
+	 */
 	bool isLocalizing;
-	bool hasQueue;
 
-	void stopNow();
+	bool hasQueue;
+	int map_xmax, map_ymax;
+	waypoint* lastKnownPoint;
+	Face referenceFace;
+
+
+	double data[370];
+	measurement *last_measure;
+	PortConfig portCfg;
+
+	void startLocalizing();
+
+
 
 	/**
 	 * Data functions
 	 */
-	double data[370];
 	void offset_correction();
 	double getPosition (Face f, DistType dt);
 	void updateLocation();
 
 
-	void calculateAverage(angleRange *p);
-	void calculateMinimum(angleRange *p);
-	void calculateMaximum(angleRange *p);
-	void calculateTheta(angleRange *p);
 
 	/**
 	 * Moving Functions
 	 */
+	void stopNow();
 	void move(WALL_FOLLOWING following_mode, int distance, int angle, int forward_target_distance  );
-	void moveUntil(int forward_target_distance, MOVEMENT dir  );
+	void moveUntil(int forward_target_distance, MOVEMENT dir, SPEED speed  );
 	void alignToFace(Face f);
 	void turn(int targetAngle, double radius);
+
+	void moveTo(waypoint p);
 
 	/**
 	 * Complex moves
 	 */
+	PortConfig getCurrentPort();
+
 	PortConfig determinePort();
+	PortConfig determinePort(measurement *m);
 	void navigateThroughTunnel();
 	void small_turn();
 
+private:
+	bool hasPortBeenFound = false;
 
 };
 

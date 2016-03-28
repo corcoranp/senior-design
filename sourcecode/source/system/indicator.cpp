@@ -112,6 +112,15 @@ void indicator::off(int light){
 	}
 }
 
+void indicator::offAll(){
+
+	this->gpio_led1->setValue(GPIO::HIGH);
+	this->gpio_led1->setValue(GPIO::HIGH);
+	this->gpio_led1->setValue(GPIO::HIGH);
+	this->gpio_led1->setValue(GPIO::HIGH);
+
+}
+
 indicator::~indicator() {
 	// TODO Auto-generated destructor stub
 }

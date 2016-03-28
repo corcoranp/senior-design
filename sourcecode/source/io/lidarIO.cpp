@@ -8,7 +8,7 @@
 
 #include "../../include/io/lidarIO.h"
 #include "../include/system/console.h"
-#include "../../include/model/pdata.h"
+#include "../include/globals.h"
 #include <iostream>
 #include <cstdio>
 #include <cstdlib>
@@ -18,11 +18,12 @@
 #include <fstream>
 #include <unistd.h>
 
+
 using namespace std;
 using namespace blaze;
 
 int lidar_fd = -1;
-pdata *pdata::s_instance = 0;
+//pdata *pdata::s_instance = 0;
 
 
 lidarIO::~lidarIO() {
@@ -142,7 +143,7 @@ double * lidarIO::getData(int fd, double *returnArray){
 			}
 		}
 
-		if(startCount && angle == to_string(zeroRef)){
+		if(startCount && angle == to_string(ZERO_REF)){
 			console::debug("lidarIO: Reached end of lidar data");
 			dontStopLoop = false;  //stop the main while loop...
 
@@ -150,7 +151,7 @@ double * lidarIO::getData(int fd, double *returnArray){
 
 
 		//Start counting angles...
-		if(angle == to_string(zeroRef)){
+		if(angle == to_string(ZERO_REF)){
 			//Lidar alignment...
 			//console::debug("lidarIO:  angle is at zeroRef");
 			startCount = true; //loop until first end...

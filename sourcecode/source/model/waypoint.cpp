@@ -28,5 +28,5 @@ void waypoint::setTheta(double val){
 }
 
 string waypoint::toString(){
-	return "(" ;//+ to_string(xval) + "," + to_string(yval) + "," + to_string(theta) + ")";
+	return "(" + to_string(xval) + "," + to_string(yval) + "," + to_string(theta) + ")";
 }

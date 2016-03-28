@@ -16,7 +16,7 @@ namespace blaze {
 class StorageController {
 public:
 	string pinName;
-	StorageController(string pwmName);
+	StorageController(string pwmName, int drivepos, int deliverypos, int loadpos);
 	virtual ~StorageController();
 
 	void setDrivePostion();
@@ -24,6 +24,8 @@ public:
 	void setLoadPosition();
 	void setRestPosition();
 
+private:
+	unsigned int m_drivepos, m_deliverypos, m_loadpos;
 
 };
 
