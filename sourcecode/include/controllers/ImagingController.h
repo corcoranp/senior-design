@@ -10,6 +10,9 @@
 
 #include "../enums.h"
 #include "../model/qrcode.h"
+#include "../model/QRCodeFinder.h"
+#include "../model/BlueVision.h"
+#include "../model/Camera.h"
 
 #include <opencv2/opencv.hpp>
 
@@ -26,29 +29,13 @@ namespace blaze {
 	 */
 	class ImagingController {
 	public:
-		/*
-		 * Global Image Mat definitions
-		 */
-		cv::Mat src_img;		//main source image
-		Mat src_thresh;		//threshold modified image
+		ImagingController(int cameraIndex=0);
+		ImagingController(ImagingController& orig);
+		virtual ~ImagingController();
 
+		vector<QRCode> readQRCodes() throw (string);
 
-		/*
-		 * Contours & Hierarchy
-		 *
-		 */
-			vector<vector<Point> > s_cntrs;		//source image contour global ref
-			vector<Vec4i> s_hrchy; 				//source image hierarchy
-
-
-
-		/*
-		 * Fuctions used for Image Processing...
-		 */
-		Color getBlockColor(Mat image);
-		Size getBlockSize(Mat image);
-		//qrcode getQRCode(Mat image);
-		void getBlockPosition(Mat image);
+		vector<BlueBlocks> readBlueBlocks() throw (string);
 
 		void identifyRailColor(Mat image);
 
@@ -66,6 +53,7 @@ namespace blaze {
 
 		void reset();
 	private:
+		Camera* camera;
 
 	};
 

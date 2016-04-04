@@ -59,11 +59,11 @@ Rect QRCode::getRectangle() {
 void QRCode::setRectangle(Rect rectangle) {
 	this->rectangle = rectangle;
 
-	this->center.x = this->rectangle.boundingRect().x
-					+ (this->rectangle.boundingRect().width / 2);
-	this->center.y = this->rectangle.boundingRect().y
-					+ (this->rectangle.boundingRect().height / 2);
-	this->area = this->rectangle.size.area();
+	this->center.x = this->rectangle.x
+					+ (this->rectangle.width / 2);
+	this->center.y = this->rectangle.y
+					+ (this->rectangle.height / 2);
+	this->area = this->rectangle.area();
 }
 
 QRCode::QRCode() {
@@ -71,17 +71,16 @@ QRCode::QRCode() {
 	this->center.x = 0;
 	this->center.y = 0;
 	this->area = 0;
+	this->color = Color::BLUE;
 }
 
 QRCode::QRCode(Rect rect, Color color) {
-	this->rectangle = rect;
-
-	this->center.x = this->rectangle.boundingRect().x
-					+ (this->rectangle.boundingRect().width / 2);
-	this->center.y = this->rectangle.boundingRect().y
-					+ (this->rectangle.boundingRect().height / 2);
-	this->area = this->rectangle.size.area();
 	this->color = color;
+	this->center.x = this->rectangle.x
+					+ (this->rectangle.width / 2);
+	this->center.y = this->rectangle.y
+					+ (this->rectangle.height / 2);
+	this->area = this->rectangle.area();
 }
 
 QRCode::~QRCode() {
