@@ -90,7 +90,7 @@ void RobotController::start(){
 	stepperControl->disable();
 
 	console::debug("Setup Arm Controller");
-	//armControl = new ArmController(stepperControl);
+	armControl = new ArmController(stepperControl);
 
 	console::debug("Setup Storage Controller");
 	storageControl = new StorageController(STORAGE_PWM, DRIVE_POSITION, DELIVERY_POSITION, LOAD_POSITION);

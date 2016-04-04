@@ -8,13 +8,10 @@
 #ifndef INCLUDE_CONTROLLERS_IMAGINGCONTROLLER_H_
 #define INCLUDE_CONTROLLERS_IMAGINGCONTROLLER_H_
 
-#include "enums.h"
+#include "../enums.h"
 #include "../model/qrcode.h"
 
-#include <cv.h>
-#include <opencv.hpp>
-#include <highgui/highgui.hpp>
-#include <imgproc/imgproc.hpp>
+#include <opencv2/opencv.hpp>
 
 #include <vector>       // std::vector
 #include <iostream>

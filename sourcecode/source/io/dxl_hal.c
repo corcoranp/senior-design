@@ -48,8 +48,8 @@ int dxl_hal_open(int deviceIndex, float baudrate)
 	newtio.c_iflag		= IGNPAR;
 	newtio.c_oflag		= 0;
 	newtio.c_lflag		= 0;
-	newtio.c_cc[VTIME]	= 0;	// time-out 값 (TIME * 0.1초) 0 : disable
-	newtio.c_cc[VMIN]	= 0;	// MIN 은 read 가 return 되기 위한 최소 문자 개수
+	newtio.c_cc[VTIME]	= 0;	// time-out ê°’ (TIME * 0.1ì´ˆ) 0 : disable
+	newtio.c_cc[VMIN]	= 0;	// MIN ì�€ read ê°€ return ë�˜ê¸° ìœ„í•œ ìµœì†Œ ë¬¸ìž� ê°œìˆ˜
 
 	tcflush(gSocket_fd, TCIFLUSH);
 	tcsetattr(gSocket_fd, TCSANOW, &newtio);
@@ -74,8 +74,8 @@ int dxl_hal_open(int deviceIndex, float baudrate)
 	newtio.c_iflag		= IGNPAR;
 	newtio.c_oflag		= 0;
 	newtio.c_lflag		= 0;
-	newtio.c_cc[VTIME]	= 0;	// time-out 값 (TIME * 0.1초) 0 : disable
-	newtio.c_cc[VMIN]	= 0;	// MIN 은 read 가 return 되기 위한 최소 문자 개수
+	newtio.c_cc[VTIME]	= 0;	// time-out ê°’ (TIME * 0.1ì´ˆ) 0 : disable
+	newtio.c_cc[VMIN]	= 0;	// MIN ì�€ read ê°€ return ë�˜ê¸° ìœ„í•œ ìµœì†Œ ë¬¸ìž� ê°œìˆ˜
 
 	tcflush(gSocket_fd, TCIFLUSH);
 	tcsetattr(gSocket_fd, TCSANOW, &newtio);
@@ -92,6 +92,10 @@ void dxl_hal_close()
 	if(gSocket_fd != -1)
 		close(gSocket_fd);
 	gSocket_fd = -1;
+}
+
+int dxl_hal_isOpen(){
+	return (gSocket_fd != -1)?1:0;
 }
 
 int dxl_hal_set_baud( float baudrate )

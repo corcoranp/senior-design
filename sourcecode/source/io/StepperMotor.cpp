@@ -1,5 +1,5 @@
 /*
-gfgff * StepperMotor.cpp  Created on: 13 Jun 2014
+ gfgff * StepperMotor.cpp  Created on: 13 Jun 2014
  * Copyright (c) 2014 Derek Molloy (www.derekmolloy.ie)
  * Made available for the book "Exploring BeagleBone" 
  * See: www.exploringbeaglebone.com
@@ -31,25 +31,31 @@ using namespace std;
 
 namespace blaze {
 
-StepperMotor::StepperMotor(GPIO *gpio_MS1, GPIO *gpio_MS2, GPIO *gpio_MS3, GPIO *gpio_STEP, GPIO *gpio_SLP, GPIO *gpio_DIR, GPIO *gpio_EN, GPIO *gpio_LSW, GPIO *gpio_RSW, int speedRPM, int stepsPerRevolution){
-	this->gpio_MS1  = gpio_MS1;
-	this->gpio_MS2  = gpio_MS2;
-	this->gpio_MS3 	= gpio_MS3;
+StepperMotor::StepperMotor(GPIO *gpio_MS1, GPIO *gpio_MS2, GPIO *gpio_MS3,
+		GPIO *gpio_STEP, GPIO *gpio_SLP, GPIO *gpio_DIR, GPIO *gpio_EN,
+		GPIO *gpio_LSW, GPIO *gpio_RSW, int speedRPM, int stepsPerRevolution) {
+	homePosition = HOME_POSITION::LEFT;
+	this->gpio_MS1 = gpio_MS1;
+	this->gpio_MS2 = gpio_MS2;
+	this->gpio_MS3 = gpio_MS3;
 	this->gpio_STEP = gpio_STEP;
-	this->gpio_SLP  = gpio_SLP;
-	this->gpio_DIR  = gpio_DIR;
-	this->gpio_EN 	= gpio_EN;
-	this->gpio_LSW 	= gpio_LSW;
-	this->gpio_RSW 	= gpio_RSW;
+	this->gpio_SLP = gpio_SLP;
+	this->gpio_DIR = gpio_DIR;
+	this->gpio_EN = gpio_EN;
+	this->gpio_LSW = gpio_LSW;
+	this->gpio_RSW = gpio_RSW;
 	// the default speed in rpm
 	this->setSpeed(speedRPM);
 	this->stepsPerRevolution = stepsPerRevolution;
 	this->init(speedRPM, stepsPerRevolution);
 }
 
-StepperMotor::StepperMotor(int gpio_MS1, int gpio_MS2, int gpio_MS3, int gpio_STEP, int gpio_SLP, int gpio_DIR, int gpio_EN, int gpio_LSW, int gpio_RSW, int speedRPM, int stepsPerRevolution){
+StepperMotor::StepperMotor(int gpio_MS1, int gpio_MS2, int gpio_MS3,
+		int gpio_STEP, int gpio_SLP, int gpio_DIR, int gpio_EN, int gpio_LSW,
+		int gpio_RSW, int speedRPM, int stepsPerRevolution) {
 
 	cout << "*** Stepper constructor" << endl;
+	homePosition = HOME_POSITION::LEFT;
 	this->gpio_MS1 = new GPIO(gpio_MS1);
 	this->gpio_MS2 = new GPIO(gpio_MS2);
 	this->gpio_MS3 = new GPIO(gpio_MS3);
@@ -74,7 +80,7 @@ StepperMotor::StepperMotor(int gpio_MS1, int gpio_MS2, int gpio_MS3, int gpio_ST
 	this->init(speedRPM, stepsPerRevolution);
 }
 
-void StepperMotor::init(int speedRPM, int stepsPerRevolution){
+void StepperMotor::init(int speedRPM, int stepsPerRevolution) {
 	this->gpio_MS1->setDirection(GPIO::OUTPUT);
 	this->gpio_MS2->setDirection(GPIO::OUTPUT);
 	this->gpio_MS3->setDirection(GPIO::OUTPUT);
@@ -102,7 +108,7 @@ void StepperMotor::init(int speedRPM, int stepsPerRevolution){
 
 void StepperMotor::setStepMode(STEP_MODE mode) {
 	this->stepMode = mode;
-	switch(stepMode){
+	switch (stepMode) {
 	case STEP_FULL:
 		this->gpio_MS1->setValue(GPIO::LOW);
 		this->gpio_MS2->setValue(GPIO::LOW);
@@ -138,116 +144,219 @@ void StepperMotor::setStepMode(STEP_MODE mode) {
 
 void StepperMotor::setSpeed(float rpm) {
 	this->speed = rpm;
-	float delayPerSec = (60/rpm)/stepsPerRevolution;    // delay per step in seconds
-	this->uSecDelay = (int)(delayPerSec * 1000 * 1000); // in microseconds
+	float delayPerSec = (60 / rpm) / stepsPerRevolution; // delay per step in seconds
+	this->uSecDelay = (int) (delayPerSec * 1000 * 1000); // in microseconds
 }
 
-void StepperMotor::step(int numberOfSteps){
+void StepperMotor::step(int numberOfSteps) {
 	//cout << "Doing "<< numberOfSteps << " steps and going to sleep for " << uSecDelay/delayFactor << "uS\n";
-	int sleepDelay = uSecDelay/delayFactor;
-	if(numberOfSteps<0) {
-		this->reverseDirection();
+	int sleepDelay = uSecDelay / delayFactor;
+	checkDirection(numberOfSteps);
+	if ((numberOfSteps < 0)) {
+//		this->reverseDirection();
 		numberOfSteps = -numberOfSteps;
 	}
-	for(int i=0; i<numberOfSteps; i++){
+	for (int i = 0; i < numberOfSteps; i++) {
+		if (isAtLimit()) {
+			return;
+		}
 		this->step();
 		usleep(sleepDelay);
 	}
 }
 
-void StepperMotor::step(){
+void StepperMotor::step() {
+	string lsw("LSW: ");
+	lsw.append(((this->gpio_LSW->getValue() == GPIO::LOW) ? "LOW" : "HIGH"));
+	string rsw("RSW: ");
+	rsw.append(((this->gpio_RSW->getValue() == GPIO::LOW) ? "LOW" : "HIGH"));
+	console::debug(lsw.c_str());
+	console::debug(rsw.c_str());
 
-	console::debug("LSW: " + this->gpio_LSW->getValue() );
-	console::debug("RSW: " + this->gpio_RSW->getValue() );
+	string dir("Direction: ");
+	dir.append(((this->getDirection() == DIRECTION::CLOCKWISE)?"CLOCKWISE":"ANTICLOCKWISE"));
+	console::debug(dir.c_str());
 
-	if(this->gpio_LSW->getValue() == GPIO::LOW){
-		//switch is tripped...should go right...
-		this->setDirection(DIRECTION::CLOCKWISE);
+//	if ((this->gpio_LSW->getValue() == GPIO::HIGH)
+//			&& (this->direction == DIRECTION::ANTICLOCKWISE)) {
+//		//switch is tripped...should go right...
+////		this->setDirection(DIRECTION::CLOCKWISE);
+//		return;//limit reached
+//	}
+//	if ((this->gpio_RSW->getValue() == GPIO::HIGH)
+//			&& (this->direction == DIRECTION::CLOCKWISE)) {
+////		this->setDirection(DIRECTION::ANTICLOCKWISE);
+//		return;//limit reached
+//	}
+	if(!this->isAtLimit()){
+		this->gpio_STEP->setValue(GPIO::LOW);
+		this->gpio_STEP->setValue(GPIO::HIGH);
 	}
-	if(this->gpio_RSW->getValue() == GPIO::LOW){
-		this->setDirection(DIRECTION::ANTICLOCKWISE);
-	}
-
-    this->gpio_STEP->setValue(GPIO::LOW);
-    this->gpio_STEP->setValue(GPIO::HIGH);
 }
 
-
-int  StepperMotor::threadedStepForDuration(int numberOfSteps, int duration_ms){
+int StepperMotor::threadedStepForDuration(int numberOfSteps, int duration_ms) {
 	this->threadedStepNumber = numberOfSteps;
-	this->threadedStepPeriod = duration_ms/numberOfSteps;
+	this->threadedStepPeriod = duration_ms / numberOfSteps;
 	this->threadRunning = true;
-    if(pthread_create(&this->thread, NULL, &threadedStep, static_cast<void*>(this))){
-    	perror("StepperMotor: Failed to create the stepping thread");
-    	this->threadRunning = false;
-    	return -1;
-    }
-    return 0;
-}
-
-void StepperMotor::setDirection(DIRECTION direction){
-	this->direction = direction;
-	if(this->direction==CLOCKWISE) this->gpio_DIR->setValue(GPIO::HIGH);
-		else this->gpio_DIR->setValue(GPIO::LOW);
-}
-
-void StepperMotor::reverseDirection(){
-	if(this->direction==CLOCKWISE){
-		this->setDirection(ANTICLOCKWISE);
+	if (pthread_create(&this->thread, NULL, &threadedStep,
+			static_cast<void*>(this))) {
+		perror("StepperMotor: Failed to create the stepping thread");
+		this->threadRunning = false;
+		return -1;
 	}
-	else this->setDirection(CLOCKWISE);
+	return 0;
 }
 
-void StepperMotor::rotate(float degrees){
-	float degreesPerStep = 360.0f/getStepsPerRevolution();
-	int numberOfSteps = floor(((this->delayFactor*degrees)/degreesPerStep)+0.5);
+void StepperMotor::setDirection(DIRECTION direction) {
+	this->direction = direction;
+	if (this->direction == CLOCKWISE)
+		this->gpio_DIR->setValue(GPIO::HIGH);
+	else
+		this->gpio_DIR->setValue(GPIO::LOW);
+}
+
+void StepperMotor::reverseDirection() {
+	if (this->direction == CLOCKWISE) {
+		this->setDirection(ANTICLOCKWISE);
+	} else
+		this->setDirection(CLOCKWISE);
+}
+
+void StepperMotor::rotate(float degrees) {
+	float degreesPerStep = 360.0f / getStepsPerRevolution();
+	int numberOfSteps = floor(
+			((this->delayFactor * degrees) / degreesPerStep) + 0.5);
 	//cout << "The number of steps is " << numberOfSteps << endl;
 	//cout << "The delay factor is " << delayFactor << endl;
 	step(numberOfSteps);
 }
 
-void StepperMotor::sleep(){
+void StepperMotor::sleep() {
 	this->asleep = true;
 	this->gpio_SLP->setValue(GPIO::LOW);
 }
 
-void StepperMotor::wake(){
+void StepperMotor::wake() {
 	this->asleep = false;
 	this->gpio_SLP->setValue(GPIO::HIGH);
 }
 
 //PMC added
-void StepperMotor::enable(){
+void StepperMotor::enable() {
 	this->enabled = true;
 	this->gpio_EN->setValue(GPIO::LOW);
 }
 //PMC added
-void StepperMotor::disable(){
+void StepperMotor::disable() {
 	this->enabled = false;
 	this->gpio_EN->setValue(GPIO::HIGH);
 }
 
-
-
-StepperMotor::~StepperMotor() {}
+StepperMotor::~StepperMotor() {
+	//Stop stepper motors
+	disable();
+	sleep();
+}
 
 // This thread function is a friend function of the class
-void* threadedStep(void *value){
+void* threadedStep(void *value) {
 	StepperMotor *stepper = static_cast<StepperMotor*>(value);
-	while(stepper->threadRunning){
-		if(stepper->gpio_LSW->getValue() == GPIO::LOW){
+	while (stepper->threadRunning) {
+		if (stepper->gpio_LSW->getValue() == GPIO::HIGH) {
 			//switch is tripped...should go right...
 			stepper->setDirection(StepperMotor::DIRECTION::CLOCKWISE);
 		}
-		if(stepper->gpio_RSW->getValue() == GPIO::LOW){
+		if (stepper->gpio_RSW->getValue() == GPIO::HIGH) {
 			stepper->setDirection(StepperMotor::DIRECTION::ANTICLOCKWISE);
 		}
 		stepper->step();
 		usleep(stepper->threadedStepPeriod * 1000);  // convert from ms to us
-		if(stepper->threadedStepNumber>0) stepper->threadedStepNumber--;
-		if(stepper->threadedStepNumber==0) stepper->threadRunning = false;
+		if (stepper->threadedStepNumber > 0)
+			stepper->threadedStepNumber--;
+		if (stepper->threadedStepNumber == 0)
+			stepper->threadRunning = false;
 	}
 	return 0;
 }
 
+}
+
+void blaze::StepperMotor::setHome(HOME_POSITION position) {
+	homePosition = position;
+	if (position == HOME_POSITION::LEFT) {
+		blaze::StepperMotor::setDirection(DIRECTION::CLOCKWISE);
+	} else {
+		blaze::StepperMotor::setDirection(DIRECTION::ANTICLOCKWISE);
+	}
+}
+
+blaze::StepperMotor::HOME_POSITION blaze::StepperMotor::getHome() {
+	return homePosition;
+}
+
+bool blaze::StepperMotor::goHome() {
+	if(!isHome()){
+		if (homePosition == HOME_POSITION::LEFT) {
+			blaze::StepperMotor::setDirection(DIRECTION::CLOCKWISE);
+		} else {
+			blaze::StepperMotor::setDirection(DIRECTION::ANTICLOCKWISE);
+		}
+	}
+	while (!isHome()) {
+		step();
+		if(isAtEnd()){
+			if (homePosition == HOME_POSITION::LEFT) {
+				blaze::StepperMotor::setDirection(DIRECTION::CLOCKWISE);
+			} else {
+				blaze::StepperMotor::setDirection(DIRECTION::ANTICLOCKWISE);
+			}
+		}
+	}
+	return isHome();
+}
+
+bool blaze::StepperMotor::isHome() {
+	if (this->gpio_LSW->getValue() == GPIO::HIGH) {
+		return (homePosition == HOME_POSITION::LEFT);
+	} else if (this->gpio_RSW->getValue() == GPIO::HIGH) {
+		return (homePosition == HOME_POSITION::RIGHT);
+	} else {
+		return false;
+	}
+}
+
+bool blaze::StepperMotor::isAtEnd() {
+	if (this->gpio_RSW->getValue() == GPIO::HIGH) {
+		return (homePosition == HOME_POSITION::LEFT);
+	} else if (this->gpio_LSW->getValue() == GPIO::HIGH) {
+		return (homePosition == HOME_POSITION::RIGHT);
+	} else {
+		return false;
+	}
+}
+
+bool blaze::StepperMotor::isAtLimit() {
+	if (this->gpio_LSW->getValue() == GPIO::HIGH) {
+		return (this->direction == DIRECTION::CLOCKWISE);
+	} else if (this->gpio_RSW->getValue() == GPIO::HIGH) {
+		return (this->direction == DIRECTION::ANTICLOCKWISE);
+	} else {
+		return false;
+	}
+}
+
+void blaze::StepperMotor::checkDirection(int steps) {
+	if (homePosition == HOME_POSITION::LEFT) {
+		if (steps < 0) {
+			this->setDirection(DIRECTION::CLOCKWISE);
+		} else {
+			this->setDirection(DIRECTION::ANTICLOCKWISE);
+		}
+	} else {
+		if (steps < 0) {
+			this->setDirection(DIRECTION::ANTICLOCKWISE);
+		} else {
+			this->setDirection(DIRECTION::CLOCKWISE);
+		}
+	}
 }

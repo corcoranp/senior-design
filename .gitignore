@@ -28,3 +28,5 @@
 *.app
 /all/
 /BBB Build/
+sourcecode/include/Arm/Arm.h
+sourcecode/source/Arm/Arm.cpp

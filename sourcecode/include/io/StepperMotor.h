@@ -38,6 +38,7 @@ class StepperMotor {
 public:
 	enum STEP_MODE { STEP_FULL, STEP_HALF, STEP_QUARTER, STEP_EIGHT, STEP_SIXTEEN };
 	enum DIRECTION { CLOCKWISE, ANTICLOCKWISE };
+	enum HOME_POSITION { LEFT, RIGHT};
 
 private:
 	// The GPIO pins MS1, MS2 (Microstepping options), STEP (The low->high step)
@@ -81,10 +82,18 @@ public:
    virtual void disable();//PMC added
    virtual bool isEnabled() {return enabled; } //PMC added
    virtual bool  isAsleep() { return asleep; }
+   virtual void setHome(HOME_POSITION position);
+   virtual HOME_POSITION getHome();
+   virtual bool goHome();
+   virtual bool isHome();
+   virtual bool isAtEnd();
+   virtual bool isAtLimit();
+   virtual void checkDirection(int steps);
 
    virtual ~StepperMotor();
 
 private:
+   HOME_POSITION homePosition;
    bool threadRunning;
    pthread_t thread;
    CallbackType callbackFunction;

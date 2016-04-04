@@ -35,6 +35,11 @@ void dxl_terminate(void)
 	dxl_hal_close();
 }
 
+
+int dxl_connected(){
+	return dxl_hal_isOpen();
+}
+
 void dxl_tx_packet(void)
 {
 	unsigned char i;

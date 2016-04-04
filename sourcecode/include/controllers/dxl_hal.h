@@ -9,6 +9,7 @@ extern "C" {
 
 int dxl_hal_open(int deviceIndex, float baudrate);
 void dxl_hal_close();
+int dxl_hal_isOpen();
 int dxl_hal_set_baud( float baudrate );
 void dxl_hal_clear();
 int dxl_hal_tx( unsigned char *pPacket, int numPacket );
